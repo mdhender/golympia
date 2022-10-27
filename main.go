@@ -18,5 +18,42 @@
 
 package main
 
+import "log"
+
 func main() {
+	clear_alloc_flag()
+	dir_assert()
+	open_fps()
+	load_seed(SEED_FILE)
+	map_init()
+	read_map("map-data.txt")
+	fix_terrain_land()
+	set_regions("regions.json")
+	set_province_clumps("lands.json")
+	unnamed_province_clumps()
+	make_islands()
+	make_graveyards()
+	place_sublocations()
+	make_gates()
+	make_roads()
+	print_map(stdout)
+	print_sublocs()
+	dump_continents("continents.json")
+	count_cities()
+	count_continents()
+	count_sublocs()
+	count_subloc_coverage()
+	dump_roads("roads.json")
+	dump_gates("gates.json")
+
+	fclose(loc_fp)
+	fclose(gate_fp)
+	fclose(road_fp)
+
+	count_tiles()
+
+	log.Printf("highest province = %d\n\n", map_[max_row][max_col].region)
+
+	// if the province allocation spilled into the subloc range, we have to increase SUBLOC_MAX
+	assert(SUBLOC_LOW > map_[max_row][max_col].region)
 }
