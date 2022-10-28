@@ -70,7 +70,11 @@ func GenerateMap(options ...Option) error {
 
 	count_tiles()
 
-	log.Printf("highest province = %d\n\n", map_[max_row][max_col].region)
+	log.Println("")
+	log.Println("")
+	log.Printf("max row, col     = (%2d,%2d)\n", max_row, max_col)
+	log.Printf("subloc_low       = %8d\n", SUBLOC_LOW)
+	log.Printf("highest province = %8d\n", map_[max_row][max_col].region)
 
 	// if the province allocation spilled into the subloc range, we have to increase SUBLOC_MAX
 	if !(SUBLOC_LOW > map_[max_row][max_col].region) {

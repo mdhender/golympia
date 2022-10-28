@@ -75,7 +75,6 @@ var argsGenerateMap struct {
 }
 
 func init() {
-	// --map-file _map_name_ --loc-file _loc_file_name_
 	cmdGenerate.AddCommand(cmdGenerateMap)
 	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.mapFileName, "map-data", "map-data.txt", "map data to import")
 	//if err := cmdGenerateMap.MarkFlagRequired("map-data"); err != nil {
