@@ -17,16 +17,27 @@
  *
  */
 
-package main
+// Package cli implements the command line interface.
+package cli
 
-// road.h
+import (
+	"github.com/spf13/cobra"
+)
 
-type road struct {
-	ent_num int
-	name    string
-	to_loc  int
-	hidden  int
+// cmdRoot represents the base command when called without any subcommands
+var cmdRoot = &cobra.Command{
+	Short:   "Olympia: The Age of Gods game engine",
+	Long:    `goly is the game engine for Olympia: The Age of Gods.`,
+	Version: "0.0.1",
+	PersistentPreRunE: func(cmd *cobra.Command, args []string) error {
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
+	},
 }
 
-type rlist []*road
-type road_t = road
+// Execute adds all child commands to the root command and sets flags appropriately.
+// This is called by main.main(). It only needs to happen once to the root Command.
+func Execute() error {
+	return cmdRoot.Execute()
+}

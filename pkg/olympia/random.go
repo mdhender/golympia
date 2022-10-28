@@ -1,6 +1,6 @@
 /*
  * golympia - a turn based game
- * Copyright (c) 1992-2022 Michael D Henderson
+ * Copyright (c) 2022 Michael D Henderson
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,28 +17,16 @@
  *
  */
 
-package main
+package olympia
 
 import (
-	"github.com/mdhender/golympia/cli"
-	"log"
-	"math/rand"
-	"os"
-	"time"
+	"github.com/mdhender/golympia/pkg/prng"
 )
 
-func main() {
-	started := time.Now()
-	rand.Seed(started.UnixNano())
+func load_seed(name string) {
+	prng.LoadSeed(name)
+}
 
-	rv := 0
-	if err := cli.Execute(); err != nil {
-		log.Printf("\n%+v\n", err)
-		rv = 2
-	}
-
-	log.Printf("\n")
-	log.Printf("completed in %v\n", time.Now().Sub(started))
-
-	os.Exit(rv)
+func rnd(low, high int) int {
+	return prng.Range(low, high)
 }

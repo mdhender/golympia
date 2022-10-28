@@ -17,7 +17,7 @@
  *
  */
 
-package main
+package olympia
 
 // vectors/ilist.h
 

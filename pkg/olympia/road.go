@@ -17,16 +17,16 @@
  *
  */
 
-package main
+package olympia
 
-import (
-	"github.com/mdhender/golympia/pkg/prng"
-)
+// road.h
 
-func load_seed(name string) {
-	prng.LoadSeed(name)
+type road struct {
+	ent_num int
+	name    string
+	to_loc  int
+	hidden  int
 }
 
-func rnd(low, high int) int {
-	return prng.Range(low, high)
-}
+type rlist []*road
+type road_t = road

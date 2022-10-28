@@ -17,51 +17,20 @@
  *
  */
 
-package main
+package cli
 
 import (
-	"github.com/mdhender/golympia/pkg/io"
+	"github.com/spf13/cobra"
 )
 
-// z.h
-
-const TRUE = 1
-const FALSE = 0
-
-const LEN = 512 /* generic string max length */
-
-func fuzzy_strcmp(s, t string) int {
-	panic("!implemented")
+// cmdGenerate runs the generate command
+var cmdGenerate = &cobra.Command{
+	Use:   "generate",
+	Short: "generate things",
+	Run: func(cmd *cobra.Command, args []string) {
+	},
 }
 
-func i_strcmp(s, t string) int {
-	panic("!implemented")
-}
-
-func i_strncmp(s, t string, n int) int {
-	panic("!implemented")
-}
-
-// z.c
-
-// Line reader with no size limits strips newline off end of line
-func getlin(fp *io.FILE) (string, bool) {
-	return fp.GetLine()
-}
-
-// Get line, remove leading and trailing whitespace
-func getlin_ew(fp *io.FILE) (string, bool) {
-	return fp.GetLineEW()
-}
-
-func readlin() (string, bool) {
-	return io.ReadLine()
-}
-
-func readlin_ew() (string, bool) {
-	return io.ReadLineEW()
-}
-
-func str_save(s string) string {
-	return s
+func init() {
+	cmdRoot.AddCommand(cmdGenerate)
 }

@@ -17,7 +17,7 @@
  *
  */
 
-package main
+package olympia
 
 import (
 	"github.com/mdhender/golympia/pkg/io"
