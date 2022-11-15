@@ -19,36 +19,42 @@
 
 package olympia
 
-import (
-	"fmt"
-	"os"
-)
+type queue_l []int
 
-func fclose(fp *os.File) *os.File {
-	if fp != nil {
-		_ = fp.Close()
+func (q queue_l) Len() int {
+	return len(q)
+}
+
+func (q queue_l) Less(i, j int) bool {
+	return bx[q[i]].temp < bx[q[j]].temp
+}
+
+func (q queue_l) Swap(i, j int) {
+	q[i], q[j] = q[j], q[i]
+}
+
+func (q queue_l) copy() queue_l {
+	var cp queue_l
+	return append(cp, q...)
+}
+
+func (q queue_l) delete(index int) queue_l {
+	var cp queue_l
+	for i, e := range q {
+		if i == index {
+			continue
+		}
+		cp = append(cp, e)
 	}
-	return nil
+	return cp
 }
 
-func fflush(fp *os.File) {}
-
-func fopen(name string, mode string) (*os.File, error) {
-	switch mode {
-	case "w":
-		return os.Create(name)
+// rem_value_uniq removes the rightmost element in the list that matches the value
+func (q queue_l) rem_value_uniq(value int) queue_l {
+	for i := len(q) - 1; i >= 0; i-- {
+		if e := q[i]; e == value {
+			return q.delete(i)
+		}
 	}
-	return nil, fmt.Errorf("fopen: unknown mode %q", mode)
-}
-
-func fprintf(fp *os.File, format string, args ...interface{}) {
-	_, _ = fp.WriteString(fmt.Sprintf(format, args...))
-}
-
-func fputb(s []byte, fp *os.File) {
-	fprintf(fp, "%s\n", string(s))
-}
-
-func fputs(s string, fp *os.File) {
-	fprintf(fp, "%s\n", s)
+	return q
 }

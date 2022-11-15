@@ -21,7 +21,6 @@ package olympia
 
 import (
 	"github.com/mdhender/golympia/pkg/io"
-	"strings"
 )
 
 var stdout, stderr *io.FILE
@@ -31,6 +30,16 @@ func abs(n int) int {
 		return -n
 	}
 	return n
+}
+
+type AccessFlag int
+
+const (
+	R_OK AccessFlag = iota
+)
+
+func access(path string, flag AccessFlag) int {
+	panic(path)
 }
 
 func assert(t bool) {
@@ -59,22 +68,8 @@ func iswhite(c byte) bool {
 	return ((c) == ' ' || (c) == '\t')
 }
 
-func lcase(s string) string {
-	return strings.ToLower(s)
-}
-
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
+func system(cmd string) int {
+	panic(cmd)
 }
 
 func tolower(c byte) byte {
@@ -89,4 +84,22 @@ func toupper(c byte) byte {
 		c = c - 'a' + 'A'
 	}
 	return c
+}
+
+type UMaskFlag int
+
+const (
+	S_IWGRP UMaskFlag = iota
+	S_IXGRP
+	S_IWOTH
+	S_IXOTH
+	S_IRWXO
+)
+
+func umask(flag UMaskFlag) {
+	panic("!implemented")
+}
+
+func unlink(path string) int {
+	panic(path)
 }

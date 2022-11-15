@@ -57,15 +57,15 @@ const (
 )
 
 const (
-	DIR_N   = 1
-	DIR_NE  = 2
-	DIR_E   = 3
-	DIR_SE  = 4
-	DIR_S   = 5
-	DIR_SW  = 6
-	DIR_W   = 7
-	DIR_NW  = 8
-	MAX_DIR = DIR_NW + 1
+	MG_DIR_N   = 1
+	MG_DIR_NE  = 2
+	MG_DIR_E   = 3
+	MG_DIR_SE  = 4
+	MG_DIR_S   = 5
+	MG_DIR_SW  = 6
+	MG_DIR_W   = 7
+	MG_DIR_NW  = 8
+	MG_MAX_DIR = MG_DIR_NW + 1
 )
 
 // G2 Entity coding system:
@@ -94,7 +94,7 @@ const (
 
 var alloc_flag [MAX_BOX]int
 var bridge_dir_s = []string{"-invalid-", "  n-s", "  e-w", "ne-sw", "nw-se"}
-var dir_vector [MAX_DIR]int
+var dir_vector [MG_MAX_DIR]int
 
 type guild_name_t struct {
 	skill  int
@@ -262,13 +262,13 @@ var map_ [MAX_ROW][MAX_COL]*tile
 
 const MAX_SUBLOC = 20000
 
-var subloc [MAX_SUBLOC]*tile
+var subloc_mg [MAX_SUBLOC]*tile
 
 var top_subloc = 0
 
-var loc_fp *io.FILE
-var gate_fp *io.FILE
-var road_fp *io.FILE
+var loc_fp *os.File
+var gate_fp *os.File
+var road_fp *os.File
 
 func alloc_inside() int {
 	inside_top++
@@ -280,7 +280,7 @@ func alloc_inside() int {
 
 func add_road(from *tile, to_loc int, hidden int, name string) {
 	from.roads = append(from.roads, &road{
-		ent_num: rnd_alloc_num(SUBLOC_LOW, SUBLOC_HIGH),
+		ent_num: rnd_alloc_flag_num(SUBLOC_LOW, SUBLOC_HIGH),
 		to_loc:  to_loc,
 		hidden:  hidden,
 		name:    name,
@@ -320,24 +320,24 @@ func adjacent_tile_terr(row, col int) *tile {
 // Returns 0 if there is no adjacent location in the given direction.
 func adjacent_tile_sup(row, col int, dir int) *tile {
 	switch dir {
-	case DIR_N:
+	case MG_DIR_N:
 		row--
-	case DIR_NE:
+	case MG_DIR_NE:
 		row--
 		col++
-	case DIR_E:
+	case MG_DIR_E:
 		col++
-	case DIR_SE:
+	case MG_DIR_SE:
 		row++
 		col++
-	case DIR_S:
+	case MG_DIR_S:
 		row++
-	case DIR_SW:
+	case MG_DIR_SW:
 		row++
 		col--
-	case DIR_W:
+	case MG_DIR_W:
 		col--
-	case DIR_NW:
+	case MG_DIR_NW:
 		row--
 		col--
 	default:
@@ -401,35 +401,35 @@ var _static_bridge_corner_sup = struct {
 
 func bridge_corner_sup(row, col int) int {
 	// find all squares neighboring the hole
-	n := adjacent_tile_sup(row, col, DIR_N)
+	n := adjacent_tile_sup(row, col, MG_DIR_N)
 	if n != nil && n.mark != 0 {
 		return FALSE
 	}
-	s := adjacent_tile_sup(row, col, DIR_S)
+	s := adjacent_tile_sup(row, col, MG_DIR_S)
 	if s != nil && s.mark != 0 {
 		return FALSE
 	}
-	e := adjacent_tile_sup(row, col, DIR_E)
+	e := adjacent_tile_sup(row, col, MG_DIR_E)
 	if s != nil && e.mark != 0 {
 		return FALSE
 	}
-	w := adjacent_tile_sup(row, col, DIR_W)
+	w := adjacent_tile_sup(row, col, MG_DIR_W)
 	if w != nil && w.mark != 0 {
 		return FALSE
 	}
-	nw := adjacent_tile_sup(row, col, DIR_NW)
+	nw := adjacent_tile_sup(row, col, MG_DIR_NW)
 	if nw != nil && nw.mark != 0 {
 		return FALSE
 	}
-	sw := adjacent_tile_sup(row, col, DIR_SW)
+	sw := adjacent_tile_sup(row, col, MG_DIR_SW)
 	if sw != nil && sw.mark != 0 {
 		return FALSE
 	}
-	ne := adjacent_tile_sup(row, col, DIR_NE)
+	ne := adjacent_tile_sup(row, col, MG_DIR_NE)
 	if ne != nil && ne.mark != 0 {
 		return FALSE
 	}
-	se := adjacent_tile_sup(row, col, DIR_SE)
+	se := adjacent_tile_sup(row, col, MG_DIR_SE)
 	if se != nil && se.mark != 0 {
 		return FALSE
 	}
@@ -524,35 +524,35 @@ var _static_bridge_map_hole_sup = struct {
 
 func bridge_map_hole_sup(row, col int) int {
 	// find all squares neighboring the hole
-	n := adjacent_tile_sup(row, col, DIR_N)
+	n := adjacent_tile_sup(row, col, MG_DIR_N)
 	if n != nil && n.mark != 0 {
 		return FALSE
 	}
-	s := adjacent_tile_sup(row, col, DIR_S)
+	s := adjacent_tile_sup(row, col, MG_DIR_S)
 	if s != nil && s.mark != 0 {
 		return FALSE
 	}
-	e := adjacent_tile_sup(row, col, DIR_E)
+	e := adjacent_tile_sup(row, col, MG_DIR_E)
 	if s != nil && e.mark != 0 {
 		return FALSE
 	}
-	w := adjacent_tile_sup(row, col, DIR_W)
+	w := adjacent_tile_sup(row, col, MG_DIR_W)
 	if w != nil && w.mark != 0 {
 		return FALSE
 	}
-	nw := adjacent_tile_sup(row, col, DIR_NW)
+	nw := adjacent_tile_sup(row, col, MG_DIR_NW)
 	if nw != nil && nw.mark != 0 {
 		return FALSE
 	}
-	sw := adjacent_tile_sup(row, col, DIR_SW)
+	sw := adjacent_tile_sup(row, col, MG_DIR_SW)
 	if sw != nil && sw.mark != 0 {
 		return FALSE
 	}
-	ne := adjacent_tile_sup(row, col, DIR_NE)
+	ne := adjacent_tile_sup(row, col, MG_DIR_NE)
 	if ne != nil && ne.mark != 0 {
 		return FALSE
 	}
-	se := adjacent_tile_sup(row, col, DIR_SE)
+	se := adjacent_tile_sup(row, col, MG_DIR_SE)
 	if se != nil && se.mark != 0 {
 		return FALSE
 	}
@@ -660,7 +660,7 @@ func bridge_mountain_ports() {
 	// todo: max_row vs MAX_ROW
 	for row := 0; row < MAX_ROW; row++ {
 		for col := 0; col < MAX_COL; col++ {
-			if map_[row][col] != nil && map_[row][col].terrain == terr_mountain && is_port_city(row, col) != FALSE && rnd(1, 7) == 7 {
+			if map_[row][col] != nil && map_[row][col].terrain == terr_mountain && is_port_city_rc(row, col) && rnd(1, 7) == 7 {
 				bridge_mountain_sup(row, col)
 			}
 		}
@@ -725,15 +725,15 @@ func clear_province_marks() {
 
 func clear_subloc_marks() {
 	for i := 1; i <= top_subloc; i++ {
-		subloc[i].mark = 0
+		subloc_mg[i].mark = 0
 	}
 }
 
 // count_cities updates the global inside_num_sides array.
 func count_cities() {
 	for i := 1; i <= top_subloc; i++ {
-		if subloc[i].terrain == terr_city {
-			inside_num_cities[map_[subloc[i].row][subloc[i].col].inside]++
+		if subloc_mg[i].terrain == terr_city {
+			inside_num_cities[map_[subloc_mg[i].row][subloc_mg[i].col].inside]++
 		}
 	}
 }
@@ -769,10 +769,10 @@ func count_subloc_coverage() {
 	clear_province_marks()
 
 	for i := 1; i <= top_subloc; i++ {
-		if subloc[i].depth == 3 {
-			map_[subloc[i].row][subloc[i].col].mark++
-			if map_[subloc[i].row][subloc[i].col].mark >= 5 {
-				log.Printf("(%d,%d) has %d sublocs (region %d)\n", subloc[i].row, subloc[i].col, map_[subloc[i].row][subloc[i].col].mark, map_[subloc[i].row][subloc[i].col].region)
+		if subloc_mg[i].depth == 3 {
+			map_[subloc_mg[i].row][subloc_mg[i].col].mark++
+			if map_[subloc_mg[i].row][subloc_mg[i].col].mark >= 5 {
+				log.Printf("(%d,%d) has %d sublocs (region %d)\n", subloc_mg[i].row, subloc_mg[i].col, map_[subloc_mg[i].row][subloc_mg[i].col].mark, map_[subloc_mg[i].row][subloc_mg[i].col].region)
 			}
 		}
 	}
@@ -815,8 +815,8 @@ func count_sublocs() {
 	clear_province_marks()
 
 	for i := 1; i <= top_subloc; i++ {
-		if subloc[i].terrain == terr_island {
-			row, col := subloc[i].row, subloc[i].col
+		if subloc_mg[i].terrain == terr_island {
+			row, col := subloc_mg[i].row, subloc_mg[i].col
 			map_[row][col].mark++
 		}
 	}
@@ -868,10 +868,10 @@ func count_tiles() {
 		}
 	}
 	for i := 1; i <= top_subloc; i++ {
-		count[subloc[i].terrain]++
+		count[subloc_mg[i].terrain]++
 	}
 	for i := 1; i < len(terr_s[i]); i++ {
-		fprintf(stderr, "%-30s %d\n", terr_s[i], count[i])
+		log.Printf("%-30s %d\n", terr_s[i], count[i])
 	}
 }
 
@@ -881,18 +881,18 @@ func create_a_building(sl int, hidden int, kind int) int {
 		panic("assert(top_subloc < MAX_SUBLOC)")
 	}
 
-	subloc[top_subloc] = &tile{}
-	subloc[top_subloc].region = rnd_alloc_num(SUBLOC_LOW, SUBLOC_HIGH)
-	subloc[top_subloc].inside = subloc[sl].region
+	subloc_mg[top_subloc] = &tile{}
+	subloc_mg[top_subloc].region = rnd_alloc_flag_num(SUBLOC_LOW, SUBLOC_HIGH)
+	subloc_mg[top_subloc].inside = subloc_mg[sl].region
 
-	subloc[top_subloc].row = subloc[sl].row
-	subloc[top_subloc].col = subloc[sl].col
+	subloc_mg[top_subloc].row = subloc_mg[sl].row
+	subloc_mg[top_subloc].col = subloc_mg[sl].col
 
-	subloc[top_subloc].hidden = hidden
-	subloc[top_subloc].terrain = kind
-	subloc[top_subloc].depth = 4
+	subloc_mg[top_subloc].hidden = hidden
+	subloc_mg[top_subloc].terrain = kind
+	subloc_mg[top_subloc].depth = 4
 
-	subloc[sl].subs = append(subloc[sl].subs, subloc[top_subloc].region)
+	subloc_mg[sl].subs = append(subloc_mg[sl].subs, subloc_mg[top_subloc].region)
 
 	return top_subloc
 }
@@ -902,8 +902,8 @@ func create_a_city(row, col int, name string, major int) int {
 		name = random_city_name()
 	}
 	n := create_a_subloc(row, col, 0, terr_city)
-	subloc[n].name = name
-	subloc[n].major_city = major
+	subloc_mg[n].name = name
+	subloc_mg[n].major_city = major
 	return n
 }
 
@@ -911,7 +911,7 @@ func create_a_graveyard(row, col int) {
 	n := create_a_subloc(row, col, rnd(0, 1), terr_grave)
 	s := name_guild(terr_grave)
 	if s != "" {
-		subloc[n].name = s
+		subloc_mg[n].name = s
 	}
 }
 
@@ -921,64 +921,26 @@ func create_a_subloc(row, col int, hidden int, kind int) int {
 		panic("assert(top_subloc < MAX_SUBLOC)")
 	}
 
-	subloc[top_subloc] = &tile{}
+	subloc_mg[top_subloc] = &tile{}
 	if kind == terr_city {
-		subloc[top_subloc].region = rnd_alloc_num(CITY_LOW, CITY_HIGH)
+		subloc_mg[top_subloc].region = rnd_alloc_flag_num(CITY_LOW, CITY_HIGH)
 	} else {
-		subloc[top_subloc].region = rnd_alloc_num(SUBLOC_LOW, SUBLOC_HIGH)
+		subloc_mg[top_subloc].region = rnd_alloc_flag_num(SUBLOC_LOW, SUBLOC_HIGH)
 	}
-	subloc[top_subloc].inside = map_[row][col].region
-	subloc[top_subloc].row = row
-	subloc[top_subloc].col = col
-	subloc[top_subloc].hidden = hidden
-	subloc[top_subloc].terrain = kind
-	subloc[top_subloc].depth = 3
+	subloc_mg[top_subloc].inside = map_[row][col].region
+	subloc_mg[top_subloc].row = row
+	subloc_mg[top_subloc].col = col
+	subloc_mg[top_subloc].hidden = hidden
+	subloc_mg[top_subloc].terrain = kind
+	subloc_mg[top_subloc].depth = 3
 
 	if kind == terr_city {
 		map_[row][col].city = 2
 	}
 
-	map_[row][col].subs = append(map_[row][col].subs, subloc[top_subloc].region)
+	map_[row][col].subs = append(map_[row][col].subs, subloc_mg[top_subloc].region)
 
 	return top_subloc
-}
-
-func dir_assert() {
-	row, col := 1, 1
-	reg := rc_to_region(row, col)
-	if !(reg == 10101) {
-		panic("assert(rc_to_region(row, col) == 10101)")
-	}
-	if !(row == region_row(reg)) {
-		panic("assert(region_row(reg) == row)")
-	}
-	if !(col == region_col(reg)) {
-		panic("assert(region_col(reg) == col)")
-	}
-
-	row, col = 99, 99
-	reg = rc_to_region(row, col)
-	if !(reg == 19999) {
-		panic("assert(rc_to_region(row, col) == 19999)")
-	}
-	if !(row == region_row(reg)) {
-		panic("assert(region_row(reg) == row)")
-	}
-	if !(col == region_col(reg)) {
-		panic("assert(region_col(reg) == col)")
-	}
-
-	row, col = 57, 63
-	reg = rc_to_region(row, col)
-	if !(reg == 15763) {
-		panic("assert(rc_to_region(row, col) == 15763)")
-	}
-	if !(row == region_row(reg)) {
-		panic("assert(region_row(reg) == row)")
-	}
-	if !(col == region_col(reg)) {
-		panic("assert(region_col(reg) == col)")
-	}
 }
 
 func dump_continents(name string) {
@@ -1049,14 +1011,14 @@ func dump_gates(name string) {
 	}
 
 	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc[i].gates_num); j++ {
-			fprintf(gate_fp, "%d gate 0\n", subloc[i].gates_num[j])
+		for j := 0; j < len(subloc_mg[i].gates_num); j++ {
+			fprintf(gate_fp, "%d gate 0\n", subloc_mg[i].gates_num[j])
 			fprintf(gate_fp, "LI\n")
-			fprintf(gate_fp, " wh %d\n", subloc[i].region)
+			fprintf(gate_fp, " wh %d\n", subloc_mg[i].region)
 			fprintf(gate_fp, "GA\n")
-			fprintf(gate_fp, " tl %d\n", subloc[i].gates_dest[j])
-			if subloc[i].gates_key[j] != 0 {
-				fprintf(gate_fp, " sk %d\n", subloc[i].gates_key[j])
+			fprintf(gate_fp, " tl %d\n", subloc_mg[i].gates_dest[j])
+			if subloc_mg[i].gates_key[j] != 0 {
+				fprintf(gate_fp, " sk %d\n", subloc_mg[i].gates_key[j])
 			}
 			fprintf(gate_fp, "\n")
 		}
@@ -1087,14 +1049,14 @@ func dump_gates(name string) {
 	}
 
 	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc[i].gates_num); j++ {
-			fprintf(gate_fp, "%d gate 0\n", subloc[i].gates_num[j])
+		for j := 0; j < len(subloc_mg[i].gates_num); j++ {
+			fprintf(gate_fp, "%d gate 0\n", subloc_mg[i].gates_num[j])
 			fprintf(gate_fp, "LI\n")
-			fprintf(gate_fp, " wh %d\n", subloc[i].region)
+			fprintf(gate_fp, " wh %d\n", subloc_mg[i].region)
 			fprintf(gate_fp, "GA\n")
-			fprintf(gate_fp, " tl %d\n", subloc[i].gates_dest[j])
-			if subloc[i].gates_key[j] != 0 {
-				fprintf(gate_fp, " sk %d\n", subloc[i].gates_key[j])
+			fprintf(gate_fp, " tl %d\n", subloc_mg[i].gates_dest[j])
+			if subloc_mg[i].gates_key[j] != 0 {
+				fprintf(gate_fp, " sk %d\n", subloc_mg[i].gates_key[j])
 			}
 			fprintf(gate_fp, "\n")
 		}
@@ -1144,17 +1106,17 @@ func dump_roads(name string) {
 	}
 
 	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc[i].roads); j++ {
+		for j := 0; j < len(subloc_mg[i].roads); j++ {
 			data.Roads = append(data.Roads, road{
-				EntNum: subloc[i].roads[j].ent_num,
-				Name:   subloc[i].roads[j].name,
+				EntNum: subloc_mg[i].roads[j].ent_num,
+				Name:   subloc_mg[i].roads[j].name,
 				LinksTo: []link_to{
-					link_to{WhereTo: subloc[i].region},
+					link_to{WhereTo: subloc_mg[i].region},
 				},
 				GatesTo: []gate_to{
 					gate_to{
-						ToLoc:  subloc[i].roads[j].to_loc,
-						Hidden: subloc[i].roads[j].hidden,
+						ToLoc:  subloc_mg[i].roads[j].to_loc,
+						Hidden: subloc_mg[i].roads[j].hidden,
 					},
 				},
 			})
@@ -1189,17 +1151,17 @@ func dump_roads(name string) {
 	}
 
 	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc[i].roads); j++ {
-			fprintf(road_fp, "%d road 0\n", subloc[i].roads[j].ent_num)
-			if subloc[i].roads[j].name != "" {
-				fprintf(road_fp, "na %s\n", subloc[i].roads[j].name)
+		for j := 0; j < len(subloc_mg[i].roads); j++ {
+			fprintf(road_fp, "%d road 0\n", subloc_mg[i].roads[j].ent_num)
+			if subloc_mg[i].roads[j].name != "" {
+				fprintf(road_fp, "na %s\n", subloc_mg[i].roads[j].name)
 			}
 			fprintf(road_fp, "LI\n")
-			fprintf(road_fp, " wh %d\n", subloc[i].region)
+			fprintf(road_fp, " wh %d\n", subloc_mg[i].region)
 			fprintf(road_fp, "GA\n")
-			fprintf(road_fp, " tl %d\n", subloc[i].roads[j].to_loc)
-			if subloc[i].roads[j].hidden != FALSE {
-				fprintf(road_fp, " rh %d\n", subloc[i].roads[j].hidden)
+			fprintf(road_fp, " tl %d\n", subloc_mg[i].roads[j].to_loc)
+			if subloc_mg[i].roads[j].hidden != FALSE {
+				fprintf(road_fp, " rh %d\n", subloc_mg[i].roads[j].hidden)
 			}
 			fprintf(road_fp, "\n")
 		}
@@ -1227,7 +1189,7 @@ func flood_land_clumps(row, col int, name string) int {
 	map_[row][col].name = name
 
 	count := 0
-	for dir := 1; dir < MAX_DIR; dir++ {
+	for dir := 1; dir < MG_MAX_DIR; dir++ {
 		p := adjacent_tile_sup(row, col, dir)
 		if p == nil || p.terrain == terr_ocean || p.color == -1 || p.color != map_[row][col].color {
 			continue
@@ -1251,7 +1213,7 @@ func flood_land_inside(row, col int, ins int) int {
 		return count
 	}
 
-	for dir := 1; dir < MAX_DIR; dir++ {
+	for dir := 1; dir < MG_MAX_DIR; dir++ {
 		p := adjacent_tile_sup(row, col, dir)
 		if p == nil || p.terrain == terr_ocean {
 			continue
@@ -1270,7 +1232,7 @@ func flood_water_inside(row, col int, ins int) int {
 	count := 0
 	map_[row][col].inside = ins
 
-	for dir := 1; dir < MAX_DIR; dir++ {
+	for dir := 1; dir < MG_MAX_DIR; dir++ {
 		p := adjacent_tile_sup(row, col, dir)
 		if p == nil || p.color == -1 || p.color != map_[row][col].color {
 			continue
@@ -1338,11 +1300,11 @@ func gate_link_islands(rings int) {
 		n := first
 		for i := 1; i < num; i++ {
 			next := random_island()
-			new_gate(subloc[n], subloc[next], 0)
+			new_gate(subloc_mg[n], subloc_mg[next], 0)
 			n = next
 		}
 
-		new_gate(subloc[n], subloc[first], 0)
+		new_gate(subloc_mg[n], subloc_mg[first], 0)
 	}
 }
 
@@ -1359,8 +1321,8 @@ func gate_province_islands(times int) {
 		var r2, c2 int
 		random_province(&r2, &c2, 0)
 
-		new_gate(map_[r1][c1], subloc[isle], 0)
-		new_gate(subloc[isle], map_[r2][c2], 0)
+		new_gate(map_[r1][c1], subloc_mg[isle], 0)
+		new_gate(subloc_mg[isle], map_[r2][c2], 0)
 	}
 }
 
@@ -1376,7 +1338,7 @@ func gate_stone_circles() {
 	l := random_tile_from_each_region()
 	for i := 0; i < len(l); i++ {
 		n := create_a_subloc(l[i].row, l[i].col, 1, terr_stone_cir)
-		circs = append(circs, subloc[n])
+		circs = append(circs, subloc_mg[n])
 		log.Printf("	(%2d,%2d) in %s\n", l[i].row, l[i].col, inside_names[l[i].inside])
 	}
 
@@ -1404,14 +1366,14 @@ func gate_stone_circles() {
 	}
 }
 
-func is_port_city(row, col int) int {
-	for _, dir := range []int{DIR_N, DIR_S, DIR_E, DIR_W} {
+func is_port_city_rc(row, col int) bool {
+	for _, dir := range []int{MG_DIR_N, MG_DIR_S, MG_DIR_E, MG_DIR_W} {
 		t := adjacent_tile_sup(row, col, dir)
 		if t != nil && t.terrain == terr_ocean {
-			return TRUE
+			return true
 		}
 	}
-	return FALSE
+	return false
 }
 
 func island_allowed(row, col int) bool {
@@ -1434,15 +1396,15 @@ func island_allowed(row, col int) bool {
 // A very few locations will have the route between two sublocs.
 func link_roads(from, to *tile, hidden int, name string) {
 	for i := 1; i <= top_subloc; i++ {
-		if subloc[i].inside == from.region && subloc[i].terrain != terr_city {
-			from = subloc[i]
+		if subloc_mg[i].inside == from.region && subloc_mg[i].terrain != terr_city {
+			from = subloc_mg[i]
 			break
 		}
 	}
 
 	for i := 1; i <= top_subloc; i++ {
-		if subloc[i].inside == to.region && subloc[i].terrain != terr_city {
-			to = subloc[i]
+		if subloc_mg[i].inside == to.region && subloc_mg[i].terrain != terr_city {
+			to = subloc_mg[i]
 			break
 		}
 	}
@@ -1484,7 +1446,7 @@ func make_appropriate_subloc(row, col int, unused int) {
 				n = create_a_subloc(row, col, hid, loc.kind)
 				s := name_guild(loc.kind)
 				if s != "" {
-					subloc[n].name = s
+					subloc_mg[n].name = s
 				}
 				break
 			}
@@ -1625,7 +1587,7 @@ func name_guild(skill int) string {
 }
 
 func new_gate(from *tile, to *tile, key int) {
-	gate_num := rnd_alloc_num(SUBLOC_LOW, SUBLOC_HIGH)
+	gate_num := rnd_alloc_flag_num(SUBLOC_LOW, SUBLOC_HIGH)
 
 	from.gates_num = append(from.gates_num, gate_num)
 	from.gates_dest = append(from.gates_dest, to.region)
@@ -1811,7 +1773,7 @@ func print_map(fp *io.FILE) {
 			print_inside_sublocs(flag, row, col)
 
 			fprintf(loc_fp, "LO\n")
-			fprintf(loc_fp, " pd %d %d %d %d\n", prov_dest(map_[row][col], DIR_N), prov_dest(map_[row][col], DIR_E), prov_dest(map_[row][col], DIR_S), prov_dest(map_[row][col], DIR_W))
+			fprintf(loc_fp, " pd %d %d %d %d\n", prov_dest(map_[row][col], MG_DIR_N), prov_dest(map_[row][col], MG_DIR_E), prov_dest(map_[row][col], MG_DIR_S), prov_dest(map_[row][col], MG_DIR_W))
 
 			if map_[row][col].hidden != FALSE {
 				fprintf(loc_fp, " hi %d\n", map_[row][col].hidden)
@@ -1884,7 +1846,7 @@ func print_inside_sublocs(flag int, row, col int) {
 func print_subloc_gates(n int) { // and inside buildings...
 	count := 0
 
-	for i := 0; i < len(subloc[n].roads); i++ {
+	for i := 0; i < len(subloc_mg[n].roads); i++ {
 		count++
 		if count == 1 {
 			fprintf(loc_fp, " hl ")
@@ -1892,10 +1854,10 @@ func print_subloc_gates(n int) { // and inside buildings...
 		if count%11 == 10 { // continuation line
 			fprintf(loc_fp, "\\\n\t")
 		}
-		fprintf(loc_fp, "%d ", subloc[n].roads[i].ent_num)
+		fprintf(loc_fp, "%d ", subloc_mg[n].roads[i].ent_num)
 	}
 
-	for i := 0; i < len(subloc[n].gates_num); i++ {
+	for i := 0; i < len(subloc_mg[n].gates_num); i++ {
 		count++
 		if count == 1 {
 			fprintf(loc_fp, " hl ")
@@ -1903,10 +1865,10 @@ func print_subloc_gates(n int) { // and inside buildings...
 		if count%11 == 10 { // continuation line
 			fprintf(loc_fp, "\\\n\t")
 		}
-		fprintf(loc_fp, "%d ", subloc[n].gates_num[i])
+		fprintf(loc_fp, "%d ", subloc_mg[n].gates_num[i])
 	}
 
-	for i := 0; i < len(subloc[n].subs); i++ {
+	for i := 0; i < len(subloc_mg[n].subs); i++ {
 		count++
 		if count == 1 {
 			fprintf(loc_fp, " hl ")
@@ -1914,7 +1876,7 @@ func print_subloc_gates(n int) { // and inside buildings...
 		if count%11 == 10 { // continuation line
 			fprintf(loc_fp, "\\\n\t")
 		}
-		fprintf(loc_fp, "%d ", subloc[n].subs[i])
+		fprintf(loc_fp, "%d ", subloc_mg[n].subs[i])
 	}
 
 	if count != 0 {
@@ -1926,35 +1888,35 @@ func print_sublocs() {
 	for i := 1; i <= top_subloc; i++ {
 		sl := FALSE
 
-		fprintf(loc_fp, "%d loc %s\n", subloc[i].region, terr_s[subloc[i].terrain])
+		fprintf(loc_fp, "%d loc %s\n", subloc_mg[i].region, terr_s[subloc_mg[i].terrain])
 
-		if subloc[i].name != "" && subloc[i].name != "Unnamed" {
-			fprintf(loc_fp, "na %s\n", subloc[i].name)
+		if subloc_mg[i].name != "" && subloc_mg[i].name != "Unnamed" {
+			fprintf(loc_fp, "na %s\n", subloc_mg[i].name)
 		}
 
-		if !(subloc[i].inside != 0) {
+		if !(subloc_mg[i].inside != 0) {
 			panic("assert(subloc[i].inside != 0)")
 		}
 
 		fprintf(loc_fp, "LI\n")
-		fprintf(loc_fp, " wh %d\n", subloc[i].inside)
+		fprintf(loc_fp, " wh %d\n", subloc_mg[i].inside)
 		print_subloc_gates(i)
 
 		fprintf(loc_fp, "LO\n")
 
-		if subloc[i].hidden != FALSE {
-			fprintf(loc_fp, " hi %d\n", subloc[i].hidden)
+		if subloc_mg[i].hidden != FALSE {
+			fprintf(loc_fp, " hi %d\n", subloc_mg[i].hidden)
 		}
 
-		if subloc[i].major_city != FALSE {
+		if subloc_mg[i].major_city != FALSE {
 			if sl == FALSE {
 				fprintf(loc_fp, "SL\n")
 				sl = TRUE
 			}
-			fprintf(loc_fp, " mc %d\n", subloc[i].major_city)
+			fprintf(loc_fp, " mc %d\n", subloc_mg[i].major_city)
 		}
 
-		if subloc[i].safe_haven != FALSE {
+		if subloc_mg[i].safe_haven != FALSE {
 			if sl == FALSE {
 				fprintf(loc_fp, "SL\n")
 				sl = TRUE
@@ -1972,13 +1934,13 @@ func prov_dest(t *tile, dir int) int {
 	row, col := t.row, t.col
 
 	switch dir {
-	case DIR_N:
+	case MG_DIR_N:
 		row--
-	case DIR_E:
+	case MG_DIR_E:
 		col++
-	case DIR_S:
+	case MG_DIR_S:
 		row++
-	case DIR_W:
+	case MG_DIR_W:
 		col--
 	default:
 		panic(fmt.Sprintf("assert(dir != %d)", dir))
@@ -2060,7 +2022,7 @@ func random_island() int {
 	for { // todo: understand what this is doing
 		n := rnd(1, num_islands)
 		for i = 1; i <= top_subloc; i++ {
-			if subloc[i].terrain == terr_island {
+			if subloc_mg[i].terrain == terr_island {
 				n--
 				if n <= 0 {
 					break
@@ -2070,11 +2032,11 @@ func random_island() int {
 		if !(n <= top_subloc) {
 			panic("assert(n <= top_subloc);")
 		}
-		if !(subloc[i].mark != FALSE) {
+		if !(subloc_mg[i].mark != FALSE) {
 			break
 		}
 	}
-	subloc[i].mark = TRUE
+	subloc_mg[i].mark = TRUE
 	return i
 }
 
@@ -2178,21 +2140,15 @@ func random_tile_from_each_region() []*tile {
 }
 
 func randomize_dir_vector() {
-	snap := []int{DIR_N, DIR_NE, DIR_E, DIR_SE, DIR_S, DIR_SW, DIR_W, DIR_NW}
+	snap := []int{MG_DIR_N, MG_DIR_NE, MG_DIR_E, MG_DIR_SE, MG_DIR_S, MG_DIR_SW, MG_DIR_W, MG_DIR_NW}
 	rand.Shuffle(len(snap), func(i, j int) {
 		snap[i], snap[j] = snap[j], snap[i]
 	})
 	dir_vector[0] = 0
-	for i := 1; i < MAX_DIR; i++ {
+	for i := 1; i < MG_MAX_DIR; i++ {
 		dir_vector[i] = snap[i-1]
 	}
 	return
-}
-
-func rc_to_region(row, col int) int {
-	assert(0 <= row && row < MAX_ROW)
-	assert(0 <= col && col < MAX_COL)
-	return 10_000 + (row * 100) + col
 }
 
 func read_map(name string) {
@@ -2345,55 +2301,55 @@ func read_map(name string) {
 				color = 19
 				map_[row][col].safe_haven = TRUE
 				n := create_a_city(row, col, "Drassa", TRUE)
-				subloc[n].safe_haven = TRUE
-				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				subloc_mg[n].safe_haven = TRUE
+				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '2':
 				terrain = terr_forest
 				color = 19
 				map_[row][col].safe_haven = TRUE
 				n := create_a_city(row, col, "Rimmon", TRUE)
-				subloc[n].safe_haven = TRUE
-				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				subloc_mg[n].safe_haven = TRUE
+				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '3':
 				terrain = terr_forest
 				color = 19
 				map_[row][col].safe_haven = TRUE
 				n := create_a_city(row, col, "Harn", TRUE)
-				subloc[n].safe_haven = TRUE
-				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				subloc_mg[n].safe_haven = TRUE
+				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '4':
 				terrain = terr_forest
 				color = 19
 				map_[row][col].safe_haven = TRUE
 				n := create_a_city(row, col, "Imperial City", TRUE)
-				subloc[n].safe_haven = TRUE
-				log.Printf("Imperical City #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				subloc_mg[n].safe_haven = TRUE
+				log.Printf("Imperical City #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '5':
 				terrain = terr_forest
 				color = 19
 				map_[row][col].safe_haven = TRUE
 				n := create_a_city(row, col, "Port Aurnos", TRUE)
-				subloc[n].safe_haven = TRUE
-				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				subloc_mg[n].safe_haven = TRUE
+				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '6':
 				terrain = terr_forest
 				color = 19
 				map_[row][col].safe_haven = TRUE
 				n := create_a_city(row, col, "Greyfell", TRUE)
-				subloc[n].safe_haven = TRUE
-				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				subloc_mg[n].safe_haven = TRUE
+				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '7':
 				terrain = terr_forest
 				color = 19
 				map_[row][col].safe_haven = TRUE
 				n := create_a_city(row, col, "Yellowleaf", TRUE)
-				subloc[n].safe_haven = TRUE
-				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				subloc_mg[n].safe_haven = TRUE
+				log.Printf("Start city #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '8':
 				terrain = terr_forest
 				color = 19
 				n := create_a_city(row, col, "Golden City", TRUE)
-				log.Printf("Golden City #%c %s at (%d,%d)\n", line[col], subloc[n].name, row, col)
+				log.Printf("Golden City #%c %s at (%d,%d)\n", line[col], subloc_mg[n].name, row, col)
 			case '*':
 				terrain = terr_land
 				create_a_city(row, col, "", TRUE)
@@ -2440,23 +2396,10 @@ func read_map(name string) {
 // location entity numbers may be used, i.e. 'aa'. 101, 'ab' . 102,
 // so [aa01] . [10101], [ab53] . [10253].
 
-func region_col(where int) int {
-	return where % 100
-}
-
-func region_row(where int) int {
-	return (where / 100) % 100
-}
-
-func region_row_col(where int) (int, int) {
-	return (where / 100) % 100, where % 100
-}
-
-// rnd_alloc_num allocates a number in the range low...high.
+// rnd_alloc_flag_num allocates a number in the range low...high.
 // it panics if it can't find an available number in that range.
-func rnd_alloc_num(low, high int) int {
+func rnd_alloc_flag_num(low, high int) int {
 	n := rnd(low, high)
-
 	for i := n; i <= high; i++ {
 		if alloc_flag[i] == 0 {
 			alloc_flag[i] = 1
@@ -2471,7 +2414,7 @@ func rnd_alloc_num(low, high int) int {
 		}
 	}
 
-	panic(fmt.Sprintf("rnd_alloc_num(%d, %d) failed", low, high))
+	panic(fmt.Sprintf("rnd_alloc_flag_num(%d, %d) failed", low, high))
 }
 
 // name groups of provinces
@@ -2615,6 +2558,15 @@ func show_gate_coverage() {
 		}
 		log.Printf("\t%d/%d\t%s\n", inside_gates_to[i], inside_gates_from[i], inside_names[i])
 	}
+}
+
+func shuffle_exits(l []*exit_view) []*exit_view {
+	var cp []*exit_view
+	cp = append(cp, l...)
+	rand.Shuffle(len(l), func(i, j int) {
+		cp[i], cp[j] = cp[j], cp[i]
+	})
+	return cp
 }
 
 func shuffle_ints(i []int) (l []int) {

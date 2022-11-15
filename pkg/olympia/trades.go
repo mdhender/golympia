@@ -19,36 +19,14 @@
 
 package olympia
 
-import (
-	"fmt"
-	"os"
-)
+type trade_l []*trade
 
-func fclose(fp *os.File) *os.File {
-	if fp != nil {
-		_ = fp.Close()
+func (l trade_l) rem_value(e *trade) trade_l {
+	var cp trade_l
+	for i := len(l) - 1; i >= 0; i-- {
+		if l[i] != e {
+			cp = append(cp, l[i])
+		}
 	}
-	return nil
-}
-
-func fflush(fp *os.File) {}
-
-func fopen(name string, mode string) (*os.File, error) {
-	switch mode {
-	case "w":
-		return os.Create(name)
-	}
-	return nil, fmt.Errorf("fopen: unknown mode %q", mode)
-}
-
-func fprintf(fp *os.File, format string, args ...interface{}) {
-	_, _ = fp.WriteString(fmt.Sprintf(format, args...))
-}
-
-func fputb(s []byte, fp *os.File) {
-	fprintf(fp, "%s\n", string(s))
-}
-
-func fputs(s string, fp *os.File) {
-	fprintf(fp, "%s\n", s)
+	return cp
 }

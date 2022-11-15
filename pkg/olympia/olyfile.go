@@ -21,6 +21,7 @@ package olympia
 
 import (
 	"bytes"
+	"github.com/mdhender/golympia/pkg/io"
 	"log"
 	"os"
 )
@@ -39,7 +40,7 @@ type olyline struct {
 // readfile opens the file, loads it, splits it into lines,
 // trims trailing spaces, tabs and carriage-returns from each line, and returns those lines.
 // if there is an error loading the file, nil and false are returned.
-func readfile(filename string) (*olyfile, bool) { // src/z.c
+func oly_readfile(filename string) (*olyfile, bool) { // src/z.c
 	data, err := os.ReadFile(filename)
 	if err != nil {
 		log.Printf("readfile: %+v\n", err)
@@ -52,7 +53,7 @@ func readfile(filename string) (*olyfile, bool) { // src/z.c
 	return of, true
 }
 
-func readbytes(filename string, data []byte) (*olyfile, bool) {
+func oly_readbytes(filename string, data []byte) (*olyfile, bool) {
 	of := &olyfile{name: filename}
 	for no, line := range bytes.Split(data, []byte{'\n'}) {
 		of.lines = append(of.lines, &olyline{no: no + 1, line: bcopy(bytes.TrimRight(line, " \r\t"))})
@@ -72,6 +73,10 @@ func (of *olyfile) fgets() *olyline {
 
 func (of *olyfile) fputs(s string) {
 	panic("!implemented")
+}
+
+func (of *olyfile) readlin() (string, bool) {
+	return io.ReadLine()
 }
 
 // ungets backs up a line in the file, if possible.

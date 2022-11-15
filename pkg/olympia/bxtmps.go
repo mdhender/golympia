@@ -19,36 +19,16 @@
 
 package olympia
 
-import (
-	"fmt"
-	"os"
-)
+type bxtmp_l []int
 
-func fclose(fp *os.File) *os.File {
-	if fp != nil {
-		_ = fp.Close()
-	}
-	return nil
+func (l bxtmp_l) Len() int {
+	return len(l)
 }
 
-func fflush(fp *os.File) {}
-
-func fopen(name string, mode string) (*os.File, error) {
-	switch mode {
-	case "w":
-		return os.Create(name)
-	}
-	return nil, fmt.Errorf("fopen: unknown mode %q", mode)
+func (l bxtmp_l) Less(i, j int) bool {
+	return bx[l[j]].temp < bx[l[i]].temp
 }
 
-func fprintf(fp *os.File, format string, args ...interface{}) {
-	_, _ = fp.WriteString(fmt.Sprintf(format, args...))
-}
-
-func fputb(s []byte, fp *os.File) {
-	fprintf(fp, "%s\n", string(s))
-}
-
-func fputs(s string, fp *os.File) {
-	fprintf(fp, "%s\n", s)
+func (l bxtmp_l) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
 }

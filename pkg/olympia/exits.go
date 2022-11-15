@@ -19,36 +19,14 @@
 
 package olympia
 
-import (
-	"fmt"
-	"os"
-)
+type exit_view_l []*exit_view
 
-func fclose(fp *os.File) *os.File {
-	if fp != nil {
-		_ = fp.Close()
+func (l exit_view_l) delete(index int) exit_view_l {
+	var cp exit_view_l
+	for i, e := range l {
+		if i != index {
+			cp = append(cp, e)
+		}
 	}
-	return nil
-}
-
-func fflush(fp *os.File) {}
-
-func fopen(name string, mode string) (*os.File, error) {
-	switch mode {
-	case "w":
-		return os.Create(name)
-	}
-	return nil, fmt.Errorf("fopen: unknown mode %q", mode)
-}
-
-func fprintf(fp *os.File, format string, args ...interface{}) {
-	_, _ = fp.WriteString(fmt.Sprintf(format, args...))
-}
-
-func fputb(s []byte, fp *os.File) {
-	fprintf(fp, "%s\n", string(s))
-}
-
-func fputs(s string, fp *os.File) {
-	fprintf(fp, "%s\n", s)
+	return cp
 }
