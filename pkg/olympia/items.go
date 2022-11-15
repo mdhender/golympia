@@ -19,36 +19,16 @@
 
 package olympia
 
-import (
-	"fmt"
-	"os"
-)
+type item_ent_l []*item_ent
 
-func fclose(fp *os.File) *os.File {
-	if fp != nil {
-		_ = fp.Close()
-	}
-	return nil
+func (ie item_ent_l) Len() int {
+	return len(ie)
 }
 
-func fflush(fp *os.File) {}
-
-func fopen(name string, mode string) (*os.File, error) {
-	switch mode {
-	case "w":
-		return os.Create(name)
-	}
-	return nil, fmt.Errorf("fopen: unknown mode %q", mode)
+func (ie item_ent_l) Less(i, j int) bool {
+	return ie[i].item < ie[j].item
 }
 
-func fprintf(fp *os.File, format string, args ...interface{}) {
-	_, _ = fp.WriteString(fmt.Sprintf(format, args...))
-}
-
-func fputb(s []byte, fp *os.File) {
-	fprintf(fp, "%s\n", string(s))
-}
-
-func fputs(s string, fp *os.File) {
-	fprintf(fp, "%s\n", s)
+func (ie item_ent_l) Swap(i, j int) {
+	ie[i], ie[j] = ie[j], ie[i]
 }
