@@ -86,7 +86,7 @@ func d_bird_spy(c *command) int {
 		return FALSE
 	}
 
-	if use_piety(c.who, skill_piety(c.use_skill)) == FALSE {
+	if !use_piety(c.who, skill_piety(c.use_skill)) {
 		wout(c.who, "You don't have the piety required to use that prayer.")
 		return FALSE
 	}
@@ -165,7 +165,7 @@ func d_breed(c *command) int {
 	 *  be charged automatically in use.c
 	 *
 	 */
-	if use_piety(c.who, 3) == FALSE {
+	if !use_piety(c.who, 3) {
 		wout(c.who, "You don't have the piety required to use that prayer.")
 		return FALSE
 	}
@@ -233,7 +233,7 @@ func d_capture_beasts(c *command) int {
 	 *
 	 */
 
-	if check_char_here(c.who, target) == FALSE {
+	if !check_char_here(c.who, target) {
 		wout(c.who, "%s is not here.", box_name(c.a))
 		return FALSE
 	}
@@ -284,7 +284,7 @@ func d_capture_beasts(c *command) int {
 	 *  Lure the beast away.
 	 *
 	 */
-	if move_item(from, c.who, type_, 1) == FALSE {
+	if !move_item(from, c.who, type_, 1) {
 		/*
 		 *  Possibly it is "from" himself who we are capturing.
 		 *
@@ -538,7 +538,7 @@ func v_capture_beasts(c *command) int {
 	 *  In same location.
 	 *
 	 */
-	if check_char_here(c.who, target) == FALSE {
+	if !check_char_here(c.who, target) {
 		wout(c.who, "%s is not here.", box_name(c.a))
 		return FALSE
 	}

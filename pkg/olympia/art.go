@@ -90,7 +90,7 @@ func max_eff_aura(who int) int {
  *
  */
 func v_forge_palantir(c *command) int {
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -109,7 +109,7 @@ func d_forge_palantir(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -202,7 +202,7 @@ func v_destroy_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -227,7 +227,7 @@ func d_destroy_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -293,7 +293,7 @@ func v_mutate_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -325,7 +325,7 @@ func d_mutate_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -350,7 +350,7 @@ func v_conceal_arts(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -365,7 +365,7 @@ func d_conceal_arts(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -395,7 +395,7 @@ func v_reveal_arts(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -412,7 +412,7 @@ func d_reveal_arts(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -449,7 +449,7 @@ func d_reveal_arts(c *command) int {
 func v_deep_identify(c *command) int {
 	target := c.a
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -481,7 +481,7 @@ func v_obscure_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -496,7 +496,7 @@ func d_obscure_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -526,7 +526,7 @@ func v_unobscure_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -541,7 +541,7 @@ func d_unobscure_art(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -608,7 +608,7 @@ func v_detect_arts(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, skill_aura(c.use_skill)) {
+	if !check_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 
@@ -625,7 +625,7 @@ func d_detect_arts(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, skill_aura(c.use_skill)) {
+	if !charge_aura(c.who, skill_aura(c.use_skill)) {
 		return FALSE
 	}
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
@@ -655,7 +655,7 @@ func v_forge_aura(c *command) int {
 	}
 	aura = c.a
 
-	if FALSE == check_aura(c.who, aura) {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -672,7 +672,7 @@ func notify_others_auraculum(who, item int) {
 	var n int
 
 	for _, n = range loop_char() {
-		if n != who && is_magician(n) != FALSE && has_auraculum(n) != FALSE {
+		if n != who && is_magician(n) && has_auraculum(n) != FALSE {
 			wout(n, "%s has constructed an auraculum.",
 				box_name(who))
 		}
@@ -701,7 +701,7 @@ func d_forge_aura(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, aura) {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -764,11 +764,11 @@ func v_forge_art_x(c *command) int {
 		aura = 20
 	}
 
-	if FALSE == check_aura(c.who, aura) {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
-	if FALSE == can_pay(c.who, 500) {
+	if !can_pay(c.who, 500) {
 		wout(c.who, "Requires %s.", gold_s(500))
 		return FALSE
 	}
@@ -802,11 +802,11 @@ func d_forge_art_x(c *command) int {
 	var new_name string
 	//var pm *item_magic
 
-	if FALSE == check_aura(c.who, aura) {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
-	if FALSE == charge(c.who, 500) {
+	if !charge(c.who, 500) {
 		wout(c.who, "Requires %s.", gold_s(500))
 		return FALSE
 	}

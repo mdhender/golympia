@@ -49,7 +49,7 @@ func v_keep_undead(c *command) int {
 		return FALSE
 	}
 
-	if check_aura(c.who, 3) == 0 {
+	if !check_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -63,7 +63,7 @@ func d_keep_undead(c *command) int {
 		return FALSE
 	}
 
-	if charge_aura(c.who, 3) == 0 {
+	if !charge_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -86,11 +86,11 @@ func v_undead_lord(c *command) int {
 		c.a, aura = 8, 8
 	}
 
-	if may_cookie_npc(c.who, where, item_undead_cookie) == 0 {
+	if !may_cookie_npc(c.who, where, item_undead_cookie) {
 		return FALSE
 	}
 
-	if check_aura(c.who, aura) == 0 {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -101,11 +101,11 @@ func d_undead_lord(c *command) int {
 	where := subloc(c.who)
 	aura := c.a
 
-	if may_cookie_npc(c.who, where, item_undead_cookie) == 0 {
+	if !may_cookie_npc(c.who, where, item_undead_cookie) {
 		return FALSE
 	}
 
-	if charge_aura(c.who, aura) == 0 {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -161,7 +161,7 @@ func v_banish_undead(c *command) int {
 		return FALSE
 	}
 
-	if check_aura(c.who, 6) == 0 {
+	if !check_aura(c.who, 6) {
 		return FALSE
 	}
 
@@ -180,7 +180,7 @@ func d_banish_undead(c *command) int {
 		return FALSE
 	}
 
-	if charge_aura(c.who, 6) == 0 {
+	if !charge_aura(c.who, 6) {
 		return FALSE
 	}
 
@@ -327,7 +327,7 @@ func d_eat_dead(c *command) int {
 		}
 	}
 
-	if charge_aura(c.who, 5) == 0 {
+	if !charge_aura(c.who, 5) {
 		return FALSE
 	}
 
@@ -347,7 +347,7 @@ func d_eat_dead(c *command) int {
 	 *  If the body was a priest, well, that's good for your mana!
 	 *
 	 */
-	if options.mp_antipathy != FALSE && is_priest(body) != FALSE && rp_magic(c.who) != nil {
+	if options.mp_antipathy && is_priest(body) != FALSE && rp_magic(c.who) != nil {
 		//p := p_magic(c.who);
 		wout(c.who, "Your mana grows stronger on the soul of a priest!")
 		add_aura(c.who, 15)
@@ -541,7 +541,7 @@ func d_aura_blast(c *command) int {
 		return FALSE
 	}
 
-	if charge_aura(c.who, aura) == FALSE {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -634,7 +634,7 @@ func v_create_flesh_golem(c *command) int {
 func d_create_flesh_golem(c *command) int {
 	body := c.a
 
-	if charge_aura(c.who, skill_piety(c.use_skill)) == FALSE {
+	if !charge_aura(c.who, skill_piety(c.use_skill)) {
 		return FALSE
 	}
 

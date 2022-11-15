@@ -380,7 +380,7 @@ func kill_char(who int, inherit int, status int) {
 	 *  Don't do anything to a noble who has survival_fatal.
 	 *
 	 */
-	if char_melt_me(who) == 0 && survive_fatal(who) != 0 {
+	if char_melt_me(who) == 0 && survive_fatal(who) {
 		return
 	}
 
@@ -626,7 +626,7 @@ func restore_dead_body(owner, who int) {
 	 */
 	if kind(who) == T_item {
 		ret := sub_item(item_unique(who), who, 1)
-		assert(ret != 0)
+		assert(ret)
 		p_item(who).who_has = 0
 	}
 

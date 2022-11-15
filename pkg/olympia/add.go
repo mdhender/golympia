@@ -254,9 +254,9 @@ func add_new_player(pl int, faction, character, full_name, email string, nation,
 	var who int
 	//extern int new_ent_prime;        /* allocate short numbers */
 
-	new_ent_prime = TRUE
+	new_ent_prime = true
 	who = new_ent(T_char, 0)
-	new_ent_prime = FALSE
+	new_ent_prime = false
 
 	if who < 0 {
 		return 0
@@ -385,7 +385,7 @@ func make_new_players_sup(acct string, fp *os.File) bool {
 	 */
 	start_city := fetch_inp(fp)
 
-	pl := scode(acct)
+	pl := scode([]byte(acct))
 	assert(pl > 0 && pl < MAX_BOXES)
 
 	/*
@@ -437,7 +437,7 @@ func make_new_players_sup(acct string, fp *os.File) bool {
 	if strings.HasPrefix(strings.ToLower(start_city), "rand") {
 		sc = RANDOM_START
 	} else {
-		sc = code_to_int(start_city)
+		sc = code_to_int([]byte(start_city))
 	}
 
 	alloc_box(pl, T_player, sub_pl_regular)

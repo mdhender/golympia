@@ -498,7 +498,7 @@ func d_last_rites(c *command) int {
 	 *  Piety bonus for LRing magicians.
 	 *
 	 */
-	if options.mp_antipathy != FALSE {
+	if options.mp_antipathy {
 		if is_magician(body) {
 			assert(is_priest(c.who) != FALSE)
 			wout(c.who, "%s rewards you with extra piety for destroying a magician.", god_name(is_priest(c.who)))

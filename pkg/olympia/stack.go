@@ -475,7 +475,7 @@ func take_prisoner(who, target int) {
 	assert(kind(who) == T_char)
 	assert(kind(target) == T_char)
 
-	if subkind(target) == sub_ni && beast_capturable(target) != FALSE {
+	if subkind(target) == sub_ni && beast_capturable(target) {
 		ni = true
 	}
 
@@ -574,7 +574,7 @@ func stack_contains_priest(who int) int {
 }
 
 func contains_mu_undead(i int) int {
-	if is_magician(i) != FALSE && char_hide_mage(i) == FALSE {
+	if is_magician(i) && char_hide_mage(i) == FALSE {
 		return 1
 	}
 	/*
@@ -612,7 +612,7 @@ func stack_contains_mu_undead(who int) int {
 func v_stack(c *command) int {
 	target := c.a
 
-	if check_char_gone(c.who, target) != FALSE {
+	if check_char_gone(c.who, target) {
 		return FALSE
 	}
 
@@ -643,7 +643,7 @@ func v_stack(c *command) int {
 	 *  Clerics can't stack w/ magicians/undead and vice versa
 	 *
 	 */
-	if options.mp_antipathy != FALSE &&
+	if options.mp_antipathy &&
 		((stack_contains_priest(c.who) != FALSE &&
 			stack_contains_mu_undead(target) != FALSE) ||
 			(stack_contains_priest(target) != FALSE &&
@@ -696,7 +696,7 @@ func v_unstack(c *command) int {
 func v_surrender(c *command) int {
 	target := c.a
 
-	if check_char_gone(c.who, target) == FALSE {
+	if !check_char_gone(c.who, target) {
 		return FALSE
 	}
 
@@ -773,7 +773,7 @@ func v_promote(c *command) int {
 
 	targ_par = stack_parent(target)
 
-	if check_char_here(c.who, target) == FALSE {
+	if !check_char_here(c.who, target) {
 		return FALSE
 	}
 

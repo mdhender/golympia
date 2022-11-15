@@ -107,7 +107,7 @@ func v_be(c *command) int {
 func v_dump(c *command) int {
 	if valid_box(c.a) {
 		bx[c.a].temp = 0
-		save_box(stdout, c.a)
+		save_box(os.Stdout, c.a)
 		return TRUE
 	}
 	return FALSE
@@ -164,7 +164,7 @@ func v_sub_item(c *command) int {
 }
 
 func v_makeloc(c *command) int {
-	sk := lookup(subkind_s, string(c.parse[1]))
+	sk := lookup_sb(subkind_s, c.parse[1])
 	if sk < 0 {
 		wout(c.who, "Unknown subkind.")
 		return FALSE
@@ -236,7 +236,7 @@ func v_kill(c *command) int {
 }
 
 func v_take_pris(c *command) int {
-	if check_char_here(c.who, c.a) == FALSE {
+	if !check_char_here(c.who, c.a) {
 		return FALSE
 	}
 	take_prisoner(c.who, c.a)
@@ -293,7 +293,7 @@ func v_seedmarket(c *command) int {
 	seed_common_tradegoods()
 	seed_rare_tradegoods()
 	for _, i := range loop_city() {
-		do_production(i, TRUE)
+		do_production(i, true)
 	}
 	return TRUE
 }

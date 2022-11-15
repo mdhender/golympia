@@ -139,7 +139,7 @@ func v_swear(c *command) int {
 	//    return FALSE;
 	//}
 	//
-	//if (FALSE == check_char_here(c.who, target)) {
+	//if (!check_char_here(c.who, target)) {
 	//    return FALSE;
 	//}
 	//
@@ -230,7 +230,7 @@ func unit_deserts(who int, to_who int, loy_check int, k int, lev int) bool {
 
 	if must_pay {
 		num := nps_invested(who)
-		if deduct_np(to_who, num) == 0 {
+		if !deduct_np(to_who, num) {
 			return false
 		}
 		if num != 0 {
@@ -304,7 +304,7 @@ func v_bribe(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_char_here(c.who, target) {
+	if !check_char_here(c.who, target) {
 		return FALSE
 	}
 
@@ -329,7 +329,7 @@ func v_bribe(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == can_pay(c.who, amount) {
+	if !can_pay(c.who, amount) {
 		wout(c.who, "Don't have %s for a bribe.", gold_s(amount))
 		return FALSE
 	}
@@ -383,7 +383,7 @@ func d_bribe(c *command) int {
 	bribe_thresh := 0
 	var outcome int
 
-	if FALSE == check_still_here(c.who, target) {
+	if !check_still_here(c.who, target) {
 		return FALSE
 	}
 
@@ -392,7 +392,7 @@ func d_bribe(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge(c.who, amount) {
+	if !charge(c.who, amount) {
 		wout(c.who, "Don't have %s for a bribe.", gold_s(amount))
 		return FALSE
 	}
@@ -502,7 +502,7 @@ func v_honor(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge(c.who, amount) {
+	if !charge(c.who, amount) {
 		wout(c.who, "Do not have %s.", gold_s(amount))
 		return FALSE
 	}
@@ -614,7 +614,7 @@ func v_terrorize(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_char_here(c.who, target) {
+	if !check_char_here(c.who, target) {
 		return FALSE
 	}
 
@@ -658,7 +658,7 @@ func d_terrorize(c *command) int {
 	target := c.a
 	//severity := c.b;
 
-	if FALSE == check_still_here(c.who, target) {
+	if !check_still_here(c.who, target) {
 		return FALSE
 	} else if is_prisoner(target) {
 		if stack_leader(target) != stack_leader(c.who) {
@@ -686,9 +686,9 @@ func d_terrorize(c *command) int {
 func v_raise(c *command) int {
 	where := subloc(c.who)
 
-	if FALSE == check_skill(c.who, sk_raise_mob) {
+	if !check_skill(c.who, sk_raise_mob) {
 		return FALSE
-	} else if FALSE == may_cookie_npc(c.who, where, item_mob_cookie) {
+	} else if !may_cookie_npc(c.who, where, item_mob_cookie) {
 		return FALSE
 	} else if has_item(where, item_peasant) < 100 {
 		wout(c.who, "Insufficient peasantry to raise a mob.")
@@ -724,9 +724,9 @@ func d_raise(c *command) int {
 func v_rally(c *command) int {
 	mob := c.a
 
-	if FALSE == check_skill(c.who, sk_rally_mob) {
+	if !check_skill(c.who, sk_rally_mob) {
 		return FALSE
-	} else if FALSE == check_char_here(c.who, mob) {
+	} else if !check_char_here(c.who, mob) {
 		return FALSE
 	} else if noble_item(mob) != item_peasant && noble_item(mob) != item_angry_peasant {
 		wout(c.who, "%s is not a peasant mob.", box_name(mob))
@@ -756,7 +756,7 @@ func v_rally(c *command) int {
 func d_rally(c *command) int {
 	mob := c.a
 
-	if FALSE == check_char_gone(c.who, mob) {
+	if !check_char_gone(c.who, mob) {
 		return FALSE
 	} else if noble_item(mob) != item_peasant && noble_item(mob) != item_angry_peasant {
 		wout(c.who, "%s is not a peasant mob.", box_name(mob))
@@ -790,11 +790,11 @@ func v_incite(c *command) int {
 	mob := c.a
 	target := c.b
 
-	if FALSE == check_skill(c.who, sk_incite_mob) {
+	if !check_skill(c.who, sk_incite_mob) {
 		return FALSE
 	}
 
-	if FALSE == check_char_here(c.who, mob) {
+	if !check_char_here(c.who, mob) {
 		return FALSE
 	}
 
@@ -823,7 +823,7 @@ func d_incite(c *command) int {
 	target := c.b
 	where := subloc(c.who)
 
-	if FALSE == check_char_gone(c.who, mob) {
+	if !check_char_gone(c.who, mob) {
 		return FALSE
 	}
 
@@ -873,7 +873,7 @@ func d_incite(c *command) int {
 func v_persuade_oath(c *command) int {
 	target := c.a
 
-	if FALSE == check_char_here(c.who, target) {
+	if !check_char_here(c.who, target) {
 		return FALSE
 	}
 
@@ -882,7 +882,7 @@ func v_persuade_oath(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == can_pay(c.who, 25) {
+	if !can_pay(c.who, 25) {
 		wout(c.who, "Don't have %s.", gold_s(25))
 		return FALSE
 	}
@@ -894,7 +894,7 @@ func d_persuade_oath(c *command) int {
 	target := c.a
 	flag := c.b != FALSE
 
-	if FALSE == check_still_here(c.who, target) {
+	if !check_still_here(c.who, target) {
 		return FALSE
 	}
 
@@ -908,7 +908,7 @@ func d_persuade_oath(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge(c.who, 25) {
+	if !charge(c.who, 25) {
 		wout(c.who, "Don't have %s.", gold_s(25))
 		return FALSE
 	}

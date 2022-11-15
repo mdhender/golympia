@@ -161,7 +161,7 @@ func init_savage_attacks() {
 			continue
 		}
 
-		l := exits_from_loc_nsew_select(0, where, LAND, RAND)
+		l := exits_from_loc_nsew_select(0, where, LAND, RAND != FALSE)
 		if len(l) == 0 {
 			log.Printf("init_savage_attacks: no exits?\n")
 			continue /* probably shouldn't happen */
@@ -266,7 +266,7 @@ func v_use_drum(c *command) int {
 	}
 
 	n := false
-	for _, ex := range exits_from_loc_nsew_select(c.who, province(where), LAND, RAND) {
+	for _, ex := range exits_from_loc_nsew_select(c.who, province(where), LAND, RAND != FALSE) {
 		dir := exit_opposite[ex.direction]
 		s = sout("%sbeating drums may be heard to the %s.", speed_s, full_dir_s[dir])
 		wout(ex.destination, "%s", cap_(s))

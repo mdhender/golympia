@@ -67,11 +67,7 @@ func market_here(who int) int {
 }
 
 func clear_all_trades(who int) {
-	t := 0
-	for _, t = range loop_trade(who) {
-		my_free(t)
-	}
-
+	assert(valid_box(who))
 	bx[who].trades = nil
 }
 

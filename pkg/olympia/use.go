@@ -44,273 +44,9 @@ type use_tbl_ent struct {
 	poll int /* call finish each day, not just at end */
 }
 
-var use_tbl = []use_tbl_ent{
-	{},
-
-	/*
-	   allow  skill             start             finish            intr    time poll
-	*/
-
-	{"c", sk_meditate, v_meditate, d_meditate, nil, 7, 1},
-	{"c", sk_detect_gates, v_detect_gates, d_detect_gates, nil, 7, 0},
-	{"c", sk_jump_gate, v_jump_gate, nil, nil, 1, 0},
-	{"c", sk_teleport, v_teleport, nil, nil, 1, 0},
-	{"c", sk_seal_gate, v_seal_gate, d_seal_gate, nil, 7, 0},
-	{"c", sk_unseal_gate, v_unseal_gate, d_unseal_gate, nil, 7, 0},
-	{"c", sk_notify_unseal, v_notify_unseal, d_notify_unseal, nil, 7, 0},
-	{"c", sk_rem_seal, v_rem_seal, d_rem_seal, nil, 7, 0},
-	{"c", sk_reveal_key, v_reveal_key, d_reveal_key, nil, 7, 0},
-	{"c", sk_notify_jump, v_notify_jump, d_notify_jump, nil, 7, 0},
-	{"c", sk_rev_jump, v_reverse_jump, nil, nil, 1, 0},
-	{"c", sk_reveal_mage, v_reveal_mage, d_reveal_mage, nil, 7, 0},
-	{"c", sk_view_aura, v_view_aura, d_view_aura, nil, 7, 0},
-	{"c", sk_shroud_abil, v_shroud_abil, d_shroud_abil, nil, 3, 0},
-	{"c", sk_detect_abil, v_detect_abil, d_detect_abil, nil, 7, 0},
-	{"c", sk_scry_region, v_scry_region, d_scry_region, nil, 7, 0},
-	{"c", sk_shroud_region, v_shroud_region, d_shroud_region, nil, 3, 0},
-	{"c", sk_pr_shroud_loc, v_shroud_region, d_shroud_region, nil, 3, 0},
-	{"c", sk_detect_scry, v_detect_scry, d_detect_scry, nil, 7, 0},
-	{"c", sk_dispel_region, v_dispel_region, d_dispel_region, nil, 3, 0},
-	{"c", sk_dispel_abil, v_dispel_abil, d_dispel_abil, nil, 3, 0},
-	{"c", sk_adv_med, v_adv_med, d_adv_med, nil, 7, 1},
-	{"c", sk_hinder_med, v_hinder_med, d_hinder_med, nil, 10, 0},
-	{"c", sk_proj_cast, v_proj_cast, d_proj_cast, nil, 7, 0},
-	{"c", sk_locate_char, v_locate_char, d_locate_char, nil, 10, 0},
-	{"c", sk_bar_loc, v_bar_loc, d_bar_loc, nil, 10, 0},
-	{"c", sk_unbar_loc, v_unbar_loc, d_unbar_loc, nil, 7, 0},
-	{"c", sk_forge_palantir, v_forge_palantir, d_forge_palantir, nil, 10, 0},
-	{"c", sk_destroy_art, v_destroy_art, d_destroy_art, nil, 7, 0},
-	{"c", sk_save_proj, v_save_proj, d_save_proj, nil, 7, 0},
-	{"c", sk_save_quick, v_save_quick, d_save_quick, nil, 7, 0},
-	{"c", sk_quick_cast, v_quick_cast, d_quick_cast, nil, 4, 0},
-	{"c", sk_write_basic, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_write_weather, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_write_scry, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_write_gate, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_write_art, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_write_necro, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_dirt_golem, v_create_dirt_golem, d_create_dirt_golem, nil, 7, 0},
-	{"c", sk_flesh_golem, v_create_flesh_golem, d_create_flesh_golem, nil, 7, 0},
-	{"c", sk_iron_golem, v_create_iron_golem, d_create_iron_golem, nil, 7, 0},
-	{"c", sk_forge_aura, v_forge_aura, d_forge_aura, nil, 14, 0},
-	{"c", sk_mutate_artifact, v_mutate_art, d_mutate_art, nil, 30, 0},
-	{"c", sk_conceal_artifacts, v_conceal_arts, d_conceal_arts, nil, 7, 0},
-	{"c", sk_detect_artifacts, v_detect_arts, d_detect_arts, nil, 7, 0},
-	{"c", sk_obscure_artifact, v_obscure_art, d_obscure_art, nil, 7, 0},
-	{"c", sk_remove_obscurity, v_unobscure_art, d_unobscure_art, nil, 7, 0},
-	{"c", sk_reveal_artifacts, v_reveal_arts, d_reveal_arts, nil, 7, 0},
-	{"c", sk_deep_identify, v_deep_identify, nil, nil, 7, 0},
-	{"c", sk_shipbuilding, v_shipbuild, nil, nil, 0, 0},
-	{"c", sk_pilot_ship, v_sail, d_sail, i_sail, -1, 0},
-	{"c", sk_train_wild, v_use_train_riding, nil, nil, 7, 0},
-	{"c", sk_train_warmount, v_use_train_war, nil, nil, 14, 0},
-	{"c", sk_make_ram, nil, nil, nil, 14, 0},
-	{"c", sk_make_catapult, nil, nil, nil, 14, 0},
-	{"c", sk_make_siege, nil, nil, nil, 14, 0},
-	{"c", sk_brew_slave, v_brew, d_brew_slave, nil, 7, 0},
-	{"c", sk_brew_heal, v_brew, d_brew_heal, nil, 7, 0},
-	{"c", sk_brew_death, v_brew, d_brew_death, nil, 10, 0},
-	{"c", sk_brew_weightlessness, v_brew, d_brew_weightlessness, nil, 10, 0},
-	{"c", sk_brew_fiery, v_brew, d_brew_fiery, nil, 14, 0},
-	{"c", sk_mine_iron, v_mine_iron, d_mine_iron, nil, 7, 0},
-	{"c", sk_mine_gold, v_mine_gold, d_mine_gold, nil, 7, 0},
-	{"c", sk_mine_mithril, v_mine_mithril, d_mine_mithril, nil, 7, 0},
-	{"c", sk_mine_crystal, v_mine_gate_crystal, d_mine_gate_crystal, nil, 7, 0},
-	{"c", sk_quarry_stone, v_quarry, nil, nil, -1, 1},
-	{"c", sk_catch_horse, v_catch, nil, nil, -1, 1},
-	{"c", sk_extract_venom, nil, nil, nil, 7, 0},
-	{"c", sk_harvest_lumber, v_wood, nil, nil, -1, 1},
-	{"c", sk_harvest_yew, v_yew, nil, nil, -1, 1},
-	{"c", sk_add_ram, v_add_ram, d_add_ram, nil, 10, 0},
-	{"c", sk_remove_ram, v_remove_ram, d_remove_ram, nil, 10, 0},
-	{"c", sk_assassinate, v_assassinate, d_assassinate, nil, 7, 0},
-	{"c", sk_find_food, v_find_food, d_find_food, nil, 7, 0},
-	{"c", sk_spy_inv, v_spy_inv, d_spy_inv, nil, 7, 0},
-	{"c", sk_spy_skills, v_spy_skills, d_spy_skills, nil, 7, 0},
-	{"c", sk_spy_lord, v_spy_lord, d_spy_lord, nil, 7, 0},
-	{"c", sk_record_skill, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_bribe_noble, v_bribe, d_bribe, nil, 7, 0},
-	{"c", sk_summon_savage, v_summon_savage, nil, nil, 1, 0},
-	{"c", sk_keep_savage, v_keep_savage, d_keep_savage, nil, 7, 0},
-	{"c", sk_improve_opium, v_improve_opium, d_improve_opium, nil, 7, 0},
-	{"c", sk_raise_mob, v_raise, d_raise, nil, 7, 0},
-	{"c", sk_rally_mob, v_rally, d_rally, nil, 7, 0},
-	{"c", sk_incite_mob, v_incite, d_incite, nil, 7, 0},
-	{"c", sk_bird_spy, v_bird_spy, d_bird_spy, nil, 3, 0},
-	{"c", sk_lead_to_gold, v_lead_to_gold, d_lead_to_gold, nil, 7, 0},
-	{"c", sk_raise_corpses, v_raise_corpses, nil, nil, -1, 1},
-	{"c", sk_undead_lord, v_undead_lord, d_undead_lord, nil, 7, 0},
-	{"c", sk_banish_undead, v_banish_undead, d_banish_undead, nil, 7, 0},
-	{"c", sk_renew_undead, v_keep_undead, d_keep_undead, nil, 7, 0},
-	{"c", sk_eat_dead, v_eat_dead, d_eat_dead, nil, 14, 0},
-	{"c", sk_aura_blast, v_aura_blast, d_aura_blast, nil, 1, 0},
-	{"c", sk_absorb_blast, v_aura_reflect, nil, nil, 0, 0},
-	{"c", sk_summon_rain, v_summon_rain, d_summon_rain, nil, 7, 0},
-	{"c", sk_summon_wind, v_summon_wind, d_summon_wind, nil, 7, 0},
-	{"c", sk_summon_fog, v_summon_fog, d_summon_fog, nil, 7, 0},
-	{"c", sk_direct_storm, v_direct_storm, nil, nil, 1, 0},
-	{"c", sk_renew_storm, v_renew_storm, d_renew_storm, nil, 3, 0},
-	{"c", sk_dissipate, v_dissipate, d_dissipate, nil, 7, 0},
-	{"c", sk_lightning, v_lightning, d_lightning, nil, 7, 0},
-	{"c", sk_fierce_wind, v_fierce_wind, d_fierce_wind, nil, 7, 0},
-	{"c", sk_seize_storm, v_seize_storm, d_seize_storm, nil, 7, 0},
-	{"c", sk_death_fog, v_death_fog, d_death_fog, nil, 7, 0},
-	{"c", sk_banish_corpses, v_banish_corpses, d_banish_corpses, nil, 7, 0},
-	{"c", sk_hide_self, v_hide, d_hide, nil, 3, 0},
-	{"c", sk_conceal_nation, v_conceal_nation, d_conceal_nation, nil, 7, 0},
-	{"c", sk_sneak_build, v_sneak, d_sneak, nil, 3, 0},
-	{"c", sk_mage_menial, v_mage_menial, d_mage_menial, nil, 7, 1},
-	{"c", sk_petty_thief, v_petty_thief, d_petty_thief, nil, 7, 1},
-	{"c", sk_appear_common, v_appear_common, nil, nil, 1, 0},
-	{"c", sk_defense, v_defense, d_defense, nil, 7, 0},
-	{"c", sk_defense2, v_defense, d_defense, nil, 7, 0},
-	{"c", sk_archery, v_archery, d_archery, nil, 7, 0},
-	{"c", sk_swordplay, v_swordplay, d_swordplay, nil, 7, 0},
-	{"c", sk_swordplay2, v_swordplay, d_swordplay, nil, 7, 0},
-	{"c", sk_find_rich, v_find_rich, d_find_rich, nil, 7, 0},
-	{"c", sk_harvest_opium, v_implicit, nil, nil, 0, 0},
-	{"c", sk_train_angry, v_implicit, nil, nil, 0, 0},
-	{"c", sk_weaponsmith, v_implicit, nil, nil, 0, 0},
-	{"c", sk_hide_lord, v_implicit, nil, nil, 0, 0},
-	{"c", sk_transcend_death, v_implicit, nil, nil, 0, 0},
-	{"c", sk_collect_foliage, v_implicit, nil, nil, 0, 0},
-	{"c", sk_fishing, v_fish, nil, nil, 0, 0},
-	{"c", sk_summon_ghost, v_implicit, nil, nil, 0, 0},
-	{"c", sk_capture_beasts, v_capture_beasts, d_capture_beasts, nil, 7, 0},
-	{"c", sk_use_beasts, v_use_beasts, nil, nil, 0, 0},
-	{"c", sk_collect_elem, v_implicit, nil, nil, 0, 0},
-	{"c", sk_torture, v_torture, d_torture, nil, 7, 0},
-	{"c", sk_fight_to_death, v_fight_to_death, nil, nil, 0, 0},
-	{"c", sk_breed_beasts, v_breed, d_breed, nil, 7, 0},
-	{"c", sk_persuade_oath, v_persuade_oath, d_persuade_oath, nil, 7, 0},
-	{"c", sk_forge_weapon, v_forge_art_x, d_forge_art_x, nil, 7, 0},
-	{"c", sk_forge_armor, v_forge_art_x, d_forge_art_x, nil, 7, 0},
-	{"c", sk_forge_bow, v_forge_art_x, d_forge_art_x, nil, 7, 0},
-	{"c", sk_trance, v_trance, d_trance, nil, 28, 0},
-	{"c", sk_teleport_item, v_teleport_item, d_teleport_item, nil, 3, 0},
-	{"c", sk_tap_health, v_tap_health, d_tap_health, nil, 7, 0},
-	//#if 0
-	//        {"c", sk_bind_storm,     v_bind_storm,     d_bind_storm,     nil,     7, 0},
-	//#endif
-	{"c", sk_control_battle, v_prac_control, nil, nil, 3, 0},
-	{"c", sk_protect_noble, v_prac_protect, nil, nil, 3, 0},
-	{"c", sk_attack_tactics, v_attack_tactics, nil, nil, 7, 0},
-	{"c", sk_defense_tactics, v_defense_tactics, nil, nil, 0, 0},
-
-	{"c", sk_resurrect, v_resurrect, d_resurrect, nil, 30, 0},
-	{"c", sk_pray, v_prep_ritual, d_prep_ritual, nil, 7, 0},
-	{"c", sk_last_rites, v_last_rites, d_last_rites, nil, 10, 0},
-	{"c", sk_gather_holy_plant, v_gather_holy_plant, d_gather_holy_plant, nil, 10, 0},
-	{"c", sk_bless_follower, v_bless_follower, nil, nil, 1, 0},
-	{"c", sk_proselytise, v_proselytise, nil, nil, 1, 0},
-	{"c", sk_create_holy_symbol, v_create_holy_symbol, d_create_holy_symbol, nil, 14, 0},
-	{"c", sk_heal, v_heal, d_heal, nil, 7, 0},
-	{"c", sk_summon_water_elemental, v_generic_trap, d_generic_trap, nil, 7, 0},
-	{"c", sk_find_mtn_trail, v_find_mountain_trail, nil, nil, 1, 0},
-	{"c", sk_obscure_mtn_trail, v_obscure_mountain_trail, d_obscure_mountain_trail, nil, 7, 0},
-	{"c", sk_improve_mining, v_improve_mining, d_improve_mining, nil, 7, 0},
-	{"c", sk_conceal_mine, v_conceal_mine, d_conceal_mine, nil, 30, 0},
-	{"c", sk_protect_mine, v_protect_mine, d_protect_mine, nil, 7, 0},
-	{"c", sk_bless_fort, v_bless_fort, d_bless_fort, nil, 7, 0},
-	{"c", sk_weaken_fort, v_weaken_fort, d_weaken_fort, nil, 3, 0},
-	{"c", sk_boulder_trap, v_generic_trap, d_generic_trap, nil, 7, 0},
-	{"c", sk_write_anteus, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_detect_beasts, v_detect_beasts, d_detect_beasts, nil, 3, 0},
-	{"c", sk_capture_beasts, v_capture_beasts, d_capture_beasts, nil, 7, 0},
-	{"c", sk_snake_trap, v_generic_trap, d_generic_trap, nil, 7, 0},
-	{"c", sk_write_dol, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_find_forest_trail, v_find_forest_trail, nil, nil, 1, 0},
-	{"c", sk_obscure_forest_trail, v_obscure_forest_trail, d_obscure_forest_trail, nil, 7, 0},
-	{"c", sk_improve_forestry, v_improve_logging, d_improve_logging, nil, 7, 0},
-	{"c", sk_reveal_forest, v_find_hidden_features, d_find_hidden_features, nil, 7, 0},
-	{"c", sk_improve_fort, v_improve_fort, d_improve_fort, nil, 7, 0},
-	{"c", sk_create_deadfall, v_generic_trap, d_generic_trap, nil, 7, 0},
-	{"c", sk_recruit_elves, v_recruit_elves, d_recruit_elves, nil, 7, 0},
-	{"c", sk_write_timeid, v_write_spell, d_write_spell, nil, 7, 0},
-
-	{"c", sk_reveal_vision, v_reveal_vision, d_reveal_vision, nil, 10, 0},
-	{"c", sk_enchant_guard, v_enchant_guard, d_enchant_guard, nil, 7, 0},
-	{"c", sk_urchin_spy, v_urchin_spy, d_urchin_spy, nil, 7, 0},
-	{"c", sk_draw_crowds, v_draw_crowds, d_draw_crowds, nil, 7, 0},
-	{"c", sk_arrange_mugging, v_arrange_mugging, d_arrange_mugging, nil, 7, 0},
-	{"c", sk_write_ham, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_improve_quarry, v_improve_quarrying, d_improve_quarrying, nil, 7, 0},
-	{"c", sk_improve_smithing, v_improve_smithing, d_improve_smithing, nil, 7, 0},
-	{"c", sk_edge_of_kireus, v_edge_of_kireus, d_edge_of_kireus, nil, 7, 0},
-	{"c", sk_create_mithril, v_create_mithril, d_create_mithril, nil, 7, 0},
-	{"c", sk_quicksand_trap, v_generic_trap, d_generic_trap, nil, 7, 0},
-	{"c", sk_write_kireus, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_calm_ap, nil, d_calm_peasants, nil, 7, 0},
-	{"c", sk_improve_charisma, v_improve_charisma, d_improve_charisma, nil, 7, 0},
-	{"c", sk_mesmerize_crowd, nil, d_mesmerize_crowd, nil, 7, 0},
-	{"c", sk_improve_taxes, nil, d_improve_taxes, nil, 7, 0},
-	{"c", sk_guard_loyalty, nil, d_guard_loyalty, nil, 7, 0},
-	{"c", sk_instill_fanaticism, nil, d_instill_fanaticism, nil, 7, 0},
-	{"c", sk_write_halon, v_write_spell, d_write_spell, nil, 7, 0},
-
-	{"c", sk_find_hidden, nil, d_find_all_hidden_features, nil, 7, 0},
-	{"c", sk_conceal_loc, v_conceal_location, d_conceal_location, nil, 7, 0},
-	{"c", sk_create_ninja, v_create_ninja, d_create_ninja, nil, 7, 0},
-	{"c", sk_mists_of_conceal, nil, d_create_mist, nil, 7, 0},
-	{"c", sk_write_domingo, v_write_spell, d_write_spell, nil, 7, 0},
-
-	{"c", sk_dedicate_temple, v_dedicate_temple, d_dedicate_temple, nil, 7, 0},
-
-	{"c", sk_smuggle_goods, v_smuggle_goods, d_smuggle_goods, nil, 7, 0},
-	{"c", sk_smuggle_men, v_smuggle_men, d_smuggle_men, nil, 7, 0},
-	{"c", sk_build_wagons, nil, nil, nil, 7, 0},
-	{"c", sk_increase_demand, v_increase_demand, d_increase_demand, nil, 7, 0},
-	{"c", sk_decrease_demand, v_decrease_demand, d_decrease_demand, nil, 7, 0},
-	{"c", sk_increase_supply, v_increase_supply, d_increase_supply, nil, 7, 0},
-	{"c", sk_decrease_supply, v_decrease_supply, d_decrease_supply, nil, 7, 0},
-	{"c", sk_hide_money, v_hide_money, d_hide_money, nil, 7, 0},
-	{"c", sk_hide_item, v_hide_item, d_hide_item, nil, 7, 0},
-	{"c", sk_grow_pop, v_grow_pop, d_grow_pop, nil, 7, 0},
-
-	{"c", sk_add_sails, v_add_sails, d_add_sails, nil, 3, 0},
-	{"c", sk_remove_sails, v_remove_sails, d_remove_sails, nil, 3, 0},
-	{"c", sk_add_forts, v_add_forts, d_add_forts, nil, 7, 0},
-	{"c", sk_remove_forts, v_remove_forts, d_remove_forts, nil, 7, 0},
-	{"c", sk_add_ports, v_add_ports, d_add_ports, nil, 4, 0},
-	{"c", sk_remove_ports, v_remove_ports, d_remove_ports, nil, 4, 0},
-	{"c", sk_add_keels, v_add_keels, d_add_keels, nil, 5, 0},
-	{"c", sk_remove_keels, v_remove_keels, d_remove_keels, nil, 5, 0},
-
-	{"c", sk_fortify_castle, v_fortify_castle, d_fortify_castle, nil, 5, 0},
-	{"c", sk_strengthen_castle, v_strengthen_castle, d_strengthen_castle, nil, 5, 0},
-	{"c", sk_moat_castle, v_moat_castle, d_moat_castle, nil, 5, 1},
-	{"c", sk_widen_entrance, v_widen_entrance, d_widen_entrance, nil, 5, 0},
-
-	{"c", sk_wooden_shoring, v_add_wooden_shoring, d_add_wooden_shoring, nil, 5, 0},
-	{"c", sk_iron_shoring, v_add_iron_shoring, d_add_iron_shoring, nil, 5, 0},
-
-	/* Combat Spells */
-	{"c", sk_lightning_bolt, v_use_cs, nil, nil, 0, 0},
-	{"c", sk_foresee_defense, v_use_cs, nil, nil, 0, 0},
-	{"c", sk_drain_mana, v_use_cs, nil, nil, 0, 0},
-	{"c", sk_raise_soldiers, v_use_cs, nil, nil, 0, 0},
-	{"c", sk_fireball, v_use_cs, nil, nil, 0, 0},
-
-	/* Heroism */
-	{"c", sk_personal_fttd, v_personal_fight_to_death, nil, nil, 0, 0},
-	{"c", sk_forced_march, v_forced_march, nil, nil, 0, 0},
-
-	/* Basic religion */
-	{"c", sk_resurrect_b, v_resurrect, d_resurrect, nil, 30, 0},
-	{"c", sk_pray_b, v_prep_ritual, d_prep_ritual, nil, 7, 0},
-	{"c", sk_last_rites_b, v_last_rites, d_last_rites, nil, 10, 0},
-	{"c", sk_gather_holy_plant_b, v_gather_holy_plant, d_gather_holy_plant, nil, 10, 0},
-	{"c", sk_bless_b, v_bless_follower, nil, nil, 3, 0},
-	{"c", sk_proselytise_b, v_proselytise, nil, nil, 3, 0},
-	{"c", sk_create_holy_b, v_create_holy_symbol, d_create_holy_symbol, nil, 14, 0},
-	{"c", sk_heal_b, v_heal, d_heal, nil, 7, 0},
-	{"c", sk_dedicate_temple_b, v_dedicate_temple, d_dedicate_temple, nil, 7, 0},
-	{"c", sk_write_religion_b, v_write_spell, d_write_spell, nil, 7, 0},
-	{"c", sk_hinder_med_b, v_hinder_med_b, d_hinder_med_b, nil, 10, 0},
-	{"c", sk_scry_b, v_vision_reg, d_vision_reg, nil, 7, 0},
-	{"c", sk_banish_undead_b, v_banish_undead, d_banish_undead, nil, 7, 0},
-
-	{}}
+var (
+	use_tbl []use_tbl_ent
+)
 
 func rep_skill_comp(a, b *skill_ent) int {
 	//#if 1
@@ -2920,4 +2656,263 @@ func v_teach(c *command) int {
 	c.pri += 2
 	return TRUE
 
+}
+
+func init_use_tbl() {
+	if len(use_tbl) != 0 {
+		return
+	}
+
+	use_tbl = make([]use_tbl_ent, 245)
+	use_tbl = append(use_tbl, use_tbl_ent{})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_meditate, v_meditate, d_meditate, nil, 7, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_detect_gates, v_detect_gates, d_detect_gates, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_jump_gate, v_jump_gate, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_teleport, v_teleport, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_seal_gate, v_seal_gate, d_seal_gate, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_unseal_gate, v_unseal_gate, d_unseal_gate, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_notify_unseal, v_notify_unseal, d_notify_unseal, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_rem_seal, v_rem_seal, d_rem_seal, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_reveal_key, v_reveal_key, d_reveal_key, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_notify_jump, v_notify_jump, d_notify_jump, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_rev_jump, v_reverse_jump, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_reveal_mage, v_reveal_mage, d_reveal_mage, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_view_aura, v_view_aura, d_view_aura, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_shroud_abil, v_shroud_abil, d_shroud_abil, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_detect_abil, v_detect_abil, d_detect_abil, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_scry_region, v_scry_region, d_scry_region, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_shroud_region, v_shroud_region, d_shroud_region, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_pr_shroud_loc, v_shroud_region, d_shroud_region, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_detect_scry, v_detect_scry, d_detect_scry, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_dispel_region, v_dispel_region, d_dispel_region, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_dispel_abil, v_dispel_abil, d_dispel_abil, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_adv_med, v_adv_med, d_adv_med, nil, 7, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_hinder_med, v_hinder_med, d_hinder_med, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_proj_cast, v_proj_cast, d_proj_cast, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_locate_char, v_locate_char, d_locate_char, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_bar_loc, v_bar_loc, d_bar_loc, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_unbar_loc, v_unbar_loc, d_unbar_loc, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_forge_palantir, v_forge_palantir, d_forge_palantir, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_destroy_art, v_destroy_art, d_destroy_art, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_save_proj, v_save_proj, d_save_proj, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_save_quick, v_save_quick, d_save_quick, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_quick_cast, v_quick_cast, d_quick_cast, nil, 4, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_basic, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_weather, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_scry, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_gate, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_art, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_necro, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_dirt_golem, v_create_dirt_golem, d_create_dirt_golem, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_flesh_golem, v_create_flesh_golem, d_create_flesh_golem, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_iron_golem, v_create_iron_golem, d_create_iron_golem, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_forge_aura, v_forge_aura, d_forge_aura, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mutate_artifact, v_mutate_art, d_mutate_art, nil, 30, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_conceal_artifacts, v_conceal_arts, d_conceal_arts, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_detect_artifacts, v_detect_arts, d_detect_arts, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_obscure_artifact, v_obscure_art, d_obscure_art, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_remove_obscurity, v_unobscure_art, d_unobscure_art, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_reveal_artifacts, v_reveal_arts, d_reveal_arts, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_deep_identify, v_deep_identify, nil, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_shipbuilding, v_shipbuild, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_pilot_ship, v_sail, d_sail, i_sail, -1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_train_wild, v_use_train_riding, nil, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_train_warmount, v_use_train_war, nil, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_make_ram, nil, nil, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_make_catapult, nil, nil, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_make_siege, nil, nil, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_brew_slave, v_brew, d_brew_slave, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_brew_heal, v_brew, d_brew_heal, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_brew_death, v_brew, d_brew_death, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_brew_weightlessness, v_brew, d_brew_weightlessness, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_brew_fiery, v_brew, d_brew_fiery, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mine_iron, v_mine_iron, d_mine_iron, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mine_gold, v_mine_gold, d_mine_gold, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mine_mithril, v_mine_mithril, d_mine_mithril, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mine_crystal, v_mine_gate_crystal, d_mine_gate_crystal, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_quarry_stone, v_quarry, nil, nil, -1, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_catch_horse, v_catch, nil, nil, -1, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_extract_venom, nil, nil, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_harvest_lumber, v_wood, nil, nil, -1, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_harvest_yew, v_yew, nil, nil, -1, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_add_ram, v_add_ram, d_add_ram, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_remove_ram, v_remove_ram, d_remove_ram, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_assassinate, v_assassinate, d_assassinate, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_find_food, v_find_food, d_find_food, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_spy_inv, v_spy_inv, d_spy_inv, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_spy_skills, v_spy_skills, d_spy_skills, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_spy_lord, v_spy_lord, d_spy_lord, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_record_skill, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_bribe_noble, v_bribe, d_bribe, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_summon_savage, v_summon_savage, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_keep_savage, v_keep_savage, d_keep_savage, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_opium, v_improve_opium, d_improve_opium, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_raise_mob, v_raise, d_raise, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_rally_mob, v_rally, d_rally, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_incite_mob, v_incite, d_incite, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_bird_spy, v_bird_spy, d_bird_spy, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_lead_to_gold, v_lead_to_gold, d_lead_to_gold, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_raise_corpses, v_raise_corpses, nil, nil, -1, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_undead_lord, v_undead_lord, d_undead_lord, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_banish_undead, v_banish_undead, d_banish_undead, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_renew_undead, v_keep_undead, d_keep_undead, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_eat_dead, v_eat_dead, d_eat_dead, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_aura_blast, v_aura_blast, d_aura_blast, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_absorb_blast, v_aura_reflect, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_summon_rain, v_summon_rain, d_summon_rain, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_summon_wind, v_summon_wind, d_summon_wind, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_summon_fog, v_summon_fog, d_summon_fog, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_direct_storm, v_direct_storm, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_renew_storm, v_renew_storm, d_renew_storm, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_dissipate, v_dissipate, d_dissipate, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_lightning, v_lightning, d_lightning, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_fierce_wind, v_fierce_wind, d_fierce_wind, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_seize_storm, v_seize_storm, d_seize_storm, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_death_fog, v_death_fog, d_death_fog, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_banish_corpses, v_banish_corpses, d_banish_corpses, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_hide_self, v_hide, d_hide, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_conceal_nation, v_conceal_nation, d_conceal_nation, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_sneak_build, v_sneak, d_sneak, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mage_menial, v_mage_menial, d_mage_menial, nil, 7, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_petty_thief, v_petty_thief, d_petty_thief, nil, 7, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_appear_common, v_appear_common, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_defense, v_defense, d_defense, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_defense2, v_defense, d_defense, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_archery, v_archery, d_archery, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_swordplay, v_swordplay, d_swordplay, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_swordplay2, v_swordplay, d_swordplay, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_find_rich, v_find_rich, d_find_rich, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_harvest_opium, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_train_angry, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_weaponsmith, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_hide_lord, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_transcend_death, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_collect_foliage, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_fishing, v_fish, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_summon_ghost, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_capture_beasts, v_capture_beasts, d_capture_beasts, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_use_beasts, v_use_beasts, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_collect_elem, v_implicit, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_torture, v_torture, d_torture, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_fight_to_death, v_fight_to_death, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_breed_beasts, v_breed, d_breed, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_persuade_oath, v_persuade_oath, d_persuade_oath, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_forge_weapon, v_forge_art_x, d_forge_art_x, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_forge_armor, v_forge_art_x, d_forge_art_x, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_forge_bow, v_forge_art_x, d_forge_art_x, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_trance, v_trance, d_trance, nil, 28, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_teleport_item, v_teleport_item, d_teleport_item, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_tap_health, v_tap_health, d_tap_health, nil, 7, 0})
+	//use_tbl = append(use_tbl, use_tbl_ent{"c", sk_bind_storm,     v_bind_storm,     d_bind_storm,     nil,     7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_control_battle, v_prac_control, nil, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_protect_noble, v_prac_protect, nil, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_attack_tactics, v_attack_tactics, nil, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_defense_tactics, v_defense_tactics, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_resurrect, v_resurrect, d_resurrect, nil, 30, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_pray, v_prep_ritual, d_prep_ritual, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_last_rites, v_last_rites, d_last_rites, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_gather_holy_plant, v_gather_holy_plant, d_gather_holy_plant, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_bless_follower, v_bless_follower, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_proselytise, v_proselytise, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_create_holy_symbol, v_create_holy_symbol, d_create_holy_symbol, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_heal, v_heal, d_heal, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_summon_water_elemental, v_generic_trap, d_generic_trap, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_find_mtn_trail, v_find_mountain_trail, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_obscure_mtn_trail, v_obscure_mountain_trail, d_obscure_mountain_trail, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_mining, v_improve_mining, d_improve_mining, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_conceal_mine, v_conceal_mine, d_conceal_mine, nil, 30, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_protect_mine, v_protect_mine, d_protect_mine, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_bless_fort, v_bless_fort, d_bless_fort, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_weaken_fort, v_weaken_fort, d_weaken_fort, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_boulder_trap, v_generic_trap, d_generic_trap, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_anteus, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_detect_beasts, v_detect_beasts, d_detect_beasts, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_capture_beasts, v_capture_beasts, d_capture_beasts, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_snake_trap, v_generic_trap, d_generic_trap, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_dol, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_find_forest_trail, v_find_forest_trail, nil, nil, 1, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_obscure_forest_trail, v_obscure_forest_trail, d_obscure_forest_trail, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_forestry, v_improve_logging, d_improve_logging, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_reveal_forest, v_find_hidden_features, d_find_hidden_features, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_fort, v_improve_fort, d_improve_fort, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_create_deadfall, v_generic_trap, d_generic_trap, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_recruit_elves, v_recruit_elves, d_recruit_elves, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_timeid, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_reveal_vision, v_reveal_vision, d_reveal_vision, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_enchant_guard, v_enchant_guard, d_enchant_guard, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_urchin_spy, v_urchin_spy, d_urchin_spy, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_draw_crowds, v_draw_crowds, d_draw_crowds, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_arrange_mugging, v_arrange_mugging, d_arrange_mugging, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_ham, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_quarry, v_improve_quarrying, d_improve_quarrying, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_smithing, v_improve_smithing, d_improve_smithing, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_edge_of_kireus, v_edge_of_kireus, d_edge_of_kireus, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_create_mithril, v_create_mithril, d_create_mithril, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_quicksand_trap, v_generic_trap, d_generic_trap, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_kireus, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_calm_ap, nil, d_calm_peasants, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_charisma, v_improve_charisma, d_improve_charisma, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mesmerize_crowd, nil, d_mesmerize_crowd, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_improve_taxes, nil, d_improve_taxes, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_guard_loyalty, nil, d_guard_loyalty, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_instill_fanaticism, nil, d_instill_fanaticism, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_halon, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_find_hidden, nil, d_find_all_hidden_features, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_conceal_loc, v_conceal_location, d_conceal_location, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_create_ninja, v_create_ninja, d_create_ninja, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_mists_of_conceal, nil, d_create_mist, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_domingo, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_dedicate_temple, v_dedicate_temple, d_dedicate_temple, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_smuggle_goods, v_smuggle_goods, d_smuggle_goods, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_smuggle_men, v_smuggle_men, d_smuggle_men, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_build_wagons, nil, nil, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_increase_demand, v_increase_demand, d_increase_demand, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_decrease_demand, v_decrease_demand, d_decrease_demand, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_increase_supply, v_increase_supply, d_increase_supply, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_decrease_supply, v_decrease_supply, d_decrease_supply, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_hide_money, v_hide_money, d_hide_money, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_hide_item, v_hide_item, d_hide_item, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_grow_pop, v_grow_pop, d_grow_pop, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_add_sails, v_add_sails, d_add_sails, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_remove_sails, v_remove_sails, d_remove_sails, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_add_forts, v_add_forts, d_add_forts, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_remove_forts, v_remove_forts, d_remove_forts, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_add_ports, v_add_ports, d_add_ports, nil, 4, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_remove_ports, v_remove_ports, d_remove_ports, nil, 4, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_add_keels, v_add_keels, d_add_keels, nil, 5, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_remove_keels, v_remove_keels, d_remove_keels, nil, 5, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_fortify_castle, v_fortify_castle, d_fortify_castle, nil, 5, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_strengthen_castle, v_strengthen_castle, d_strengthen_castle, nil, 5, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_moat_castle, v_moat_castle, d_moat_castle, nil, 5, 1})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_widen_entrance, v_widen_entrance, d_widen_entrance, nil, 5, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_wooden_shoring, v_add_wooden_shoring, d_add_wooden_shoring, nil, 5, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_iron_shoring, v_add_iron_shoring, d_add_iron_shoring, nil, 5, 0})
+
+	// Combat Spells
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_lightning_bolt, v_use_cs, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_foresee_defense, v_use_cs, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_drain_mana, v_use_cs, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_raise_soldiers, v_use_cs, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_fireball, v_use_cs, nil, nil, 0, 0})
+
+	// Heroism
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_personal_fttd, v_personal_fight_to_death, nil, nil, 0, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_forced_march, v_forced_march, nil, nil, 0, 0})
+
+	// Basic religion
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_resurrect_b, v_resurrect, d_resurrect, nil, 30, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_pray_b, v_prep_ritual, d_prep_ritual, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_last_rites_b, v_last_rites, d_last_rites, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_gather_holy_plant_b, v_gather_holy_plant, d_gather_holy_plant, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_bless_b, v_bless_follower, nil, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_proselytise_b, v_proselytise, nil, nil, 3, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_create_holy_b, v_create_holy_symbol, d_create_holy_symbol, nil, 14, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_heal_b, v_heal, d_heal, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_dedicate_temple_b, v_dedicate_temple, d_dedicate_temple, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_write_religion_b, v_write_spell, d_write_spell, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_hinder_med_b, v_hinder_med_b, d_hinder_med_b, nil, 10, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_scry_b, v_vision_reg, d_vision_reg, nil, 7, 0})
+	use_tbl = append(use_tbl, use_tbl_ent{"c", sk_banish_undead_b, v_banish_undead, d_banish_undead, nil, 7, 0})
+
+	use_tbl = append(use_tbl, use_tbl_ent{})
 }

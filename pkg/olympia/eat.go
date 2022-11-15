@@ -810,21 +810,18 @@ func safe_name(who, n int, b []byte) string {
 }
 
 // todo: unwrap the byte/string
-func buy_comment(c *command) []byte {
-	fn := func() string {
-		if numargs(c) < 1 {
-			return sout("probably incorrect")
-		} else if numargs(c) == 1 || (numargs(c) == 2 && c.b == 0) || (numargs(c) == 3 && c.b == 0 && c.c == 0) {
-			return sout("clear %s for %s", c.parse[0], safe_name(c.who, c.a, c.parse[1]))
-		} else if numargs(c) == 2 {
-			return sout("probably incorrect: specify an item, quantity and price")
-		} else if numargs(c) == 3 {
-			return sout("%s %s for %s gold each", c.parse[0], safe_name_qty(c.who, c.a, c.b, c.parse[1]), nice_num(c.c))
-		} else {
-			return sout("%s %s for %s gold each, keeping %s", c.parse[0], safe_name_qty(c.who, c.a, c.b, c.parse[1]), nice_num(c.c), nice_num(c.d))
-		}
+func buy_comment(c *command) string {
+	if numargs(c) < 1 {
+		return sout("probably incorrect")
+	} else if numargs(c) == 1 || (numargs(c) == 2 && c.b == 0) || (numargs(c) == 3 && c.b == 0 && c.c == 0) {
+		return sout("clear %s for %s", c.parse[0], safe_name(c.who, c.a, c.parse[1]))
+	} else if numargs(c) == 2 {
+		return sout("probably incorrect: specify an item, quantity and price")
+	} else if numargs(c) == 3 {
+		return sout("%s %s for %s gold each", c.parse[0], safe_name_qty(c.who, c.a, c.b, c.parse[1]), nice_num(c.c))
+	} else {
+		return sout("%s %s for %s gold each, keeping %s", c.parse[0], safe_name_qty(c.who, c.a, c.b, c.parse[1]), nice_num(c.c), nice_num(c.d))
 	}
-	return []byte(fn())
 }
 
 func drop_comment(c *command) string {

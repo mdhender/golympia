@@ -183,14 +183,14 @@ func update_effects(what int) {
 		// disappearing golems.
 		if el[i].type_ == ef_kill_dirt_golem && el[i].days < 2 {
 			// remove a dirt golem from this guy.
-			if consume_item(what, item_dirt_golem, 1) != FALSE {
+			if consume_item(what, item_dirt_golem, 1) {
 				wout(what, "A dirt golem suddenly crumbles to dust!")
 			} else {
 				wout(gm_player, "No dirt golem available to crumble for %s.", box_name(what))
 			}
 		} else if el[i].type_ == ef_kill_flesh_golem && el[i].days < 2 {
 			// remove a flesh golem from this guy.
-			if consume_item(what, item_flesh_golem, 1) != FALSE {
+			if consume_item(what, item_flesh_golem, 1) {
 				wout(what, "A flesh golem suddenly crumbles to dust!")
 			} else {
 				wout(gm_player, "No flesh golem available to crumble for %s.", box_name(what))

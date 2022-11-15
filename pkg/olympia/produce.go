@@ -572,7 +572,7 @@ func v_generic_harvest(c *command, number int, days int, t *harvest) int {
 		return FALSE
 	}
 
-	if t.piety != 0 && FALSE == use_piety(c.who, t.piety) {
+	if t.piety != 0 && !use_piety(c.who, t.piety) {
 		wout(c.who, "You do not have the piety for that prayer.")
 		return FALSE
 	}

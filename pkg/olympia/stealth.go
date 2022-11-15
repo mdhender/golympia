@@ -24,7 +24,7 @@ import "math"
 func v_spy_inv(c *command) int {
 	target := c.a
 
-	if check_char_here(c.who, target) == FALSE {
+	if !check_char_here(c.who, target) {
 		return FALSE
 	}
 
@@ -34,7 +34,7 @@ func v_spy_inv(c *command) int {
 func d_spy_inv(c *command) int {
 	target := c.a
 
-	if check_still_here(c.who, target) == FALSE {
+	if !check_still_here(c.who, target) {
 		return FALSE
 	}
 
@@ -47,7 +47,7 @@ func d_spy_inv(c *command) int {
 func v_spy_skills(c *command) int {
 	target := c.a
 
-	if check_char_here(c.who, target) == FALSE {
+	if !check_char_here(c.who, target) {
 		return FALSE
 	}
 
@@ -57,7 +57,7 @@ func v_spy_skills(c *command) int {
 func d_spy_skills(c *command) int {
 	target := c.a
 
-	if check_still_here(c.who, target) == FALSE {
+	if !check_still_here(c.who, target) {
 		return FALSE
 	}
 
@@ -70,7 +70,7 @@ func d_spy_skills(c *command) int {
 func v_spy_lord(c *command) int {
 	target := c.a
 
-	if check_char_here(c.who, target) == FALSE {
+	if !check_char_here(c.who, target) {
 		return FALSE
 	}
 
@@ -81,13 +81,12 @@ func d_spy_lord(c *command) int {
 	target := c.a
 	var parent int
 
-	if check_still_here(c.who, target) == FALSE {
+	if !check_still_here(c.who, target) {
 		return FALSE
 	}
 
 	if cloak_lord(target) != FALSE {
-		wout(c.who, "Failed to learn the lord of %s.",
-			box_code(target))
+		wout(c.who, "Failed to learn the lord of %s.", box_code(target))
 		return FALSE
 	}
 
@@ -104,7 +103,7 @@ func d_spy_lord(c *command) int {
 func v_hide(c *command) int {
 	flag := c.a
 
-	if check_skill(c.who, sk_hide_self) == FALSE {
+	if !check_skill(c.who, sk_hide_self) {
 		return FALSE
 	}
 
@@ -297,7 +296,7 @@ func v_seek(c *command) int {
 			return FALSE
 		}
 
-		if char_here(c.who, target) != FALSE {
+		if char_here(c.who, target) {
 			wout(c.who, "%s is here.", box_name(target))
 			add_contact(target, c.who)
 
@@ -331,7 +330,7 @@ func d_seek(c *command) int {
 			return FALSE
 		}
 
-		if char_here(c.who, target) != FALSE {
+		if char_here(c.who, target) {
 			wout(c.who, "%s is here.", box_name(target))
 			add_contact(target, c.who)
 
@@ -368,7 +367,7 @@ func d_seek(c *command) int {
 	 *  5% chance of finding any hidden noble present
 	 */
 	for _, i := range loop_here(subloc(c.who)) {
-		if kind(i) != T_char || char_here(c.who, i) != FALSE {
+		if kind(i) != T_char || char_here(c.who, i) {
 			continue
 		}
 
@@ -698,7 +697,8 @@ func d_petty_thief(c *command) int {
 	c.g += amount
 
 	/* Drive away some peasants */
-	assert(consume_item(province(where), item_peasant, rnd(1, 3)) != 0)
+	ret := consume_item(province(where), item_peasant, rnd(1, 3))
+	assert(ret)
 
 	if c.wait == FALSE {
 		wout(c.who, "Earned %s gold thieving.", nice_num(c.g))
@@ -756,7 +756,7 @@ func d_petty_thief(c *command) int {
 func v_conceal_nation(c *command) int {
 	var i int
 
-	if check_skill(c.who, sk_conceal_nation) == FALSE {
+	if !check_skill(c.who, sk_conceal_nation) {
 		return FALSE
 	}
 
@@ -836,7 +836,7 @@ func d_assassinate(c *command) int {
 		return FALSE
 	}
 
-	if check_still_here(c.who, target) == FALSE {
+	if !check_still_here(c.who, target) {
 		wout(c.who, "No one here to assassinate.")
 		return FALSE
 	}
@@ -847,7 +847,7 @@ func d_assassinate(c *command) int {
 	 */
 	if loc_depth(subloc(c.who)) == LOC_province &&
 		weather_here(subloc(c.who), sub_fog) != FALSE &&
-		contacted(target, c.who) == FALSE {
+		!contacted(target, c.who) {
 		wout(c.who, "That target is not visible in the fog.")
 		return FALSE
 	}
