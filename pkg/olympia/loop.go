@@ -707,7 +707,14 @@ func loop_char_skill_known(who int) []*skill_ent {
 #define    next_trade  } assert(ll_check == 19); tr_list_reclaim(&ll_l); }
 */
 func loop_trade(who int) []*trade {
-	panic("!implemented")
+	assert(valid_box(who))
+	var cp []*trade
+	for _, e := range bx[who].trades {
+		if valid_box(e.item) && e.qty > 0 {
+			cp = append(cp, e)
+		}
+	}
+	return cp
 }
 
 /*

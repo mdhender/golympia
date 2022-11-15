@@ -19,7 +19,10 @@
 
 package olympia
 
-import "log"
+import (
+	"log"
+	"os"
+)
 
 const (
 	SZ = 6 /* SZ x SZ is size of Hades */
@@ -198,7 +201,7 @@ func create_hades_nasty() {
 	case 5:
 		nasty = create_new_beasts(where, sub_undead)
 		p_char(nasty).npc_prog = PROG_balrog
-		fprintf(stderr, "Created undead in Hades: %s.\n", box_name(nasty))
+		fprintf(os.Stderr, "Created undead in Hades: %s.\n", box_name(nasty))
 	default:
 		panic("!reached")
 	}

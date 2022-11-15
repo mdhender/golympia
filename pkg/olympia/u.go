@@ -1080,17 +1080,6 @@ func lookup(table [][]byte, s []byte) int {
 	return lookup_bb(table, s)
 }
 
-func lookup_sb(table []string, b []byte) int {
-	if len(b) == 0 {
-		return -1
-	}
-	var tbl [][]byte
-	for _, v := range table {
-		tbl = append(tbl, []byte(v))
-	}
-	return lookup_bb(tbl, b)
-}
-
 func lookup_bb(table [][]byte, s []byte) int {
 	if len(s) == 0 {
 		return -1
@@ -1101,6 +1090,28 @@ func lookup_bb(table [][]byte, s []byte) int {
 		}
 	}
 	return -1
+}
+
+func lookup_sb(table []string, s []byte) int {
+	if len(s) == 0 {
+		return -1
+	}
+	var tbl [][]byte
+	for _, v := range table {
+		tbl = append(tbl, []byte(v))
+	}
+	return lookup_bb(tbl, s)
+}
+
+func lookup_ss(table []string, s string) int {
+	if len(s) == 0 {
+		return -1
+	}
+	var tbl [][]byte
+	for _, v := range table {
+		tbl = append(tbl, []byte(v))
+	}
+	return lookup_bb(tbl, []byte(s))
 }
 
 func loyal_s(who int) string {

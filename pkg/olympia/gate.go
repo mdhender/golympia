@@ -30,7 +30,7 @@ func check_gate_here(who, gate int) bool {
 }
 
 func d_detect_gates(c *command) int {
-	if charge_aura(c.who, 1) == FALSE {
+	if !charge_aura(c.who, 1) {
 		return FALSE
 	}
 
@@ -52,7 +52,7 @@ func d_notify_jump(c *command) int {
 	gate := c.a
 	where := cast_where(c.who)
 
-	if charge_aura(c.who, 6) == FALSE {
+	if !charge_aura(c.who, 6) {
 		return FALSE
 	}
 
@@ -73,7 +73,7 @@ func d_notify_unseal(c *command) int {
 	gate, key := c.a, c.b
 	where := cast_where(c.who)
 
-	if charge_aura(c.who, 5) == FALSE {
+	if !charge_aura(c.who, 5) {
 		return FALSE
 	}
 
@@ -109,7 +109,7 @@ func d_rem_seal(c *command) int {
 	gate := c.a
 	where := cast_where(c.who)
 
-	if charge_aura(c.who, 8) == FALSE {
+	if !charge_aura(c.who, 8) {
 		return FALSE
 	}
 
@@ -137,7 +137,7 @@ func d_reveal_key(c *command) int {
 	gate := c.a
 
 	where := cast_where(c.who)
-	if charge_aura(c.who, 10) == FALSE {
+	if !charge_aura(c.who, 10) {
 		return FALSE
 	}
 	reset_cast_where(c.who)
@@ -161,7 +161,7 @@ func d_seal_gate(c *command) int {
 	gate, key := c.a, c.b
 
 	where := cast_where(c.who)
-	if charge_aura(c.who, 6) == FALSE {
+	if !charge_aura(c.who, 6) {
 		return FALSE
 	}
 	reset_cast_where(c.who)
@@ -186,7 +186,7 @@ func d_unseal_gate(c *command) int {
 	gate, key := c.a, c.b
 	where := cast_where(c.who)
 
-	if charge_aura(c.who, 3) == FALSE {
+	if !charge_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -313,7 +313,7 @@ func unseal_gate(who, gate int) {
 }
 
 func v_detect_gates(c *command) int {
-	if check_aura(c.who, 1) == FALSE {
+	if !check_aura(c.who, 1) {
 		return FALSE
 	}
 	return TRUE
@@ -336,9 +336,9 @@ func v_jump_gate(c *command) int {
 	}
 
 	var w weights
-	determine_stack_weights(c.who, &w, FALSE)
+	determine_stack_weights(c.who, &w, false)
 	cost := int(math.Ceil(float64(w.total_weight) / 250.0))
-	if charge_aura(c.who, cost) == FALSE {
+	if !charge_aura(c.who, cost) {
 		return FALSE
 	}
 
@@ -355,7 +355,7 @@ func v_jump_gate(c *command) int {
 }
 
 func v_notify_jump(c *command) int {
-	if check_aura(c.who, 6) == FALSE {
+	if !check_aura(c.who, 6) {
 		return FALSE
 	}
 	return TRUE
@@ -365,7 +365,7 @@ func v_notify_unseal(c *command) int {
 	if c.b == 0 {
 		wout(c.who, "Must specify the gate seal.")
 		return FALSE
-	} else if check_aura(c.who, 5) == FALSE {
+	} else if !check_aura(c.who, 5) {
 		return FALSE
 	}
 
@@ -373,14 +373,14 @@ func v_notify_unseal(c *command) int {
 }
 
 func v_rem_seal(c *command) int {
-	if check_aura(c.who, 8) == FALSE {
+	if !check_aura(c.who, 8) {
 		return FALSE
 	}
 	return TRUE
 }
 
 func v_reveal_key(c *command) int {
-	if check_aura(c.who, 10) == FALSE {
+	if !check_aura(c.who, 10) {
 		return FALSE
 	}
 	wout(c.who, "Attempt to learn the key for %s.", box_name(c.a))
@@ -404,9 +404,9 @@ func v_reverse_jump(c *command) int {
 	}
 
 	var w weights
-	determine_stack_weights(c.who, &w, FALSE)
+	determine_stack_weights(c.who, &w, false)
 	cost := 2 * int(math.Ceil(float64(w.total_weight)/250.0))
-	if charge_aura(c.who, cost) == FALSE {
+	if !charge_aura(c.who, cost) {
 		return FALSE
 	}
 
@@ -423,7 +423,7 @@ func v_reverse_jump(c *command) int {
 }
 
 func v_seal_gate(c *command) int {
-	if check_aura(c.who, 6) == FALSE {
+	if !check_aura(c.who, 6) {
 		return FALSE
 	}
 
@@ -448,7 +448,7 @@ func v_teleport(c *command) int {
 	}
 
 	var w weights
-	determine_stack_weights(c.who, &w, FALSE)
+	determine_stack_weights(c.who, &w, false)
 	cost := int(math.Ceil(float64(w.total_weight) / 250))
 
 	if has_item(c.who, item_gate_crystal) < 1 {
@@ -456,7 +456,7 @@ func v_teleport(c *command) int {
 		return FALSE
 	}
 
-	if charge_aura(c.who, cost) == FALSE {
+	if !charge_aura(c.who, cost) {
 		return FALSE
 	}
 
@@ -468,7 +468,7 @@ func v_teleport(c *command) int {
 }
 
 func v_unseal_gate(c *command) int {
-	if check_aura(c.who, 3) == FALSE {
+	if !check_aura(c.who, 3) {
 		return FALSE
 	}
 	key := c.b

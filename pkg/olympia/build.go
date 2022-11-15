@@ -940,9 +940,9 @@ func start_build(c *command, bi *build_ent, id int) bool {
 		change_box_kind(id, bi.kind)
 		change_box_subkind(id, bi.unfinished_subkind)
 	} else {
-		new_ent_prime = TRUE
+		new_ent_prime = true
 		newt = new_ent(bi.kind, bi.unfinished_subkind)
-		new_ent_prime = FALSE
+		new_ent_prime = false
 	}
 
 	p_player(player(c.who)).unformed = rem_value((p_player(player(c.who)).unformed), id)
@@ -1109,14 +1109,14 @@ func daily_build(c *command, bi *build_ent) bool {
 			b.effort_required
 
 		for fifth < 5 && b.build_materials < fifth {
-			if FALSE == consume_item(c.who, bi.req_item, bi.req_qty*bi.num) {
+			if !consume_item(c.who, bi.req_item, bi.req_qty*bi.num) {
 				wout(c.who, "Need another %s to continue work.  Construction halted.",
 					box_name_qty(bi.req_item, bi.req_qty*bi.num))
 				return false
 			}
 
 			if bi.req_item2 > 0 &&
-				FALSE == consume_item(c.who, bi.req_item2, bi.req_qty2*bi.num) {
+				!consume_item(c.who, bi.req_item2, bi.req_qty2*bi.num) {
 				wout(c.who, "Need another %s to continue work.  Construction halted.",
 					box_name_qty(bi.req_item2, bi.req_qty2*bi.num))
 				return false
@@ -1400,7 +1400,7 @@ func v_repair(c *command) int {
 		break
 	}
 
-	if req_item != FALSE && FALSE == consume_item(c.who, req_item, 1) {
+	if req_item != FALSE && !consume_item(c.who, req_item, 1) {
 		wout(c.who, "%s repair requires %s.",
 			cap_(subkind_s[subkind(where)]),
 			box_name_qty(req_item, 1))
@@ -1655,8 +1655,7 @@ func d_raze(c *command) int {
 	 *  NOTYET:  first erode defense points before going on to structure
 	 *	     damage, as with combat damage against structures?
 	 */
-
-	if add_structure_damage(target, points) != FALSE {
+	if add_structure_damage(target, points) {
 		c.wait = 0
 	}
 	return TRUE
@@ -1783,7 +1782,7 @@ func d_fortify_castle(c *command) int {
 	req_stone = loc_defense(inside) / 5
 
 	for fifth < 5 && b.build_materials < fifth {
-		if FALSE == consume_item(c.who, item_stone, req_stone) {
+		if !consume_item(c.who, item_stone, req_stone) {
 			wout(c.who, "Need another %s to continue work.  Construction halted.",
 				box_name_qty(item_stone, req_stone))
 			return FALSE
@@ -1929,7 +1928,7 @@ func d_strengthen_castle(c *command) int {
 	req_stone = loc_defense(inside) / 5
 
 	for fifth < 5 && b.build_materials < fifth {
-		if FALSE == consume_item(c.who, item_stone, req_stone) {
+		if !consume_item(c.who, item_stone, req_stone) {
 			wout(c.who, "Need another %s to continue work.  Construction halted.",
 				box_name_qty(item_stone, req_stone))
 			return FALSE
@@ -2082,7 +2081,7 @@ func d_moat_castle(c *command) int {
 	req_stone = MOAT_MATERIAL / 5
 
 	for fifth < 5 && b.build_materials < fifth {
-		if FALSE == consume_item(c.who, item_stone, req_stone) {
+		if !consume_item(c.who, item_stone, req_stone) {
 			wout(c.who, "Need another %s to continue work.  Construction halted.",
 				box_name_qty(item_stone, req_stone))
 			return FALSE

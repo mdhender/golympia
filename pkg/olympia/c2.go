@@ -25,7 +25,6 @@ func v_discard(c *command) int {
 	item := c.a
 	qty := c.b
 	have_left := c.c
-	var ret int
 
 	if kind(item) != T_item {
 		wout(c.who, "%s is not an item.", box_code(item))
@@ -44,9 +43,9 @@ func v_discard(c *command) int {
 		return FALSE
 	}
 
-	ret = drop_item(c.who, item, qty)
-	if !(ret != 0) {
-		panic("assert(ret!=0)")
+	ret := drop_item(c.who, item, qty)
+	if !ret {
+		panic("assert(ret)")
 	}
 
 	wout(c.who, "Dropped.")
@@ -149,7 +148,7 @@ func drop_player(pl int) {
 	log_output(LOG_DROP, "Dropped player %s", box_name(pl))
 	log_output(LOG_DROP, "    %s <%s>", s, email)
 
-	if save_flag && acct_flag {
+	if save_flag && acct_flag != FALSE {
 		//sprintf(cmd, "%s -a %s -A %s-old -p %s -g tag%d -d", options.accounting_prog, options.accounting_dir, options.accounting_dir, box_code_less(pl), game_number);
 		//system(cmd);
 		panic("!implemented")
@@ -424,7 +423,6 @@ func v_claim(c *command) int {
 	qty := c.b
 	have_left := c.c
 	pl := player(c.who)
-	var ret int
 
 	/*
 	 *  Common mistake checker!
@@ -459,9 +457,9 @@ func v_claim(c *command) int {
 		return FALSE
 	}
 
-	ret = move_item(pl, c.who, item, qty)
-	if !(ret != 0) {
-		panic("assert(ret!=0)")
+	ret := move_item(pl, c.who, item, qty)
+	if !ret {
+		panic("assert(ret)")
 	}
 
 	wout(c.who, "Claimed %s.", just_name_qty(item, qty))
@@ -567,7 +565,6 @@ func v_fee(c *command) int {
 
 func v_border(c *command) int {
 	where := c.a
-	var closed *int
 
 	if !valid_box(where) ||
 		(nil == rp_loc(where) && nil == rp_subloc(where)) {
@@ -575,6 +572,7 @@ func v_border(c *command) int {
 		return FALSE
 	}
 
+	var control *loc_control_ent
 	if kind(where) == T_loc &&
 		loc_depth(where) == LOC_province {
 		/*
@@ -586,23 +584,21 @@ func v_border(c *command) int {
 			wout(c.who, "You do not control that garrison.")
 			return FALSE
 		}
-		closed = &rp_loc(where).control.closed
+		control = &rp_loc(where).control
 	} else {
 		if nil == p_subloc(where) || first_character(where) != c.who {
 			wout(c.who, "You do not control that location.")
 			return FALSE
 		}
-		closed = &rp_subloc(where).control.closed
+		control = &rp_subloc(where).control
 	}
 
 	if strncasecmp(c.parse[2], []byte("open"), 4) == 0 {
-		*closed = 0
+		control.closed = false
 		wout(c.who, "The border at %s is now open.", box_name(where))
 		return TRUE
-	}
-
-	if strncasecmp(c.parse[2], []byte("close"), 5) == 0 {
-		*closed = 1
+	} else if strncasecmp(c.parse[2], []byte("close"), 5) == 0 {
+		control.closed = true
 		wout(c.who, "The border at %s is now closed.", box_name(where))
 		return TRUE
 	}
@@ -688,7 +684,7 @@ func v_board(c *command) int {
 		return FALSE
 	}
 
-	determine_stack_weights(c.who, &w, FALSE)
+	determine_stack_weights(c.who, &w, false)
 
 	/*
 	 *  Check that the ship isn't already overloaded, and that it won't
@@ -721,7 +717,7 @@ func v_board(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_entrance_fees(c.who, owner, amount) {
+	if !charge_entrance_fees(c.who, owner, amount) {
 		wout(owner, "%s couldn't afford a boarding fee of %s.",
 			box_name(c.who),
 			gold_s(amount))
@@ -839,7 +835,7 @@ func v_ferry(c *command) int {
 	wout(where, "%s sounds a blast on its horn.", box_name(ship))
 	log_output(LOG_SPECIAL, "FERRY for %s", box_name(player(c.who)))
 
-	p_magic(ship).ferry_flag = TRUE
+	p_magic(ship).ferry_flag = true
 
 	return TRUE
 }

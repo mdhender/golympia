@@ -21,7 +21,7 @@ package olympia
 
 func scry_show_where(who, target int) {
 
-	if crosses_ocean(who, target) != FALSE {
+	if crosses_ocean(who, target) {
 		out(who, "%s is in %s.", just_name(region(target)))
 		return
 	}
@@ -69,7 +69,7 @@ func cast_check_char_here(who, target int) int {
 
 	p_magic(who).project_cast = 0
 
-	if crosses_ocean(where, who) != FALSE {
+	if crosses_ocean(where, who) {
 		wout(who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -86,7 +86,7 @@ func cast_check_char_here(who, target int) int {
 			return TRUE
 		}
 
-		if contacted(target, who) != FALSE {
+		if contacted(target, who) {
 			return TRUE
 		}
 
@@ -110,7 +110,7 @@ func v_scry_region(c *command) int {
 		return FALSE
 	}
 
-	if crosses_ocean(targ_loc, c.who) != FALSE {
+	if crosses_ocean(targ_loc, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -120,7 +120,7 @@ func v_scry_region(c *command) int {
 	}
 	aura = c.b
 
-	if check_aura(c.who, aura) == FALSE {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -221,12 +221,12 @@ func d_scry_region(c *command) int {
 		return FALSE
 	}
 
-	if crosses_ocean(targ_loc, c.who) != FALSE {
+	if crosses_ocean(targ_loc, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
 
-	if charge_aura(c.who, aura) == FALSE {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -264,7 +264,7 @@ func v_shroud_region(c *command) int {
 	var aura int
 	where := province(cast_where(c.who))
 
-	if crosses_ocean(where, c.who) != FALSE {
+	if crosses_ocean(where, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -292,7 +292,7 @@ func d_shroud_region(c *command) int {
 	var p *entity_loc
 	where := c.b
 
-	if use_piety(c.who, aura) == FALSE {
+	if !use_piety(c.who, aura) {
 		wout(c.who, "You do not have that much piety.")
 		return FALSE
 	}
@@ -324,7 +324,7 @@ func d_shroud_region(c *command) int {
 
 func v_detect_scry(c *command) int {
 
-	if check_aura(c.who, 1) == FALSE {
+	if !check_aura(c.who, 1) {
 		return FALSE
 	}
 
@@ -334,7 +334,7 @@ func v_detect_scry(c *command) int {
 
 func d_detect_scry(c *command) int {
 
-	if charge_aura(c.who, 1) == FALSE {
+	if !charge_aura(c.who, 1) {
 		return FALSE
 	}
 
@@ -374,7 +374,7 @@ func v_dispel_region(c *command) int {
 		return FALSE
 	}
 
-	if check_aura(c.who, 3) == FALSE {
+	if !check_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -397,7 +397,7 @@ func d_dispel_region(c *command) int {
 	p = rp_loc(targ_loc)
 
 	if p != nil && p.shroud > 0 {
-		if charge_aura(c.who, 3) == FALSE {
+		if !charge_aura(c.who, 3) {
 			return FALSE
 		}
 
@@ -451,7 +451,7 @@ func v_locate_char(c *command) int {
 	}
 	aura = c.b
 
-	if check_aura(c.who, aura) == FALSE {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -471,13 +471,13 @@ func d_locate_char(c *command) int {
 		return FALSE
 	}
 
-	if crosses_ocean(target, c.who) != FALSE {
+	if crosses_ocean(target, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		charge_aura(c.who, 1)
 		return FALSE
 	}
 
-	if charge_aura(c.who, aura) == FALSE {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -534,7 +534,7 @@ func v_bar_loc(c *command) int {
 		return FALSE
 	}
 
-	if crosses_ocean(where, c.who) != FALSE {
+	if crosses_ocean(where, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -547,7 +547,7 @@ func v_bar_loc(c *command) int {
 	}
 	aura = c.a * c.a
 
-	if check_aura(c.who, aura) == FALSE {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -603,7 +603,7 @@ func d_bar_loc(c *command) int {
 		return FALSE
 	}
 
-	if charge_aura(c.who, aura) == FALSE {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -634,7 +634,7 @@ func v_unbar_loc(c *command) int {
 		where = v.destination
 	}
 
-	if crosses_ocean(where, c.who) != FALSE {
+	if crosses_ocean(where, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -647,7 +647,7 @@ func v_unbar_loc(c *command) int {
 	}
 	aura = c.b
 
-	if check_aura(c.who, aura) == FALSE {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -679,7 +679,7 @@ func d_unbar_loc(c *command) int {
 		return FALSE
 	}
 
-	if charge_aura(c.who, aura) == FALSE {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -738,7 +738,7 @@ func v_proj_cast(c *command) int {
 
 	curr_where = cast_where(c.who)
 
-	if crosses_ocean(curr_where, c.who) != FALSE {
+	if crosses_ocean(curr_where, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -747,7 +747,7 @@ func v_proj_cast(c *command) int {
 	c.d = aura
 	assert(aura >= 0 && aura < 100)
 
-	if crosses_ocean(to_where, c.who) != FALSE {
+	if crosses_ocean(to_where, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -781,12 +781,12 @@ func d_proj_cast(c *command) int {
 		return FALSE
 	}
 
-	if crosses_ocean(to_where, c.who) != FALSE {
+	if crosses_ocean(to_where, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
 
-	if charge_aura(c.who, aura) == FALSE {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -812,7 +812,7 @@ func v_save_proj(c *command) int {
 		return FALSE
 	}
 
-	if check_aura(c.who, 3) == FALSE {
+	if !check_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -824,7 +824,7 @@ func d_save_proj(c *command) int {
 	var p *char_magic
 	var im *item_magic
 
-	if charge_aura(c.who, 3) == FALSE {
+	if !charge_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -853,7 +853,7 @@ func v_use_proj_cast(c *command) int {
 
 	if im == nil ||
 		is_loc_or_ship(im.project_cast) ||
-		is_magician(c.who) == FALSE {
+		!is_magician(c.who) {
 		destroy_unique_item(c.who, item)
 		wout(c.who, "Nothing happens.")
 		return FALSE

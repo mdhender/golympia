@@ -88,7 +88,7 @@ func d_meditate(c *command) int {
 	// how much should we add?
 	// 2, 4 if alone in a tower, and 2 additional if they have an auraculum.
 	add_aura(c.who, 2)
-	if subkind(subloc(c.who)) == sub_tower && alone_here(c.who) != FALSE {
+	if subkind(subloc(c.who)) == sub_tower && alone_here(c.who) {
 		add_aura(c.who, 2)
 	}
 	if has_auraculum(c.who) != FALSE {
@@ -100,7 +100,7 @@ func d_meditate(c *command) int {
 }
 
 func v_adv_med(c *command) int {
-	if subkind(subloc(c.who)) != sub_tower || FALSE == alone_here(c.who) {
+	if subkind(subloc(c.who)) != sub_tower || !alone_here(c.who) {
 		wout(c.who, "You must be alone in a tower to use Advanced Meditation.")
 		return FALSE
 	}
@@ -109,7 +109,7 @@ func v_adv_med(c *command) int {
 }
 
 func d_adv_med(c *command) int {
-	if subkind(subloc(c.who)) != sub_tower || FALSE == alone_here(c.who) {
+	if subkind(subloc(c.who)) != sub_tower || !alone_here(c.who) {
 		wout(c.who, "You must be alone in a tower to use Advanced Meditation.")
 		return FALSE
 	}
@@ -145,7 +145,7 @@ func v_hinder_med(c *command) int {
 
 	if FALSE == cast_check_char_here(c.who, target) {
 		return FALSE
-	} else if FALSE == check_aura(c.who, aura) {
+	} else if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -174,7 +174,7 @@ func d_hinder_med(c *command) int {
 	aura := c.b
 	var p *char_magic
 
-	if FALSE == charge_aura(c.who, aura) {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -204,7 +204,7 @@ func v_reveal_mage(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, aura) {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -226,7 +226,7 @@ func d_reveal_mage(c *command) int {
 	category := c.b
 	aura := c.c
 
-	if FALSE == charge_aura(c.who, aura) {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -296,9 +296,9 @@ func v_view_aura(c *command) int {
 		c.a = 1
 	}
 	aura := c.a
-	if FALSE == check_aura(c.who, aura) {
+	if !check_aura(c.who, aura) {
 		return FALSE
-	} else if crosses_ocean(cast_where(c.who), c.who) != FALSE {
+	} else if crosses_ocean(cast_where(c.who), c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -318,7 +318,7 @@ func d_view_aura(c *command) int {
 	if !is_loc_or_ship(where) {
 		wout(c.who, "%s is no longer a valid location.", box_code(where))
 		return FALSE
-	} else if FALSE == charge_aura(c.who, aura) {
+	} else if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -382,7 +382,7 @@ func v_shroud_abil(c *command) int {
 
 func d_shroud_abil(c *command) int {
 	aura := c.a
-	if FALSE == charge_aura(c.who, aura) {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -395,7 +395,7 @@ func d_shroud_abil(c *command) int {
 }
 
 func v_detect_abil(c *command) int {
-	if FALSE == check_aura(c.who, 1) {
+	if !check_aura(c.who, 1) {
 		return FALSE
 	}
 
@@ -404,7 +404,7 @@ func v_detect_abil(c *command) int {
 }
 
 func d_detect_abil(c *command) int {
-	if FALSE == charge_aura(c.who, 1) {
+	if !charge_aura(c.who, 1) {
 		return FALSE
 	}
 
@@ -418,7 +418,7 @@ func v_dispel_abil(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == check_aura(c.who, 3) {
+	if !check_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -433,7 +433,7 @@ func d_dispel_abil(c *command) int {
 
 	p := rp_magic(target)
 	if p != nil && p.ability_shroud > 0 {
-		if FALSE == charge_aura(c.who, 3) {
+		if !charge_aura(c.who, 3) {
 			return FALSE
 		}
 
@@ -456,7 +456,7 @@ func v_quick_cast(c *command) int {
 		wout(c.who, "You may only speed casting by 3 days.")
 		aura = 3
 	}
-	if FALSE == check_aura(c.who, aura) {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -467,7 +467,7 @@ func v_quick_cast(c *command) int {
 
 func d_quick_cast(c *command) int {
 	aura := c.a
-	if FALSE == charge_aura(c.who, aura) {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -488,7 +488,7 @@ func v_save_quick(c *command) int {
 		wout(c.who, "No stored spell cast speedup.")
 		return FALSE
 	}
-	if FALSE == check_aura(c.who, 3) {
+	if !check_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -502,7 +502,7 @@ func d_save_quick(c *command) int {
 		return FALSE
 	}
 
-	if FALSE == charge_aura(c.who, 3) {
+	if !charge_aura(c.who, 3) {
 		return FALSE
 	}
 
@@ -589,12 +589,12 @@ func v_write_spell(c *command) int {
 		return FALSE
 	}
 
-	if magic_skill(c.use_skill) && FALSE == check_aura(c.who, 2*days) {
+	if magic_skill(c.use_skill) && !check_aura(c.who, 2*days) {
 		wout(c.who, "Recording a spell requires 2 aura for each day recorded.")
 		return FALSE
 	}
 
-	if religion_skill(c.use_skill) && FALSE == check_aura(c.who, 2*days) {
+	if religion_skill(c.use_skill) && !check_aura(c.who, 2*days) {
 		wout(c.who, "Recording a spell requires 2 piety for each day recorded.")
 		return FALSE
 	}
@@ -652,7 +652,7 @@ func v_write_spell(c *command) int {
 		consume_item(c.who, item_blank_scroll, scrolls_needed(days))
 		wout(c.who, "Adding pages to %s.", box_name(book))
 	} else {
-		if FALSE == can_pay(c.who, 100) {
+		if !can_pay(c.who, 100) {
 			wout(c.who, "You cannot afford to start a new book.")
 			return FALSE
 		}
@@ -667,7 +667,7 @@ func v_write_spell(c *command) int {
 		c.c = newItem
 	}
 
-	if (magic_skill(c.use_skill) || religion_skill(c.use_skill)) && FALSE == charge_aura(c.who, 2*days) {
+	if (magic_skill(c.use_skill) || religion_skill(c.use_skill)) && !charge_aura(c.who, 2*days) {
 		wout(c.who, "Some odd warp in the space-time continuum aborts this command.")
 		return FALSE
 	}
@@ -839,7 +839,7 @@ func d_mage_menial(c *command) int {
 		amount = has_item(where, item_gold)
 	}
 
-	assert(move_item(where, c.who, item_gold, amount) != 0)
+	assert(move_item(where, c.who, item_gold, amount))
 	c.g += amount
 
 	if c.wait == FALSE {
@@ -870,7 +870,7 @@ func v_appear_common(c *command) int {
 		aura = 1
 	}
 
-	if FALSE == charge_aura(c.who, aura) {
+	if !charge_aura(c.who, aura) {
 		return FALSE
 	}
 
@@ -917,7 +917,7 @@ func v_create_dirt_golem(c *command) int {
 }
 
 func d_create_dirt_golem(c *command) int {
-	if FALSE == charge_aura(c.who, skill_piety(c.use_skill)) {
+	if !charge_aura(c.who, skill_piety(c.use_skill)) {
 		return FALSE
 	}
 

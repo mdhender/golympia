@@ -285,7 +285,7 @@ func RunOly(args ...string) int {
 		for i = 0; i < 10; i++ {
 			c.a = create_random_artifact(gm_player)
 			v_identify(&c)
-			save_box(stderr, c.a)
+			save_box(os.Stderr, c.a)
 		}
 		/*
 		 *  Look to see if anyone owns a crown, palantir, etc.
@@ -382,7 +382,7 @@ func RunOly(args ...string) int {
 		//#if 0
 		//        list_new_players();
 		//#endif
-		if options.open_ended == FALSE {
+		if !options.open_ended {
 			check_win_conditions()
 		}
 		gm_report(gm_player)

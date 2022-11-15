@@ -101,7 +101,7 @@ func bottom_out(pl, who, unit int, s string) {
 			return
 		}
 		fp = grab_fp(pl)
-		set_bit(&(p_player(pl).output), who)
+		p_player(pl).output = set_bit((p_player(pl).output), who)
 	}
 
 	if show_day {
@@ -145,15 +145,15 @@ func bottom_out(pl, who, unit int, s string) {
  *  in a hidden loc, which garrisons can't see into.
  */
 func can_view_loc(pl int, p *entity_player, where int, outer int) int {
-	if test_bit(p.locs, where) != 0 {
+	if test_bit(p.locs, where) {
 		return TRUE
-	} else if test_bit(p.locs, outer) != 0 {
-		if loc_hidden(where) != 0 && test_known(pl, where) {
+	} else if test_bit(p.locs, outer) {
+		if loc_hidden(where) && test_known(pl, where) {
 			return FALSE
 		}
 		return TRUE
 	} else if show_to_garrison && loc_depth(outer) == LOC_province && player(province_admin(outer)) == pl {
-		if where != outer && loc_hidden(where) != 0 {
+		if where != outer && loc_hidden(where) {
 			return FALSE
 		}
 		return TRUE

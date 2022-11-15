@@ -104,7 +104,7 @@ func show_carry_capacity(who, num int) {
 
 	out(who, "")
 
-	determine_unit_weights(num, &w, FALSE)
+	determine_unit_weights(num, &w, false)
 
 	if w.land_cap > 0 {
 		walk_percent = sout(" (%d%%)",
@@ -942,7 +942,7 @@ func strip_leading_stupid_word(s string) string {
 }
 
 func stupid_word(s string) bool {
-	return lookup(stupid_words, s) >= 0
+	return lookup_ss(stupid_words, s) >= 0
 }
 
 func prev_word(s, t string) string {
@@ -1044,7 +1044,7 @@ func unit_summary_sup(pl, who int) {
 	fight = sum_fighters(who)
 
 	loy_s = sout("%c%s", loyal_chars[loyal_kind(who)],
-		knum(loyal_rate(who), FALSE))
+		knum(loyal_rate(who), false))
 
 	if options.output_tags > 0 {
 		buf = fmt.Sprintf(
@@ -1070,11 +1070,11 @@ func unit_summary_sup(pl, who int) {
 		health_s,
 		char_behind(who),
 		cur_aura_s,
-		knum(gold, TRUE),
-		knum(peas, TRUE),
-		knum(work, TRUE),
-		knum(sail, TRUE),
-		knum(fight, TRUE),
+		knum(gold, true),
+		knum(peas, true),
+		knum(work, true),
+		knum(sail, true),
+		knum(fight, true),
 		CHAR_FIELD, under_s,
 		nam)
 
@@ -1131,11 +1131,11 @@ func unit_summary(pl int) {
 		out(pl, "%*s %-*s                   %4s %4s %4s %4s %4s",
 			CHAR_FIELD, "",
 			CHAR_FIELD, "",
-			knum(sum_gold, TRUE),
-			knum(sum_peas, TRUE),
-			knum(sum_work, TRUE),
-			knum(sum_sail, TRUE),
-			knum(sum_fight, TRUE))
+			knum(sum_gold, true),
+			knum(sum_peas, true),
+			knum(sum_work, true),
+			knum(sum_sail, true),
+			knum(sum_fight, true))
 	}
 	tagout(pl, "</tag type=unit_section>")
 }
@@ -1317,7 +1317,7 @@ func stack_capacity_report(pl int) {
 			first = false
 		}
 
-		determine_stack_weights(who, &w, FALSE)
+		determine_stack_weights(who, &w, false)
 
 		if w.land_cap > 0 {
 			n = w.land_weight * 100 / w.land_cap

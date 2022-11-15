@@ -143,8 +143,7 @@ func v_dedicate_tower(c *command) int {
 	 *  Have to be a guild member already or ready to join the guild.
 	 *
 	 */
-	if guild_member(c.who) != school &&
-		FALSE == can_join_guild(c.who, school) {
+	if guild_member(c.who) != school && !can_join_guild(c.who, school) {
 		wout(c.who, "You must be a guild member or ready to join to dedicate a guild.")
 		return FALSE
 	}
@@ -163,7 +162,7 @@ func make_tower_guild(where, school int) {
 
 	change_box_subkind(where, sub_guild)
 	p.guild = school
-	if options.guild_teaching != FALSE {
+	if options.guild_teaching {
 		p.teaches = append(p.teaches, school)
 	}
 
@@ -228,7 +227,7 @@ func d_dedicate_tower(c *command) int {
 	 *
 	 */
 	if guild_member(c.who) != school &&
-		FALSE == can_join_guild(c.who, school) {
+		!can_join_guild(c.who, school) {
 		wout(c.who, "You must be a guild member or ready to join to dedicate a guild.")
 		return FALSE
 	}
@@ -237,7 +236,7 @@ func d_dedicate_tower(c *command) int {
 	 *  Need some gold for the dedication ceremony.
 	 *
 	 */
-	if FALSE == charge(c.who, 250) {
+	if !charge(c.who, 250) {
 		wout(c.who, "Dedicating a tower requires 250 gold.")
 		return FALSE
 	}

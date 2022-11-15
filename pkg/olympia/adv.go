@@ -37,7 +37,7 @@ func d_teleport_item(c *command) int {
 		return FALSE
 	}
 
-	if is_prisoner(target) != FALSE {
+	if is_prisoner(target) {
 		wout(c.who, "Prisoners may not be given anything.")
 		return FALSE
 	}
@@ -57,7 +57,7 @@ func d_teleport_item(c *command) int {
 		return FALSE
 	}
 
-	if crosses_ocean(target, c.who) != FALSE {
+	if crosses_ocean(target, c.who) {
 		wout(c.who, "Something seems to block your magic.")
 		return FALSE
 	}
@@ -68,15 +68,15 @@ func d_teleport_item(c *command) int {
 	}
 
 	aura := 3 + item_weight(item)*qty/250
-	if check_aura(c.who, aura) == FALSE {
+	if !check_aura(c.who, aura) {
 		return FALSE
 	}
-	if will_accept(target, item, c.who, qty) == FALSE {
+	if !will_accept(target, item, c.who, qty) {
 		return FALSE
 	}
 	charge_aura(c.who, aura)
-	if move_item(c.who, target, item, qty) == FALSE {
-		panic("assert(move_item(c.who, target, item, qty) != FALSE)")
+	if !move_item(c.who, target, item, qty) {
+		panic("assert(move_item(c.who, target, item, qty))")
 	}
 
 	wout(c.who, "Teleported %s to %s.", just_name_qty(item, qty), box_name(target))
@@ -92,7 +92,7 @@ func v_create_iron_golem(c *command) int {
 }
 
 func d_create_iron_golem(c *command) int {
-	if charge_aura(c.who, skill_piety(c.use_skill)) == FALSE {
+	if !charge_aura(c.who, skill_piety(c.use_skill)) {
 		return FALSE
 	}
 

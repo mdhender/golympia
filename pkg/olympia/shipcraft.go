@@ -661,7 +661,7 @@ func ship_storm_check(ship int) {
 	 *  Protection from a Priest of Eres.
 	 *
 	 */
-	if priest_in_stack(first_character(ship), sk_eres) != FALSE {
+	if priest_in_stack(first_character(ship), sk_eres) {
 		damage_chance -= 5
 	}
 

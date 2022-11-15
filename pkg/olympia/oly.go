@@ -1457,7 +1457,7 @@ type options_struct struct {
 	times_pay               int    /* What the Times pays for an article. */
 	cpp                     string /* Path of cpp */
 	full_markets            bool   /* City markets buy wood, etc. */
-	output_tags             bool   /* include <tag> in output */
+	output_tags             int    /* include <tag> in output */
 	open_ended              bool   /* No end to game. */
 	num_books               int    /* Number of teaching books in city */
 	market_age              int    /* Months untouched in market before removal. */

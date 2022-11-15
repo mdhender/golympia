@@ -98,7 +98,7 @@ package olympia
  */
 func v_forced_march(c *command) int {
 	/*  Has a $10 cost */
-	if charge(c.who, 10) == FALSE {
+	if !charge(c.who, 10) {
 		wout(c.who, "Can't afford %s to prepare for a forced march.", gold_s(10))
 		return FALSE
 	}
@@ -127,7 +127,7 @@ func v_personal_fight_to_death(c *command) int {
 	} else if flag > 100 {
 		flag = 100
 	}
-	p_char(c.who).personal_break_point = schar(flag)
+	p_char(c.who).personal_break_point = flag
 	wout(c.who, "%s will now leave battle when he has %d health remaining", box_name(c.who), flag)
 
 	return TRUE

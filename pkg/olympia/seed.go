@@ -35,11 +35,11 @@ import (
 func choose_city_prominence(city int) int {
 	var n int
 
-	if safe_haven(city) != FALSE || major_city(city) != FALSE {
+	if safe_haven(city) || major_city(city) != FALSE {
 		return 3
 	}
 
-	if loc_hidden(city) != FALSE || loc_hidden(province(city)) != FALSE {
+	if loc_hidden(city) || loc_hidden(province(city)) {
 		return 0
 	}
 
@@ -569,7 +569,7 @@ func seed_city_trade(where int) {
 			add_city_trade(where, CONSUME, item_jewel, 5, 100, 0)
 		}
 
-		do_production(where, TRUE)
+		do_production(where, true)
 		return
 	}
 
@@ -620,7 +620,7 @@ func seed_city_trade(where int) {
 		add_city_trade(where, PRODUCE, item_lead, 50, 10, 0)
 	}
 
-	do_production(where, TRUE)
+	do_production(where, true)
 }
 
 func base_price(n int) int {
@@ -1106,9 +1106,9 @@ func seed_city(where int) {
 	 */
 	num = rnd(1, 4)
 	for i = 0; i < num; i++ {
-		new_ent_prime = TRUE
+		new_ent_prime = true
 		newEnt := new_ent(T_loc, sub_tower)
-		new_ent_prime = FALSE
+		new_ent_prime = false
 		set_where(newEnt, where)
 		set_name(newEnt, "Public tower")
 		p = p_subloc(newEnt)
@@ -1175,7 +1175,7 @@ func seed_initial_locations() {
 	/* seed_rare_tradegoods(); */
 
 	for _, i = range loop_city() {
-		do_production(i, TRUE)
+		do_production(i, true)
 	}
 
 	seed_orcs()

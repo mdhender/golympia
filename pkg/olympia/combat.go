@@ -646,13 +646,13 @@ func init_attack_defense(l []*fight) []*fight {
 	return l
 }
 
-func add_to_fight_list(l []*fight, unit int, kind int, num int, ally int, inside bool) []*fight {
+func add_to_fight_list(l *[]*fight, unit int, kind int, num int, ally int, inside bool) {
 	/*
 	 *  Siege engines not engaged for naval combat
 	 */
 
 	if combat_sea && is_siege_engine(kind) {
-		return l
+		return
 	}
 
 	/*
@@ -660,7 +660,7 @@ func add_to_fight_list(l []*fight, unit int, kind int, num int, ally int, inside
 	 *
 	 */
 	if num == 0 {
-		return l
+		return
 	}
 
 	newt := &fight{}
@@ -678,7 +678,7 @@ func add_to_fight_list(l []*fight, unit int, kind int, num int, ally int, inside
 	newt.ally = ally
 	newt.inside = inside
 
-	return append(l, newt)
+	*l = append(*l, newt)
 }
 
 /*
@@ -802,14 +802,14 @@ func calc_beast_limit(who, defender int) int {
 	return beast_limit
 }
 
-func add_fighters(l []*fight, who int, ally int, inside bool, defender int) []*fight {
+func add_fighters(l *[]*fight, who int, ally int, inside bool, defender int) {
 	man_limit := 0
 	beast_limit := 0
 
 	assert(kind(who) == T_char)
 
 	if is_prisoner(who) {
-		return l
+		return
 	}
 
 	add_to_fight_list(l, who, FK_noble, or_int(char_health(who) > 0, char_health(who), 1), ally, inside)
@@ -846,16 +846,16 @@ func add_fighters(l []*fight, who int, ally int, inside bool, defender int) []*f
 			 */
 			if !is_real_npc(who) && subkind(who) == sub_ni &&
 				e.item == noble_item(who) {
-				l = add_to_fight_list(l, who, e.item, e.qty, ally, inside)
+				add_to_fight_list(l, who, e.item, e.qty, ally, inside)
 				continue
 			}
 			if FALSE == item_animal(e.item) {
 				num := min(e.qty, man_limit)
-				l = add_to_fight_list(l, who, e.item, num, ally, inside)
+				add_to_fight_list(l, who, e.item, num, ally, inside)
 				man_limit -= num
 			} else {
 				num := min(e.qty, beast_limit)
-				l = add_to_fight_list(l, who, e.item, num, ally, inside)
+				add_to_fight_list(l, who, e.item, num, ally, inside)
 				beast_limit -= num
 			}
 		}
@@ -863,19 +863,19 @@ func add_fighters(l []*fight, who int, ally int, inside bool, defender int) []*f
 			break
 		}
 	}
-	return l
+	return
 }
 
-func add_fight_stack(l []*fight, who int, ally int, defender int) []*fight {
+func add_fight_stack(l *[]*fight, who int, ally int, defender int) {
 	assert(kind(who) == T_char)
 
-	inside := len(l) > 0 && (l)[0].kind == FK_fort && somewhere_inside((l)[0].unit, who) != FALSE
+	inside := len(*l) > 0 && (*l)[0].kind == FK_fort && somewhere_inside((*l)[0].unit, who) != FALSE
 	add_fighters(l, who, ally, inside, defender)
 	for _, i := range loop_char_here(who) {
 		add_fighters(l, i, ally, inside, defender)
 	}
 
-	return l
+	return
 }
 
 /*
@@ -897,7 +897,7 @@ func contains_unit(l []*fight, unit int) bool {
 /*
  *  Look for any characters in where that are allied to def1 or def2
  */
-func look_for_allies(l []*fight, where int, def1 int, def2 int, attacker int, defender int, l_a []*fight) []*fight {
+func look_for_allies(l *[]*fight, where int, def1 int, def2 int, attacker int, defender int, l_a []*fight) {
 	for _, i := range loop_here(where) {
 		if kind(i) == T_char &&
 			i != def1 && i != def2 &&
@@ -906,7 +906,7 @@ func look_for_allies(l []*fight, where int, def1 int, def2 int, attacker int, de
 			stack_leader(i) == i &&
 			attacker != i &&
 			player(attacker) != player(i) &&
-			!contains_unit(l, i) {
+			!contains_unit(*l, i) {
 			assert(stack_leader(i) == i)
 			/*
 			 * Wed May 27 12:04:12 1998 -- Scott Turner
@@ -917,11 +917,11 @@ func look_for_allies(l []*fight, where int, def1 int, def2 int, attacker int, de
 			wout(i, "  %s joins the battle in defense of %s!", box_name(i), box_name(def1))
 			wout(VECT, "  %s joins the battle in defense of %s!", box_name(i), box_name(def1))
 			wout(combat_pl, "  %s joins the battle in defense of %s!", box_name(i), box_name(def1))
-			l = add_fight_stack(l, i, TRUE, defender)
+			add_fight_stack(l, i, TRUE, defender)
 		}
 	}
 
-	return l
+	return
 }
 
 /*
@@ -981,12 +981,13 @@ func construct_fight_list(target int, attacker int, defender int) []*fight {
 			hp := or_int(loc_hp(target) != 0, loc_hp(target), 100)
 			rating := hp - loc_damage(target)
 			assert(rating > 0)
-			l = add_to_fight_list(l, target, FK_fort, rating, FALSE, false)
+			add_to_fight_list(&l, target, FK_fort, rating, FALSE, false)
 		}
 	} else {
 		who = target
 	}
-	return add_fight_stack(l, who, FALSE, defender)
+	add_fight_stack(&l, who, FALSE, defender)
+	return l
 }
 
 // todo: this is just not right...
@@ -1018,7 +1019,7 @@ func construct_guard_fight_list(target int, attacker int, l_a []*fight, defender
 			continue
 		}
 
-		l = add_fight_stack(l, i, FALSE, defender)
+		add_fight_stack(&l, i, FALSE, defender)
 	}
 
 	/*
@@ -3298,8 +3299,8 @@ func reconcile(winner int, l_a []*fight, l_b []*fight) {
  *
  */
 
-func run_combat(lap, lbp []*fight) ([]*fight, []*fight, int) {
-	l_a, l_b := lap, lbp
+func run_combat(lap, lbp *[]*fight) int {
+	l_a, l_b := *lap, *lbp
 	lead_a, lead_b := lead_char(l_a), lead_char(l_b)
 	first := false
 
@@ -3347,14 +3348,14 @@ func run_combat(lap, lbp []*fight) ([]*fight, []*fight, int) {
 			// If a fort, call in the defenders for both the fort and the owner
 			// of the fort.  Otherwise, just call in the unit's defenders.
 			if l_b[0].kind == FK_fort {
-				lbp = look_for_allies(lbp, subloc(l_b[0].unit), l_b[0].unit, l_b[1].unit, attacker, TRUE, l_a)
-				l_b = lbp
-				lbp = look_for_allies(lbp, subloc(l_b[1].unit), l_b[0].unit, l_b[1].unit, attacker, TRUE, l_a)
+				look_for_allies(lbp, subloc(l_b[0].unit), l_b[0].unit, l_b[1].unit, attacker, TRUE, l_a)
+				l_b = *lbp
+				look_for_allies(lbp, subloc(l_b[1].unit), l_b[0].unit, l_b[1].unit, attacker, TRUE, l_a)
 			} else {
-				lbp = look_for_allies(lbp, subloc(l_b[0].unit), l_b[0].unit, l_b[0].unit, attacker, TRUE, l_a)
+				look_for_allies(lbp, subloc(l_b[0].unit), l_b[0].unit, l_b[0].unit, attacker, TRUE, l_a)
 			}
 			// reset the pointers.
-			l_a, l_b = lap, lbp
+			l_a, l_b = *lap, *lbp
 
 			ready_fight_list(l_b)
 			wout(combat_pl, "  Old threshold: %d.", thresh_b)
@@ -3491,18 +3492,18 @@ func run_combat(lap, lbp []*fight) ([]*fight, []*fight, int) {
 	 */
 	if num_a <= thresh_a && num_b > thresh_b {
 		assert(l_b[lead_char_pos(l_b)].num > 0)
-		return lap, lbp, B_WON
+		return B_WON
 	}
 
 	if num_b <= thresh_b && num_a > thresh_a {
 		assert(l_a[lead_char_pos(l_a)].num > 0)
-		return lap, lbp, A_WON
+		return A_WON
 	}
 
-	return lap, lbp, TIE
+	return TIE
 }
 
-func combat_top(lap, lbp *[]*fight) ([]*fight, []*fight, bool) {
+func combat_top(lap, lbp *[]*fight) bool {
 	l_a, l_b := *lap, *lbp
 
 	print_dot('*')
@@ -3528,7 +3529,7 @@ func combat_top(lap, lbp *[]*fight) ([]*fight, []*fight, bool) {
 	combat_banner(l_a, l_b)
 
 	var result int
-	lap, lbp, result = run_combat(lap, lbp)
+	result = run_combat(lap, lbp)
 
 	// reset the pointers.
 	l_a, l_b = *lap, *lbp
@@ -3558,7 +3559,7 @@ func combat_top(lap, lbp *[]*fight) ([]*fight, []*fight, bool) {
 
 	show_to_garrison = false
 
-	return lap, lbp, result == A_WON
+	return result == A_WON
 }
 
 func fail_defeat_check(a int, l_b []*fight) int {
@@ -3625,7 +3626,6 @@ func set_weather(where, where2 int) {
 }
 
 func regular_combat(a int, b int, seize_slot int, already_waiting int) int {
-	var result int
 	assert(a != b)
 
 	l_a := construct_fight_list(a, b, FALSE)
@@ -3685,9 +3685,11 @@ func regular_combat(a int, b int, seize_slot int, already_waiting int) int {
 	/*
 	 *  Note that seize_slot is always false for the defender.
 	 */
-	l_a, l_b, result = combat_top(&l_a, &l_b)
 
-	return result
+	if combat_top(&l_a, &l_b) {
+		return A_WON
+	}
+	return FALSE
 }
 
 /*
@@ -3703,8 +3705,7 @@ func regular_combat(a int, b int, seize_slot int, already_waiting int) int {
 
 func select_target(c *command) int {
 	target := c.a
-	where := subloc(c.who)
-	//struct exit_view *v;
+	//where := subloc(c.who)
 
 	if kind(target) == T_deadchar {
 		wout(c.who, "%s is not here.", c.parse[1])
@@ -3856,7 +3857,10 @@ func attack_guard_units(a, b int) int {
 
 	assert(len(l_a) > 0)
 
-	return combat_top(&l_a, &l_b)
+	if combat_top(&l_a, &l_b) {
+		return TRUE
+	}
+	return FALSE
 }
 
 func v_pillage(c *command) int {
@@ -4053,8 +4057,8 @@ func check_auto_attack_sup(who int) {
 			}
 		} else if is_loc_or_ship(i) {
 			if kind(i) == T_loc &&
-							loc_hidden(i) &&
-							!test_known(who, i) {
+				loc_hidden(i) &&
+				!test_known(who, i) {
 				continue
 			}
 
@@ -4068,7 +4072,7 @@ func check_auto_attack_sup(who int) {
 			}
 
 			if targ_who == 0 ||
-							player(who) == player(targ_who) {
+				player(who) == player(targ_who) {
 				continue
 			}
 		} else {

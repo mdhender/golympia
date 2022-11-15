@@ -309,7 +309,7 @@ func gm_list_animate_items(pl int) {
 	out(pl, "%25s %8s %8s %8s  %s", "----", "-----", "--------", "-----", "-------")
 
 	for _, i = range loop_item() {
-		if FALSE == is_fighter(i) && FALSE == man_item(i) && FALSE == beast_capturable(i) && FALSE == item_animal(i) {
+		if FALSE == is_fighter(i) && FALSE == man_item(i) && !beast_capturable(i) && FALSE == item_animal(i) {
 			continue
 		}
 
@@ -558,7 +558,7 @@ func gm_show_locs_visited(pl int) {
 			n_sub++
 			if bx[i].temp != 0 {
 				n_sub_visit++
-				if loc_hidden(i) != 0 {
+				if loc_hidden(i) {
 					hid++
 				} else {
 					vis++
@@ -585,7 +585,7 @@ func gm_show_locs_visited(pl int) {
 			nt++
 			if bx[j].temp != 0 {
 				nf++
-				if loc_hidden(j) != 0 {
+				if loc_hidden(j) {
 					nf_hid++
 				} else {
 					nf_vis++
@@ -827,12 +827,12 @@ func gm_player_details(pl int) {
 
 		out(pl, "%4s %3s %5s %5s %4s %6s %5s %6s  %s",
 			box_code_less(i), age,
-			knum(sum_gold, FALSE),
-			knum(sum_units, FALSE),
-			knum(sum_bld, TRUE),
-			knum(sum_subloc, TRUE),
-			knum(sum_ship, TRUE),
-			knum(sum_skills, TRUE),
+			knum(sum_gold, false),
+			knum(sum_units, false),
+			knum(sum_bld, true),
+			knum(sum_subloc, true),
+			knum(sum_ship, true),
+			knum(sum_skills, true),
 			just_name(i))
 	}
 

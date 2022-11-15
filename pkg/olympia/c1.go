@@ -595,7 +595,6 @@ func v_give(c *command) int {
 	item := c.b
 	qty := c.c
 	have_left := c.d
-	var ret int
 	var fee int
 
 	/*
@@ -648,9 +647,9 @@ func v_give(c *command) int {
 			wout(c.who, "You cannot deposit that item into CLAIM.")
 			return FALSE
 		}
-	} else if FALSE == check_char_here(c.who, target) {
+	} else if !check_char_here(c.who, target) {
 		return FALSE
-	} else if FALSE == check_char_gone(c.who, target) {
+	} else if !check_char_gone(c.who, target) {
 		return FALSE
 	}
 
@@ -709,8 +708,8 @@ func v_give(c *command) int {
 		qty -= fee
 	}
 
-	ret = move_item(c.who, target, item, qty)
-	assert(ret != FALSE)
+	ret := move_item(c.who, target, item, qty)
+	assert(ret)
 
 	if target == player(c.who) {
 		wout(c.who, "Deposited %s into CLAIM.", just_name_qty(item, qty))
@@ -738,10 +737,10 @@ func v_pay(c *command) int {
 
 func may_take(who, target int) bool {
 
-	if FALSE == check_char_here(who, target) {
+	if !check_char_here(who, target) {
 		return false
 	}
-	if FALSE == check_char_gone(who, target) {
+	if !check_char_gone(who, target) {
 		return false
 	}
 
@@ -755,7 +754,7 @@ func may_take(who, target int) bool {
 		return false
 	}
 
-	if FALSE == my_prisoner(who, target) &&
+	if !my_prisoner(who, target) &&
 		player(target) != player(who) {
 		wout(who, "May only take items from other units in your faction.")
 		return false
@@ -773,7 +772,6 @@ func v_get(c *command) int {
 	item := c.b
 	qty := c.c
 	have_left := c.d
-	var ret int
 
 	if !may_take(c.who, target) {
 		return FALSE
@@ -784,14 +782,12 @@ func v_get(c *command) int {
 	}
 
 	if kind(item) != T_item {
-		wout(c.who, "%s is not an item or a prisoner.",
-			box_code(item))
+		wout(c.who, "%s is not an item or a prisoner.", box_code(item))
 		return FALSE
 	}
 
 	if has_item(target, item) < 1 {
-		wout(c.who, "%s does not have any %s.", box_name(target),
-			box_code(item))
+		wout(c.who, "%s does not have any %s.", box_name(target), box_code(item))
 		return FALSE
 	}
 
@@ -803,9 +799,7 @@ func v_get(c *command) int {
 
 	if subkind(target) == sub_garrison && man_item(item) != FALSE {
 		garr_men := count_man_items(target)
-
 		garr_men -= qty
-
 		if garr_men < 10 {
 			wout(c.who, "Garrisons must be left with a minimum of ten men.")
 			return FALSE
@@ -813,19 +807,15 @@ func v_get(c *command) int {
 	}
 
 	if rp_item(item).ungiveable != FALSE {
-		wout(c.who, "You cannot transfer %s between nobles.",
-			plural_item_name(item, 2))
+		wout(c.who, "You cannot transfer %s between nobles.", plural_item_name(item, 2))
 		return FALSE
 	}
 
-	ret = move_item(target, c.who, item, qty)
-	assert(ret != FALSE)
+	ret := move_item(target, c.who, item, qty)
+	assert(ret)
 
-	wout(c.who, "Took %s from %s.", just_name_qty(item, qty),
-		box_name(target))
-
-	wout(target, "%s took %s from us.", box_name(c.who),
-		box_name_qty(item, qty))
+	wout(c.who, "Took %s from %s.", just_name_qty(item, qty), box_name(target))
+	wout(target, "%s took %s from us.", box_name(c.who), box_name_qty(item, qty))
 
 	if item == item_sailor || item == item_pirate {
 		check_captain_loses_sailors(qty, target, c.who)
@@ -1200,7 +1190,7 @@ func parse_wait_args(c *command) string {
 	i = 1
 	for i <= numargs(c) {
 		tag_s = string(c.parse[i])
-		tag = lookup(wait_tags, tag_s)
+		tag = lookup_ss(wait_tags, tag_s)
 
 		switch tag {
 		case 16:
@@ -1510,7 +1500,7 @@ func check_wait_conditions(c *command) string {
 			if !is_ship(p.a1) {
 				return sout("%s is not a ship", box_code(p.a1))
 			}
-			cond = (subloc(p.a1) == subloc(c.who) && ferry_horn(p.a1) != FALSE)
+			cond = (subloc(p.a1) == subloc(c.who) && ferry_horn(p.a1))
 			if not {
 				cond = !cond
 			}

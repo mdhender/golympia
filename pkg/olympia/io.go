@@ -4676,7 +4676,7 @@ func load_system() error {
 		} else if strncmp_bs(s, "full_markets=", 13) == 0 {
 			options.full_markets = atoi_b(s[13:]) != FALSE
 		} else if strncmp_bs(s, "output_tags=", 12) == 0 {
-			options.output_tags = atoi_b(s[12:]) != FALSE
+			options.output_tags = atoi_b(s[12:])
 		} else if strncmp_bs(s, "num_books=", 10) == 0 {
 			options.num_books = atoi_b(s[10:])
 		} else if strncmp_bs(s, "market_age=", 11) == 0 {

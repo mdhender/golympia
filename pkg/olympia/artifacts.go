@@ -901,7 +901,7 @@ func v_art_teleport(c *command) int {
 		return TRUE
 	}
 
-	determine_stack_weights(c.who, &w, FALSE)
+	determine_stack_weights(c.who, &w, false)
 
 	if w.total_weight > rp_item_artifact(item).param1 {
 		wout(c.who, "%s hums briefly but nothing happens.")

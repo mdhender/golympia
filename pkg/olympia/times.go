@@ -178,7 +178,7 @@ func times_goal_info() {
 		fprintf(fp, "        * Castles controlled: %d.\n", total1)
 	}
 
-	if options.open_ended == FALSE {
+	if !options.open_ended {
 		for _, i := range loop_nation() {
 			if rp_nation(i).win == 1 {
 				fprintf(fp, "\n  *********************************************************\n")
@@ -211,7 +211,7 @@ func times_goal_info() {
 		}
 	}
 
-	if options.mp_antipathy != FALSE {
+	if options.mp_antipathy {
 		fprintf(fp, "\n  Staff of the Sun Summary\n")
 		fprintf(fp, "  ------------------------\n\n")
 

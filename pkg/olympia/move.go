@@ -1813,7 +1813,7 @@ func v_west(c *command) int {
 	return v_move_attack(c)
 }
 
-func check_captain_loses_sailors(qty, target int, inform bool) {
+func check_captain_loses_sailors(qty, target, inform int) {
 	panic("this is broken")
 	//    static int cmd_sail = -1;
 	//    where := subloc(target);

@@ -1513,7 +1513,7 @@ func men_starve(who, have int) {
 			consume_item(who, item[i], starve[i])
 
 			if item[i] == item_sailor || item[i] == item_pirate {
-				check_captain_loses_sailors(starve[i], who, false)
+				check_captain_loses_sailors(starve[i], who, who)
 			}
 		}
 	}
@@ -1734,7 +1734,7 @@ func temple_income() {
 			continue
 		}
 
-		if options.mp_antipathy != 0 {
+		if options.mp_antipathy {
 			/*
 			 *  Is there a magician present?
 			 *
@@ -2921,7 +2921,7 @@ func post_month() {
 	decrement_region_shroud()
 	decrement_meditation_hinder()
 	hide_mage_decay()
-	if options.mp_antipathy != FALSE {
+	if options.mp_antipathy {
 		do_staff()
 	}
 
