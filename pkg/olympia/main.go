@@ -441,13 +441,15 @@ func RunOly(args ...string) int {
 	return 0
 }
 
-func call_init_routines() {
+func call_init_routines() error {
 	init_lower()
 	dir_assert()
 	glob_init()         /* initialize global tables */
 	initialize_buffer() /* used by sout() */
 	init_spaces()
 	init_random() /* seed random number generator */
+
+	return nil
 }
 
 func write_totimes() {
