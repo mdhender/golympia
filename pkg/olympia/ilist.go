@@ -23,6 +23,8 @@ package olympia
 
 type ilist []int
 
+type ints_l []int
+
 // vectors/ilist.c
 
 func ilist_cap(l ilist) int {
