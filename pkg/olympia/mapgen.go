@@ -173,39 +173,6 @@ var loc_table = []loc_table_t{
 	{terr_plain, terr_battlefield, 6, 2},
 }
 
-const (
-	terr_land        = 1
-	terr_ocean       = 2
-	terr_forest      = 3
-	terr_swamp       = 4
-	terr_mountain    = 5
-	terr_plain       = 6
-	terr_desert      = 7
-	terr_water       = 8
-	terr_island      = 9
-	terr_stone_cir   = 10 /* circle of stones */
-	terr_grove       = 11 /* mallorn grove */
-	terr_bog         = 12
-	terr_cave        = 13
-	terr_city        = 14
-	terr_guild       = 15
-	terr_grave       = 16
-	terr_ruins       = 17
-	terr_battlefield = 18
-	terr_ench_for    = 19 /* enchanted forest */
-	terr_rocky_hill  = 20
-	terr_tree_cir    = 21
-	terr_pits        = 22
-	terr_pasture     = 23
-	terr_oasis       = 24
-	terr_yew_grove   = 25
-	terr_sand_pit    = 26
-	terr_sac_grove   = 27 /* sacred grove */
-	terr_pop_field   = 28 /* poppy field */
-	terr_temple      = 29
-	terr_lair        = 30 /* dragon lair */
-)
-
 var terr_s = []string{
 	"<null>",
 	"land",
@@ -265,10 +232,6 @@ const MAX_SUBLOC = 20000
 var subloc_mg [MAX_SUBLOC]*tile
 
 var top_subloc = 0
-
-var loc_fp *os.File
-var gate_fp *os.File
-var road_fp *os.File
 
 func alloc_inside() int {
 	inside_top++
@@ -943,229 +906,38 @@ func create_a_subloc(row, col int, hidden int, kind int) int {
 	return top_subloc
 }
 
-func dump_continents(name string) {
-	type continent struct {
-		Name string `json:"na,omitempty"`
-	}
-	var data struct {
-		Continents []continent `json:"loc-region"`
-	}
-	for i := 1; i <= inside_top; i++ {
-		c := continent{Name: inside_names[i]}
-		data.Continents = append(data.Continents, c)
-		// todo: print_inside_locs needs to be hoisted into here
-	}
-	if buf, err := json.MarshalIndent(data, "", "  "); err != nil {
-		panic(err)
-	} else if err = os.WriteFile(name, buf, 0666); err != nil {
-		panic(err)
-	}
+func dump_continents(name string) error {
+	// mdhender: continents are regions and regions are locations data
+	log.Printf("todo: continents should be in locations data\n")
 
-	for i := 1; i <= inside_top; i++ {
-		fprintf(loc_fp, "%d loc region\n", REGION_OFF+i)
-		if inside_names[i] != "" {
-			fprintf(loc_fp, "na %s\n", inside_names[i])
-		}
-		print_inside_locs(i)
-		fprintf(loc_fp, "\n")
+	if buf, err := json.MarshalIndent(ContinentsFromMapGen(), "", "  "); err != nil {
+		return fmt.Errorf("dump_continents: %w", err)
+	} else if err = os.WriteFile(name, buf, 0666); err != nil {
+		return fmt.Errorf("dump_continents: %w", err)
 	}
+	log.Printf("dump_continents: created %s\n", name)
+	return nil
 }
 
-func dump_gates(name string) {
-	type gate_to struct {
-		ToLoc int `json:"tl"`
-		Key   int `json:"sk,omitempty"`
-	}
-	type link_to struct {
-		WhereTo int `json:"wh"`
-	}
-	type gate struct {
-		EntNum  int       `json:"ent-num"`
-		LinksTo []link_to `json:"LI"`
-		GatesTo []gate_to `json:"GA"`
-	}
-	var data struct {
-		Gates []gate `json:"gates"`
-	}
-
-	for row := 0; row < MAX_ROW; row++ {
-		for col := 0; col < MAX_COL; col++ {
-			if map_[row][col] == nil {
-				continue
-			}
-			for j := 0; j < len(map_[row][col].gates_dest); j++ {
-				data.Gates = append(data.Gates, gate{
-					EntNum: map_[row][col].gates_num[j],
-					LinksTo: []link_to{
-						link_to{WhereTo: map_[row][col].region},
-					},
-					GatesTo: []gate_to{
-						gate_to{
-							ToLoc: map_[row][col].gates_dest[j],
-							Key:   map_[row][col].gates_key[j],
-						},
-					},
-				})
-			}
-		}
-	}
-
-	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc_mg[i].gates_num); j++ {
-			fprintf(gate_fp, "%d gate 0\n", subloc_mg[i].gates_num[j])
-			fprintf(gate_fp, "LI\n")
-			fprintf(gate_fp, " wh %d\n", subloc_mg[i].region)
-			fprintf(gate_fp, "GA\n")
-			fprintf(gate_fp, " tl %d\n", subloc_mg[i].gates_dest[j])
-			if subloc_mg[i].gates_key[j] != 0 {
-				fprintf(gate_fp, " sk %d\n", subloc_mg[i].gates_key[j])
-			}
-			fprintf(gate_fp, "\n")
-		}
-	}
-
-	if buf, err := json.MarshalIndent(data, "", "  "); err != nil {
-		panic(err)
+func dump_gates(name string) error {
+	if buf, err := json.MarshalIndent(GatesFromMapGen(), "", "  "); err != nil {
+		return fmt.Errorf("dump_gates: %w", err)
 	} else if err = os.WriteFile(name, buf, 0666); err != nil {
-		panic(err)
+		return fmt.Errorf("dump_gates: %w", err)
 	}
-
-	for row := 0; row < MAX_ROW; row++ {
-		for col := 0; col < MAX_COL; col++ {
-			if map_[row][col] != nil {
-				for j := 0; j < len(map_[row][col].gates_dest); j++ {
-					fprintf(gate_fp, "%d gate 0\n", map_[row][col].gates_num[j])
-					fprintf(gate_fp, "LI\n")
-					fprintf(gate_fp, " wh %d\n", map_[row][col].region)
-					fprintf(gate_fp, "GA\n")
-					fprintf(gate_fp, " tl %d\n", map_[row][col].gates_dest[j])
-					if map_[row][col].gates_key[j] != 0 {
-						fprintf(gate_fp, " sk %d\n", map_[row][col].gates_key[j])
-					}
-					fprintf(gate_fp, "\n")
-				}
-			}
-		}
-	}
-
-	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc_mg[i].gates_num); j++ {
-			fprintf(gate_fp, "%d gate 0\n", subloc_mg[i].gates_num[j])
-			fprintf(gate_fp, "LI\n")
-			fprintf(gate_fp, " wh %d\n", subloc_mg[i].region)
-			fprintf(gate_fp, "GA\n")
-			fprintf(gate_fp, " tl %d\n", subloc_mg[i].gates_dest[j])
-			if subloc_mg[i].gates_key[j] != 0 {
-				fprintf(gate_fp, " sk %d\n", subloc_mg[i].gates_key[j])
-			}
-			fprintf(gate_fp, "\n")
-		}
-	}
+	log.Printf("dump_gates: created %s\n", name)
+	return nil
 }
 
-func dump_roads(name string) {
-	type gate_to struct {
-		ToLoc  int `json:"tl"`
-		Hidden int `json:"rh,omitempty"`
-	}
-	type link_to struct {
-		WhereTo int `json:"wh"`
-	}
-	type road struct {
-		EntNum  int       `json:"ent-num"`
-		Name    string    `json:"na,omitempty"`
-		Region  int       `json:"region"`
-		LinksTo []link_to `json:"LI"`
-		GatesTo []gate_to `json:"GA"`
-	}
-	var data struct {
-		Roads []road `json:"roads"`
-	}
-
-	for row := 0; row < MAX_ROW; row++ {
-		for col := 0; col < MAX_COL; col++ {
-			if map_[row][col] == nil {
-				continue
-			}
-			for j := 0; j < len(map_[row][col].roads); j++ {
-				data.Roads = append(data.Roads, road{
-					EntNum: map_[row][col].roads[j].ent_num,
-					Name:   map_[row][col].roads[j].name,
-					LinksTo: []link_to{
-						link_to{WhereTo: map_[row][col].region},
-					},
-					GatesTo: []gate_to{
-						gate_to{
-							ToLoc:  map_[row][col].roads[j].to_loc,
-							Hidden: map_[row][col].roads[j].hidden,
-						},
-					},
-				})
-			}
-		}
-	}
-
-	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc_mg[i].roads); j++ {
-			data.Roads = append(data.Roads, road{
-				EntNum: subloc_mg[i].roads[j].ent_num,
-				Name:   subloc_mg[i].roads[j].name,
-				LinksTo: []link_to{
-					link_to{WhereTo: subloc_mg[i].region},
-				},
-				GatesTo: []gate_to{
-					gate_to{
-						ToLoc:  subloc_mg[i].roads[j].to_loc,
-						Hidden: subloc_mg[i].roads[j].hidden,
-					},
-				},
-			})
-		}
-	}
-
-	if buf, err := json.MarshalIndent(data, "", "  "); err != nil {
-		panic(err)
+func dump_roads(name string) error {
+	if buf, err := json.MarshalIndent(RoadsFromMapGen(), "", "  "); err != nil {
+		return fmt.Errorf("dump_roads: %w", err)
 	} else if err = os.WriteFile(name, buf, 0666); err != nil {
-		panic(err)
+		return fmt.Errorf("dump_roads: %w", err)
 	}
+	log.Printf("dump_roads: created %s\n", name)
 
-	for row := 0; row < MAX_ROW; row++ {
-		for col := 0; col < MAX_COL; col++ {
-			if map_[row][col] != nil {
-				for j := 0; j < len(map_[row][col].roads); j++ {
-					fprintf(road_fp, "%d road 0\n", map_[row][col].roads[j].ent_num)
-					if map_[row][col].roads[j].name != "" {
-						fprintf(road_fp, "na %s\n", map_[row][col].roads[j].name)
-					}
-					fprintf(road_fp, "LI\n")
-					fprintf(road_fp, " wh %d\n", map_[row][col].region)
-					fprintf(road_fp, "GA\n")
-					fprintf(road_fp, " tl %d\n", map_[row][col].roads[j].to_loc)
-					if map_[row][col].roads[j].hidden != FALSE {
-						fprintf(road_fp, " rh %d\n", map_[row][col].roads[j].hidden)
-					}
-					fprintf(road_fp, "\n")
-				}
-			}
-		}
-	}
-
-	for i := 1; i <= top_subloc; i++ {
-		for j := 0; j < len(subloc_mg[i].roads); j++ {
-			fprintf(road_fp, "%d road 0\n", subloc_mg[i].roads[j].ent_num)
-			if subloc_mg[i].roads[j].name != "" {
-				fprintf(road_fp, "na %s\n", subloc_mg[i].roads[j].name)
-			}
-			fprintf(road_fp, "LI\n")
-			fprintf(road_fp, " wh %d\n", subloc_mg[i].region)
-			fprintf(road_fp, "GA\n")
-			fprintf(road_fp, " tl %d\n", subloc_mg[i].roads[j].to_loc)
-			if subloc_mg[i].roads[j].hidden != FALSE {
-				fprintf(road_fp, " rh %d\n", subloc_mg[i].roads[j].hidden)
-			}
-			fprintf(road_fp, "\n")
-		}
-	}
+	return nil
 }
 
 func fix_terrain_land() {
@@ -1643,17 +1415,6 @@ func not_random_province(row, col *int) { // oh, hack upon hack
 	panic("!reached")
 }
 
-func open_fps() {
-	var err error
-	if loc_fp, err = fopen("loc", "w"); err != nil {
-		panic(err)
-	} else if gate_fp, err = fopen("gate", "w"); err != nil {
-		panic(err)
-	} else if road_fp, err = fopen("road", "w"); err != nil {
-		panic(err)
-	}
-}
-
 func place_random_subloc(kind int, hidden int, terr int) int {
 	var row, col int
 	random_province(&row, &col, terr)
@@ -1704,228 +1465,24 @@ func print_continent(i int) {
 	log.Printf("%-25s  %8s  %6s  %7s  %s\n", name, coord, nprovs, ncities, gates)
 }
 
-func print_inside_locs(n int) {
-	count := 0
-	for i := 0; i < len(inside_list[n]); i++ {
-		count++
-		if count == 1 {
-			fprintf(loc_fp, "LI\n")
-			fprintf(loc_fp, " hl ")
-		}
-		if count%11 == 10 { // continuation line
-			fprintf(loc_fp, "\\\n\t")
-		}
-		fprintf(loc_fp, "%d ", inside_list[n][i].region)
+func print_map(name string) error {
+	if buf, err := json.MarshalIndent(MapLocationsFromMapGen(), "", "  "); err != nil {
+		return fmt.Errorf("print_map: %w", err)
+	} else if err = os.WriteFile(name, buf, 0666); err != nil {
+		return fmt.Errorf("print_map: %w", err)
 	}
-	if count != 0 {
-		fprintf(loc_fp, "\n")
-	}
+	log.Printf("print_map: created %s\n", name)
+	return nil
 }
 
-func print_map(fp *io.FILE) {
-	for row := 0; row < MAX_ROW; row++ {
-		for col := 0; col < MAX_COL; col++ {
-			if map_[row][col] == nil { // hole in map?
-				continue
-			}
-			flag, sl := TRUE, FALSE
-
-			fprintf(loc_fp, "%d loc %s\n", map_[row][col].region,
-				terr_s[map_[row][col].terrain])
-
-			if map_[row][col].name != "" && map_[row][col].name != "Unnamed" {
-				fprintf(loc_fp, "na %s\n", map_[row][col].name)
-			}
-
-			if map_[row][col].uldim_flag != 0 {
-				if sl == FALSE {
-					fprintf(loc_fp, "SL\n")
-					sl = TRUE
-				}
-				fprintf(loc_fp, " uf %d\n", map_[row][col].uldim_flag)
-			}
-
-			if map_[row][col].summerbridge_flag != 0 {
-				if sl == FALSE {
-					fprintf(loc_fp, "SL\n")
-					sl = TRUE
-				}
-				fprintf(loc_fp, " sf %d\n", map_[row][col].summerbridge_flag)
-			}
-
-			if map_[row][col].safe_haven != FALSE {
-				if sl == FALSE {
-					fprintf(loc_fp, "SL\n")
-					sl = TRUE
-				}
-				fprintf(loc_fp, " sh 1\n")
-			}
-
-			if map_[row][col].inside != 0 {
-				fprintf(loc_fp, "LI\n")
-				flag = FALSE
-
-				if map_[row][col].inside != 0 {
-					fprintf(loc_fp, " wh %d\n", map_[row][col].inside+REGION_OFF)
-				}
-			}
-
-			print_inside_sublocs(flag, row, col)
-
-			fprintf(loc_fp, "LO\n")
-			fprintf(loc_fp, " pd %d %d %d %d\n", prov_dest(map_[row][col], MG_DIR_N), prov_dest(map_[row][col], MG_DIR_E), prov_dest(map_[row][col], MG_DIR_S), prov_dest(map_[row][col], MG_DIR_W))
-
-			if map_[row][col].hidden != FALSE {
-				fprintf(loc_fp, " hi %d\n", map_[row][col].hidden)
-			}
-			/* untested */
-			if map_[row][col].sea_lane != FALSE {
-				fprintf(loc_fp, " sl 1\n")
-			}
-
-			fprintf(loc_fp, "\n")
-		}
+func print_sublocs(name string) error {
+	if buf, err := json.MarshalIndent(SubLocationsFromMapGen(), "", "  "); err != nil {
+		return fmt.Errorf("print_sublocs: %w", err)
+	} else if err = os.WriteFile(name, buf, 0666); err != nil {
+		return fmt.Errorf("print_sublocs: %w", err)
 	}
-}
-
-func print_inside_sublocs(flag int, row, col int) {
-	count := 0
-	for i := 0; i < len(map_[row][col].roads); i++ {
-		count++
-		if count == 1 {
-			if flag != 0 {
-				fprintf(loc_fp, "LI\n")
-			}
-			fprintf(loc_fp, " hl ")
-		}
-
-		if count%11 == 10 { // continuation line
-			fprintf(loc_fp, "\\\n\t")
-		}
-
-		fprintf(loc_fp, "%d ", map_[row][col].roads[i].ent_num)
-	}
-
-	for i := 0; i < len(map_[row][col].gates_num); i++ {
-		count++
-		if count == 1 {
-			if flag != 0 {
-				fprintf(loc_fp, "LI\n")
-			}
-			fprintf(loc_fp, " hl ")
-		}
-
-		if count%11 == 10 { // continuation line
-			fprintf(loc_fp, "\\\n\t")
-		}
-
-		fprintf(loc_fp, "%d ", map_[row][col].gates_num[i])
-	}
-
-	for i := 0; i < len(map_[row][col].subs); i++ {
-		count++
-		if count == 1 {
-			if flag != 0 {
-				fprintf(loc_fp, "LI\n")
-			}
-			fprintf(loc_fp, " hl ")
-		}
-
-		if count%11 == 10 { // continuation line
-			fprintf(loc_fp, "\\\n\t")
-		}
-
-		fprintf(loc_fp, "%d ", map_[row][col].subs[i])
-	}
-
-	if count != 0 {
-		fprintf(loc_fp, "\n")
-	}
-}
-
-func print_subloc_gates(n int) { // and inside buildings...
-	count := 0
-
-	for i := 0; i < len(subloc_mg[n].roads); i++ {
-		count++
-		if count == 1 {
-			fprintf(loc_fp, " hl ")
-		}
-		if count%11 == 10 { // continuation line
-			fprintf(loc_fp, "\\\n\t")
-		}
-		fprintf(loc_fp, "%d ", subloc_mg[n].roads[i].ent_num)
-	}
-
-	for i := 0; i < len(subloc_mg[n].gates_num); i++ {
-		count++
-		if count == 1 {
-			fprintf(loc_fp, " hl ")
-		}
-		if count%11 == 10 { // continuation line
-			fprintf(loc_fp, "\\\n\t")
-		}
-		fprintf(loc_fp, "%d ", subloc_mg[n].gates_num[i])
-	}
-
-	for i := 0; i < len(subloc_mg[n].subs); i++ {
-		count++
-		if count == 1 {
-			fprintf(loc_fp, " hl ")
-		}
-		if count%11 == 10 { // continuation line
-			fprintf(loc_fp, "\\\n\t")
-		}
-		fprintf(loc_fp, "%d ", subloc_mg[n].subs[i])
-	}
-
-	if count != 0 {
-		fprintf(loc_fp, "\n")
-	}
-}
-
-func print_sublocs() {
-	for i := 1; i <= top_subloc; i++ {
-		sl := FALSE
-
-		fprintf(loc_fp, "%d loc %s\n", subloc_mg[i].region, terr_s[subloc_mg[i].terrain])
-
-		if subloc_mg[i].name != "" && subloc_mg[i].name != "Unnamed" {
-			fprintf(loc_fp, "na %s\n", subloc_mg[i].name)
-		}
-
-		if !(subloc_mg[i].inside != 0) {
-			panic("assert(subloc[i].inside != 0)")
-		}
-
-		fprintf(loc_fp, "LI\n")
-		fprintf(loc_fp, " wh %d\n", subloc_mg[i].inside)
-		print_subloc_gates(i)
-
-		fprintf(loc_fp, "LO\n")
-
-		if subloc_mg[i].hidden != FALSE {
-			fprintf(loc_fp, " hi %d\n", subloc_mg[i].hidden)
-		}
-
-		if subloc_mg[i].major_city != FALSE {
-			if sl == FALSE {
-				fprintf(loc_fp, "SL\n")
-				sl = TRUE
-			}
-			fprintf(loc_fp, " mc %d\n", subloc_mg[i].major_city)
-		}
-
-		if subloc_mg[i].safe_haven != FALSE {
-			if sl == FALSE {
-				fprintf(loc_fp, "SL\n")
-				sl = TRUE
-			}
-			fprintf(loc_fp, " sh 1\n")
-		}
-
-		fprintf(loc_fp, "\n")
-	}
+	log.Printf("print_sublocs: created %s\n", name)
+	return nil
 }
 
 // Return the region immediately adjacent to <location> in direction <dir>.

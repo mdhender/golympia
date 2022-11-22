@@ -35,9 +35,9 @@ var (
 )
 
 // fill the map with characters corresponding to the provinces.
-func load_cmap() int {
+func load_cmap() (asciiMap []string) {
 	if xsize >= MAX_X || ysize >= MAX_Y {
-		return 0
+		return asciiMap
 	}
 
 	// default everything to impassible
@@ -75,13 +75,16 @@ func load_cmap() int {
 			cmap[x][y] = '?'
 		}
 	}
-	return 1
+	for i := 0; i < MAX_X; i++ {
+		asciiMap = append(asciiMap, string(cmap[i][:]))
+	}
+	return asciiMap
 }
 
 // indicate where players are...
-func load_cmap_players() int {
+func load_cmap_players() (asciiMap []string) {
 	if xsize >= MAX_X || ysize >= MAX_Y {
-		return 0
+		return asciiMap
 	}
 
 	for _, i := range loop_kind(T_loc) {
@@ -108,7 +111,10 @@ func load_cmap_players() int {
 		}
 	}
 
-	return 1
+	for i := 0; i < MAX_X; i++ {
+		asciiMap = append(asciiMap, string(cmap[i][:]))
+	}
+	return asciiMap
 }
 
 func print_cmap(w io.Writer) {

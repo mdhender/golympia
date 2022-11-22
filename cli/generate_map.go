@@ -26,7 +26,7 @@ import (
 	"log"
 )
 
-// cmdGenerateMap runs the generate map command
+// cmdGenerateMap runs the map generator command
 var cmdGenerateMap = &cobra.Command{
 	Use:   "map",
 	Short: "generate a new map",

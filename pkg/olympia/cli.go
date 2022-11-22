@@ -20,6 +20,7 @@
 package olympia
 
 import (
+	"fmt"
 	"log"
 )
 
@@ -41,37 +42,32 @@ func GenerateMap(options ...Option) error {
 
 	clear_alloc_flag()
 	dir_assert()
-	open_fps()
 	load_seed(seedDataFilename)
+
 	map_init()
+
 	read_map(mapDataFilename)
 	fix_terrain_land()
+
 	set_regions(regionDataFilename)
 	set_province_clumps(landDataFilename)
+
 	unnamed_province_clumps()
+
 	make_islands()
 	make_graveyards()
+
 	place_sublocations()
+
 	make_gates()
 	make_roads()
-	print_map(stdout)
-	print_sublocs()
-	dump_continents(continentDataFilename)
+
 	count_cities()
 	count_continents()
 	count_sublocs()
 	count_subloc_coverage()
-	dump_roads(roadDataFilename)
-	dump_gates(gateDataFilename)
-
-	fclose(loc_fp)
-	fclose(gate_fp)
-	fclose(road_fp)
-
 	count_tiles()
 
-	log.Println("")
-	log.Println("")
 	log.Printf("max row, col     = (%2d,%2d)\n", max_row, max_col)
 	log.Printf("subloc_low       = %8d\n", SUBLOC_LOW)
 	log.Printf("highest province = %8d\n", map_[max_row][max_col].region)
@@ -79,6 +75,25 @@ func GenerateMap(options ...Option) error {
 	// if the province allocation spilled into the subloc range, we have to increase SUBLOC_MAX
 	if !(SUBLOC_LOW > map_[max_row][max_col].region) {
 		panic("assert(SUBLOC_LOW > map_[max_row][max_col].region)")
+	}
+
+	log.Println("")
+	log.Println("")
+
+	if err := print_map("map-data.json"); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := print_sublocs("subloc-data.json"); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := dump_continents(continentDataFilename); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := dump_roads(roadDataFilename); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := dump_gates(gateDataFilename); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
 	}
 
 	return nil

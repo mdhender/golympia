@@ -266,14 +266,16 @@ func RunOly(args ...string) int {
 	}
 
 	if map_flag {
-		//int load_cmap();
-		//void print_map();
-		if load_cmap() != FALSE {
-			print_map(stdout)
+		if asciiMap := load_cmap(); asciiMap != nil {
+			for _, row := range asciiMap {
+				fmt.Printf("%s\n", row)
+			}
 		}
 		log.Println("")
-		if load_cmap_players() != 0 {
-			print_map(stdout)
+		if asciiMap := load_cmap_players(); asciiMap != nil {
+			for _, row := range asciiMap {
+				fmt.Printf("%s\n", row)
+			}
 		}
 		os.Exit(1)
 	}
