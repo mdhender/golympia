@@ -22,6 +22,7 @@ package olympia
 import (
 	"fmt"
 	"log"
+	"path/filepath"
 )
 
 func GenerateMap(options ...Option) error {
@@ -80,19 +81,47 @@ func GenerateMap(options ...Option) error {
 	log.Println("")
 	log.Println("")
 
-	if err := print_map("map-data.json"); err != nil {
+	if err := print_map(filepath.Join(libdir, "map-data.json")); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
-	if err := print_sublocs("subloc-data.json"); err != nil {
+	if err := print_sublocs(filepath.Join(libdir, "subloc-data.json")); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
-	if err := dump_continents(continentDataFilename); err != nil {
+	if err := dump_continents(filepath.Join(libdir, continentDataFilename)); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
-	if err := dump_roads(roadDataFilename); err != nil {
+	if err := RoadDataSave(filepath.Join(libdir, roadDataFilename)); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
-	if err := dump_gates(gateDataFilename); err != nil {
+	if err := GateDataSave(filepath.Join(libdir, gateDataFilename)); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+
+	if err := CharacterDataSave(filepath.Join(libdir, "characters")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := LocationDataSave(filepath.Join(libdir, "locations.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := ItemDataSave(filepath.Join(libdir, "items.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := MiscDataSave(filepath.Join(libdir, "misc.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := NationDataSave(filepath.Join(libdir, "nations.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := ShipDataSave(filepath.Join(libdir, "ships.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := SkillDataSave(filepath.Join(libdir, "skills.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := SysDataSave(filepath.Join(libdir, "sysdata.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	if err := UnformDataSave(filepath.Join(libdir, "unform.json")); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
 

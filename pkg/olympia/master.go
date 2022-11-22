@@ -22,50 +22,32 @@ package olympia
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"os"
 )
 
-type item_ent_l []*item_ent
+type MasterData struct{}
 
-func (ie item_ent_l) Len() int {
-	return len(ie)
-}
-
-func (ie item_ent_l) Less(i, j int) bool {
-	return ie[i].item < ie[j].item
-}
-
-func (ie item_ent_l) Swap(i, j int) {
-	ie[i], ie[j] = ie[j], ie[i]
-}
-
-type ItemList []*Item
-type Item struct {
-	Id   int    `json:"id"`             // identity of the item
-	Name string `json:"name,omitempty"` // name of the item
-}
-
-func ItemDataLoad(name string) (ItemList, error) {
-	log.Printf("ItemDataLoad: loading %s\n", name)
+func MasterDataLoad(name string) (*MasterData, error) {
 	data, err := os.ReadFile(name)
 	if err != nil {
-		return nil, fmt.Errorf("ItemDataLoad: %w", err)
+		return nil, fmt.Errorf("MasterDataLoad: %w", err)
 	}
-	var js ItemList
+	js := &SysData{}
 	if err := json.Unmarshal(data, &js); err != nil {
-		return nil, fmt.Errorf("ItemDataLoad: %w", err)
+		return nil, fmt.Errorf("MasterDataLoad: %w", err)
 	}
+
 	return nil, nil
 }
 
-func ItemDataSave(name string) error {
-	var js ItemList
+func MasterDataSave(name string) error {
+	var js MasterData
 	data, err := json.MarshalIndent(js, "", "  ")
 	if err != nil {
-		return fmt.Errorf("ItemDataSave: %w", err)
+		return fmt.Errorf("MasterDataSave: %w", err)
 	} else if err := os.WriteFile(name, data, 0666); err != nil {
-		return fmt.Errorf("ItemDataSave: %w", err)
+		return fmt.Errorf("MasterDataSave: %w", err)
 	}
+
 	return nil
 }

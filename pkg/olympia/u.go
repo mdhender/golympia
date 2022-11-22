@@ -22,7 +22,6 @@ package olympia
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
 	"time"
 )
@@ -1659,15 +1658,15 @@ func set_known(who, i int) {
 
 func print_dot(ch byte) {
 	if dot_count == 0 {
-		fprintf(os.Stderr, "   ")
+		log.Printf("   ")
 		dot_count++
 	}
 	dot_count++ // because we put two spaces in the buf
 
 	if dot_count%60 == 0 {
-		fprintf(os.Stderr, "\n   ")
+		log.Printf("\n   ")
 	}
-	fprintf(os.Stderr, "%c", ch)
+	log.Printf("%c", ch)
 }
 
 func first_character(where int) int {
@@ -1760,7 +1759,7 @@ var (
 func stage(s string) {
 	if !time_self {
 		if len(s) != 0 {
-			fprintf(os.Stderr, "%s\n", s)
+			log.Printf("%s\n", s)
 		}
 		return
 	}
@@ -1769,14 +1768,14 @@ func stage(s string) {
 	if _stage_old.IsZero() {
 		_stage_first = t
 	} else {
-		fprintf(os.Stderr, "\t%v\n", t.Sub(_stage_old))
+		log.Printf("\t%v\n", t.Sub(_stage_old))
 	}
 	_stage_old = t
 
 	if s != "" {
-		fprintf(os.Stderr, "%s", s)
+		log.Printf("%s", s)
 	} else {
-		fprintf(os.Stderr, "%v\n", t.Sub(_stage_first))
+		log.Printf("%v\n", t.Sub(_stage_first))
 	}
 }
 

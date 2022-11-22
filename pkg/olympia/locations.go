@@ -19,7 +19,13 @@
 
 package olympia
 
-import "sort"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"sort"
+)
 
 type LocationList []*Location
 
@@ -36,8 +42,10 @@ func (l LocationList) Swap(i, j int) {
 }
 
 type Location struct {
-	Id      int    `json:"id"`                // identity of the location
-	Name    string `json:"name,omitempty"`    // name of the location
+	Id      int    `json:"id"`             // identity of the location
+	Name    string `json:"name,omitempty"` // name of the location
+	Kind    string `json:"kind,omitempty"`
+	SubKind string `json:"sub-kind,omitempty"`
 	Terrain string `json:"terrain,omitempty"` // type of terrain in location
 	Is      struct {
 		Hidden       bool `json:"hidden,omitempty"`        // was `LO > hi`
@@ -165,4 +173,33 @@ func SubLocationsFromMapGen() (locations LocationList) {
 
 	sort.Sort(locations)
 	return locations
+}
+
+func LocationDataLoad(name string) (LocationList, error) {
+	log.Printf("LocationDataLoad: loading %s\n", name)
+	data, err := os.ReadFile(name)
+	if err != nil {
+		return nil, fmt.Errorf("LocationDataLoad: %w", err)
+	}
+	var list LocationList
+	if err := json.Unmarshal(data, &list); err != nil {
+		return nil, fmt.Errorf("LocationDataLoad: %w", err)
+	}
+
+	for _, e := range list {
+		BoxAlloc(e.Id, strKind[e.Kind], strSubKind[e.SubKind])
+	}
+
+	return nil, nil
+}
+
+func LocationDataSave(name string) error {
+	list := &LocationList{}
+	data, err := json.MarshalIndent(list, "", "  ")
+	if err != nil {
+		return fmt.Errorf("LocationDataSave: %w", err)
+	} else if err := os.WriteFile(name, data, 0666); err != nil {
+		return fmt.Errorf("LocationDataSave: %w", err)
+	}
+	return nil
 }

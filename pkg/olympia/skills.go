@@ -19,7 +19,13 @@
 
 package olympia
 
-import "sort"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"sort"
+)
 
 type skills_l []int
 
@@ -103,4 +109,34 @@ func (l skill_ent_l) rem_value(value *skill_ent) skill_ent_l {
 		cp = append(cp, e)
 	}
 	return cp
+}
+
+type SkillList []*Skill
+type Skill struct {
+	Id   int    `json:"id"`             // identity of the skill
+	Name string `json:"name,omitempty"` // name of the skill
+}
+
+func SkillDataLoad(name string) (SkillList, error) {
+	log.Printf("SkillDataLoad: loading %s\n", name)
+	data, err := os.ReadFile(name)
+	if err != nil {
+		return nil, fmt.Errorf("SkillDataLoad: %w", err)
+	}
+	var js SkillList
+	if err := json.Unmarshal(data, &js); err != nil {
+		return nil, fmt.Errorf("SkillDataLoad: %w", err)
+	}
+	return nil, nil
+}
+
+func SkillDataSave(name string) error {
+	var js SkillList
+	data, err := json.MarshalIndent(js, "", "  ")
+	if err != nil {
+		return fmt.Errorf("SkillDataSave: %w", err)
+	} else if err := os.WriteFile(name, data, 0666); err != nil {
+		return fmt.Errorf("SkillDataSave: %w", err)
+	}
+	return nil
 }

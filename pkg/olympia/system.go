@@ -20,10 +20,10 @@
 package olympia
 
 import (
-	"bytes"
+	"encoding/json"
+	"fmt"
 	"log"
-	"unicode"
-	"unicode/utf8"
+	"os"
 )
 
 type OlyTime struct {
@@ -95,184 +95,173 @@ type SysData struct {
 	UR int `json:"ur,omitempty"`
 }
 
-func System(buf []byte) *SysData {
-	lines := bytes.Split(buf, []byte{'\n'})
-
-	system := &SysData{
-		TopPiety:    12,
-		MiddlePiety: 6,
-		BottomPiety: 3,
+func SysDataLoad(name string) (*SysData, error) {
+	data, err := os.ReadFile(name)
+	if err != nil {
+		return nil, fmt.Errorf("SysDataLoad: %w", err)
 	}
-
-	for _, line := range lines {
-		line = bytes.TrimRightFunc(line, func(r rune) bool {
-			return r == utf8.RuneError || unicode.IsSpace(r)
-		})
-		// ignore comments and blank lines
-		if len(line) == 0 || bytes.HasPrefix(line, []byte{'#'}) {
-			continue
-		}
-		// olytime is special
-		if bytes.HasPrefix(line, []byte("sysclock:")) {
-			system.SysClock = olytimeFromSlice(line[9:])
-			continue
-		}
-		if bytes.IndexByte(line, '=') == -1 {
-			log.Printf("system: invalid line: %q\n", string(line))
-			continue
-		}
-		f := bytes.FieldsFunc(line, func(r rune) bool {
-			return r == '='
-		})
-		if len(f) != 2 {
-			log.Printf("system: invalid line: %q\n", string(line))
-			continue
-		}
-		switch string(f[0]) {
-		case "accounting_dir":
-			system.AccountingDir = string(f[1])
-		case "accounting_prog":
-			system.AccountingProg = string(f[1])
-		case "autodrop":
-			system.AutoDrop = btoi(f[1]) != 0
-		case "bottom_piety":
-			system.BottomPiety = btoi(f[1])
-		case "check_balance":
-			system.CheckBalance = btoi(f[1])
-		case "claim_give":
-			system.ClaimGive = btoi(f[1])
-		case "cp":
-			system.CombatPlayer = btoi(f[1])
-		case "cpp":
-			system.CPP = string(f[1])
-		case "cr":
-			system.CloudRegion = btoi(f[1])
-		case "death_nps":
-			system.DeathNPs = btoi(f[1])
-		case "deserted_player":
-			system.DesertedPlayer = btoi(f[1])
-		case "ds":
-			system.DistSeaCompute = btoi(f[1])
-		case "fp":
-			system.FaeryPlayer = btoi(f[1])
-		case "full_markets":
-			system.FullMarkets = btoi(f[1]) != 0
-		case "fr":
-			system.FaeryRegion = btoi(f[1])
-		case "free":
-			system.Free = btoi(f[1]) != 0
-		case "free_np_limit":
-			system.FreeNPLimit = btoi(f[1])
-		case "from_host":
-			system.FromHost = string(f[1])
-		case "game_num":
-			system.GameNumber = btoi(f[1])
-		case "gm_player":
-			system.GMPlayer = btoi(f[1])
-		case "guild_teaching":
-			system.GuildTeaching = btoi(f[1]) != 0
-		case "head_priest_piety_limit":
-			system.HeadPriestPietyLimit = btoi(f[1])
-		case "hl":
-			system.HadesPlayer = btoi(f[1])
-		case "hp":
-			system.HadesPit = btoi(f[1])
-		case "hr":
-			system.HadesRegion = btoi(f[1])
-		case "html_path":
-			system.HTMLPath = string(f[1])
-		case "html_passwords":
-			system.HTMLPasswords = string(f[1])
-		case "indep_player":
-			system.IndepPlayer = btoi(f[1])
-		case "init":
-			system.SeedHasBeenRun = btoi(f[1]) != 0
-		case "market_age":
-			system.MarketAge = btoi(f[1])
-		case "mi":
-			system.CookieInit = btoi(f[1])
-		case "middle_piety":
-			system.MiddlePiety = btoi(f[1])
-		case "min_piety":
-			system.MinPiety = btoi(f[1])
-		case "mp_antipathy":
-			system.MPAntipathy = btoi(f[1]) != 0
-		case "ms":
-			system.MonsterSublocInit = btoi(f[1]) != 0
-		case "nc":
-			system.NearCityInit = btoi(f[1])
-		case "nl":
-			system.NL = btoi(f[1])
-		case "np":
-			system.NPCPlayer = btoi(f[1])
-		case "nr":
-			system.NR = btoi(f[1])
-		case "num_books":
-			system.NumBooks = btoi(f[1])
-		case "open_ended":
-			system.OpenEnded = btoi(f[1]) != 0
-		case "output_tags":
-			system.OutputTags = btoi(f[1])
-		case "pi":
-			system.PopulationInit = btoi(f[1]) != 0
-		case "piety_limit":
-			system.PietyLimit = btoi(f[1])
-		case "post":
-			system.PostHasBeenRun = btoi(f[1]) != 0
-		case "reply_host":
-			system.ReplyHost = string(f[1])
-		case "seed0":
-			system.Seed[0] = btoi(f[1])
-		case "seed1":
-			system.Seed[1] = btoi(f[1])
-		case "seed2":
-			system.Seed[2] = btoi(f[1])
-		case "skill_player":
-			system.SkillPlayer = btoi(f[1])
-		case "survive_np":
-			system.SurviveNP = btoi(f[1]) != 0
-		case "times_pay":
-			system.TimesPay = btoi(f[1])
-		case "top_piety":
-			system.TopPiety = btoi(f[1])
-		case "tr":
-			system.TR = btoi(f[1])
-		case "turn_charge":
-			system.TurnCharge = string(f[1])
-		case "turn_limit":
-			system.TurnLimit = btoi(f[1])
-		case "ur":
-			system.UR = btoi(f[1])
-		case "xsize":
-			system.XSize = btoi(f[1])
-		case "ysize":
-			system.YSize = btoi(f[1])
-		default:
-			log.Printf("system: unrecognized field: %q\n", string(f[0]))
-		}
+	js := &SysData{}
+	if err := json.Unmarshal(data, &js); err != nil {
+		log.Printf("load_system: system: %v\n", err)
+		return nil, fmt.Errorf("SysDataLoad: %w", err)
 	}
 
 	// reset values for piety if the user set them all to zero.
-	if system.TopPiety == 0 && system.MiddlePiety == 0 && system.BottomPiety == 0 {
-		system.TopPiety = 12
-		system.MiddlePiety = 6
-		system.BottomPiety = 3
+	if js.TopPiety == 0 && js.MiddlePiety == 0 && js.BottomPiety == 0 {
+		js.TopPiety = 12
+		js.MiddlePiety = 6
+		js.BottomPiety = 3
 	}
 
 	// enforce ordering on the piety levels
-	if system.TopPiety < system.MiddlePiety {
-		system.TopPiety, system.MiddlePiety = system.MiddlePiety, system.TopPiety
+	if js.TopPiety < js.MiddlePiety {
+		js.TopPiety, js.MiddlePiety = js.MiddlePiety, js.TopPiety
 	}
-	if system.TopPiety < system.BottomPiety {
-		system.TopPiety, system.BottomPiety = system.BottomPiety, system.TopPiety
+	if js.TopPiety < js.BottomPiety {
+		js.TopPiety, js.BottomPiety = js.BottomPiety, js.TopPiety
 	}
-	if system.MiddlePiety < system.BottomPiety {
-		system.MiddlePiety, system.BottomPiety = system.BottomPiety, system.MiddlePiety
+	if js.MiddlePiety < js.BottomPiety {
+		js.MiddlePiety, js.BottomPiety = js.BottomPiety, js.MiddlePiety
 	}
 
-	return system
+	cloud_region = js.CloudRegion
+	combat_pl = js.CombatPlayer
+	cookie_init = js.CookieInit
+	deserted_player = js.DesertedPlayer
+	dist_sea_compute = js.DistSeaCompute
+	faery_player = js.FaeryPlayer
+	faery_region = js.FaeryRegion
+	from_host = js.FromHost
+	game_number = js.GameNumber
+	gm_player = js.GMPlayer
+	hades_pit = js.HadesPit
+	hades_player = js.HadesPlayer
+	hades_region = js.HadesRegion
+	indep_player = js.IndepPlayer
+	monster_subloc_init = js.MonsterSublocInit
+	near_city_init = js.NearCityInit
+	npc_pl = js.NPCPlayer
+	sysclock.day = js.SysClock.Day
+	sysclock.turn = js.SysClock.Turn
+	sysclock.days_since_epoch = js.SysClock.DaysSinceEpoch
+	options.accounting_dir = js.AccountingDir
+	options.accounting_prog = js.AccountingProg
+	options.auto_drop = js.AutoDrop
+	options.bottom_piety = js.BottomPiety
+	options.check_balance = js.CheckBalance
+	options.claim_give = js.ClaimGive
+	options.cpp = js.CPP
+	options.death_nps = js.DeathNPs
+	options.free = js.Free
+	options.free_np_limit = js.FreeNPLimit
+	options.full_markets = js.FullMarkets
+	options.guild_teaching = js.GuildTeaching
+	options.head_priest_piety_limit = js.HeadPriestPietyLimit
+	options.html_passwords = js.HTMLPasswords
+	options.html_path = js.HTMLPath
+	options.market_age = js.MarketAge
+	options.middle_piety = js.MiddlePiety
+	options.min_piety = js.MinPiety
+	options.mp_antipathy = js.MPAntipathy
+	options.num_books = js.NumBooks
+	options.open_ended = js.OpenEnded
+	options.output_tags = js.OutputTags
+	options.piety_limit = js.PietyLimit
+	options.survive_np = js.SurviveNP
+	options.times_pay = js.TimesPay
+	options.top_piety = js.TopPiety
+	options.turn_charge = js.TurnCharge
+	options.turn_limit = js.TurnLimit
+	population_init = js.PopulationInit
+	if js.PostHasBeenRun {
+		post_has_been_run = TRUE
+	} else {
+		post_has_been_run = FALSE
+	}
+	reply_host = js.ReplyHost
+	seed[0] = js.Seed[0]
+	seed[1] = js.Seed[1]
+	seed[2] = js.Seed[2]
+	if js.SeedHasBeenRun {
+		seed_has_been_run = TRUE
+	} else {
+		seed_has_been_run = FALSE
+	}
+	skill_player = js.SkillPlayer
+	xsize = js.XSize
+	ysize = js.YSize
+
+	return js, nil
 }
 
-func btoi(b []byte) int {
-	return atoi_b(b)
+func SysDataSave(name string) error {
+	var js SysData
+
+	js.CloudRegion = cloud_region
+	js.CombatPlayer = combat_pl
+	js.CookieInit = cookie_init
+	js.DesertedPlayer = deserted_player
+	js.DistSeaCompute = dist_sea_compute
+	js.FaeryPlayer = faery_player
+	js.FaeryRegion = faery_region
+	js.FromHost = from_host
+	js.GameNumber = game_number
+	js.GMPlayer = gm_player
+	js.HadesPit = hades_pit
+	js.HadesPlayer = hades_player
+	js.HadesRegion = hades_region
+	js.IndepPlayer = indep_player
+	js.MonsterSublocInit = monster_subloc_init
+	js.NearCityInit = near_city_init
+	js.NPCPlayer = npc_pl
+	js.SysClock.Day = sysclock.day
+	js.SysClock.Turn = sysclock.turn
+	js.SysClock.DaysSinceEpoch = sysclock.days_since_epoch
+	js.AccountingDir = options.accounting_dir
+	js.AccountingProg = options.accounting_prog
+	js.AutoDrop = options.auto_drop
+	js.BottomPiety = options.bottom_piety
+	js.CheckBalance = options.check_balance
+	js.ClaimGive = options.claim_give
+	js.CPP = options.cpp
+	js.DeathNPs = options.death_nps
+	js.Free = options.free
+	js.FreeNPLimit = options.free_np_limit
+	js.FullMarkets = options.full_markets
+	js.GuildTeaching = options.guild_teaching
+	js.HeadPriestPietyLimit = options.head_priest_piety_limit
+	js.HTMLPasswords = options.html_passwords
+	js.HTMLPath = options.html_path
+	js.MarketAge = options.market_age
+	js.MiddlePiety = options.middle_piety
+	js.MinPiety = options.min_piety
+	js.MPAntipathy = options.mp_antipathy
+	js.NumBooks = options.num_books
+	js.OpenEnded = options.open_ended
+	js.OutputTags = options.output_tags
+	js.PietyLimit = options.piety_limit
+	js.SurviveNP = options.survive_np
+	js.TimesPay = options.times_pay
+	js.TopPiety = options.top_piety
+	js.TurnCharge = options.turn_charge
+	js.TurnLimit = options.turn_limit
+	js.PopulationInit = population_init
+	js.PostHasBeenRun = post_has_been_run != FALSE
+	js.ReplyHost = reply_host
+	js.Seed[0] = seed[0]
+	js.Seed[1] = seed[1]
+	js.Seed[2] = seed[2]
+	js.SeedHasBeenRun = seed_has_been_run != FALSE
+	js.SkillPlayer = skill_player
+	js.XSize = xsize
+	js.YSize = ysize
+
+	data, err := json.MarshalIndent(js, "", "  ")
+	if err != nil {
+		return fmt.Errorf("SysDataSave: %w", err)
+	} else if err := os.WriteFile(name, data, 0666); err != nil {
+		return fmt.Errorf("SysDataSave: %w", err)
+	}
+
+	return nil
 }

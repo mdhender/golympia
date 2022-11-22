@@ -21,7 +21,6 @@ package olympia
 
 import (
 	"bytes"
-	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -4212,10 +4211,14 @@ func read_chars() error {
 	return nil
 }
 
-func fast_scan() bool {
-	path := filepath.Join(libdir, "master")
+func fast_scan() error {
+	if _, err := MasterDataLoad(filepath.Join(libdir, "master.json")); err != nil {
+		return fmt.Errorf("fast_scan: %w", err)
+	}
+
+	path := filepath.Join(libdir, "master.json")
 	if !readfile(path) {
-		return false
+		return fmt.Errorf("fast_scan: %w", fmt.Errorf("something?"))
 	}
 
 	for s := readlin(); s != nil; s = readlin() {
@@ -4245,7 +4248,7 @@ func fast_scan() bool {
 		alloc_box(num, kind, sk)
 	}
 
-	return true
+	return nil
 }
 
 func scan_boxes(fnam string) {
@@ -4350,27 +4353,65 @@ func scan_chars() error {
  *  We do this so it is possible to perform type and sanity checking when
  *  the contents of the boxes are read in the second pass (read_boxes).
  */
-func scan_all_boxes() {
+func scan_all_boxes() error {
+	stage("scan_all_boxes")
 
-	stage("fast_scan failed, scan_all_boxes()")
-
-	scan_boxes("loc")
-	scan_boxes("item")
-	scan_boxes("skill")
-	scan_boxes("gate")
-	scan_boxes("road")
-	scan_boxes("ship")
-	scan_boxes("unform")
-	scan_boxes("misc")
-	scan_boxes("nation")
-
-	if err := scan_chars(); err != nil {
-		log.Printf("scan_all_boxes: %+v\n", err)
+	//scan_boxes("loc")
+	if _, err := LocationDataLoad(filepath.Join(libdir, "locations.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "loc", err)
 	}
+
+	//scan_boxes("item")
+	if _, err := ItemDataLoad(filepath.Join(libdir, "items.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "items", err)
+	}
+
+	//scan_boxes("skill")
+	if _, err := SkillDataLoad(filepath.Join(libdir, "skills.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "skills", err)
+	}
+
+	//scan_boxes("gate")
+	if _, err := GateDataLoad(filepath.Join(libdir, "gates.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "gates", err)
+	}
+
+	//scan_boxes("road")
+	if _, err := RoadDataLoad(filepath.Join(libdir, "roads.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "roads", err)
+	}
+
+	//scan_boxes("ship")
+	if _, err := ShipDataLoad(filepath.Join(libdir, "ships.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "ships", err)
+	}
+
+	//scan_boxes("unform")
+	if _, err := UnformDataLoad(filepath.Join(libdir, "unform.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "unform", err)
+	}
+
+	//scan_boxes("misc")
+	if _, err := MiscDataLoad(filepath.Join(libdir, "misc.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "misc", err)
+	}
+
+	//scan_boxes("nation")
+	if _, err := NationDataLoad(filepath.Join(libdir, "nations.json")); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "nations", err)
+	}
+
+	//if err := scan_chars(); err != nil {
+	//	log.Printf("scan_all_boxes: %+v\n", err)
+	//}
+	if err := CharactersLoad(); err != nil {
+		return fmt.Errorf("scan_all_boxes: %s: %w", "characters", err)
+	}
+
+	return nil
 }
 
 func read_all_boxes() {
-
 	read_boxes("loc")
 	read_boxes("item")
 	read_boxes("skill")
@@ -4382,7 +4423,7 @@ func read_all_boxes() {
 	read_boxes("nation")
 
 	if err := read_chars(); err != nil {
-		log.Printf("read_all_boxes: %+v\n", err)
+		panic(fmt.Sprintf("read_all_boxes: %+v\n", err))
 	}
 }
 
@@ -4569,156 +4610,16 @@ func write_master() error {
 //#endif
 
 func load_system() error {
-	fname := filepath.Join(libdir, "system.json")
-	data, err := os.ReadFile(fname)
-	if err != nil {
-		log.Printf("load_system: system: %v\n", err)
-		return err
+	if _, err := SysDataLoad(filepath.Join(libdir, "sysdata.json")); err != nil {
+		return fmt.Errorf("load_system: %w", err)
 	}
-	var js xlat.SYSTEM
-	if err := json.Unmarshal(data, &js); err != nil {
-		log.Printf("load_system: system: %v\n", err)
-		return err
-	}
-
-	cloud_region = js.CloudRegion
-	combat_pl = js.CombatPlayer
-	cookie_init = js.CookieInit
-	deserted_player = js.DesertedPlayer
-	dist_sea_compute = js.DistSeaCompute
-	faery_player = js.FaeryPlayer
-	faery_region = js.FaeryRegion
-	from_host = js.FromHost
-	game_number = js.GameNumber
-	gm_player = js.GMPlayer
-	hades_pit = js.HadesPit
-	hades_player = js.HadesPlayer
-	hades_region = js.HadesRegion
-	indep_player = js.IndepPlayer
-	monster_subloc_init = js.MonsterSublocInit
-	near_city_init = js.NearCityInit
-	npc_pl = js.NPCPlayer
-	sysclock.day = js.SysClock.Day
-	sysclock.turn = js.SysClock.Turn
-	sysclock.days_since_epoch = js.SysClock.DaysSinceEpoch
-	options.accounting_dir = js.AccountingDir
-	options.accounting_prog = js.AccountingProg
-	options.auto_drop = js.AutoDrop
-	options.bottom_piety = js.BottomPiety
-	options.check_balance = js.CheckBalance
-	options.claim_give = js.ClaimGive
-	options.cpp = js.CPP
-	options.death_nps = js.DeathNPs
-	options.free = js.Free
-	options.free_np_limit = js.FreeNPLimit
-	options.full_markets = js.FullMarkets
-	options.guild_teaching = js.GuildTeaching
-	options.head_priest_piety_limit = js.HeadPriestPietyLimit
-	options.html_passwords = js.HTMLPasswords
-	options.html_path = js.HTMLPath
-	options.market_age = js.MarketAge
-	options.middle_piety = js.MiddlePiety
-	options.min_piety = js.MinPiety
-	options.mp_antipathy = js.MPAntipathy
-	options.num_books = js.NumBooks
-	options.open_ended = js.OpenEnded
-	options.output_tags = js.OutputTags
-	options.piety_limit = js.PietyLimit
-	options.survive_np = js.SurviveNP
-	options.times_pay = js.TimesPay
-	options.top_piety = js.TopPiety
-	options.turn_charge = js.TurnCharge
-	options.turn_limit = js.TurnLimit
-	population_init = js.PopulationInit
-	if js.PostHasBeenRun {
-		post_has_been_run = TRUE
-	} else {
-		post_has_been_run = FALSE
-	}
-	reply_host = js.ReplyHost
-	seed[0] = js.Seed[0]
-	seed[1] = js.Seed[1]
-	seed[2] = js.Seed[2]
-	if js.SeedHasBeenRun {
-		seed_has_been_run = TRUE
-	} else {
-		seed_has_been_run = FALSE
-	}
-	skill_player = js.SkillPlayer
-	xsize = js.XSize
-	ysize = js.YSize
-
 	return nil
 }
 
 func save_system() error {
-	log.Printf("save_system: please update for boolean values\n")
-
-	fname := filepath.Join(libdir, "system")
-	fp, err := os.Create(fname)
-	if err != nil {
-		fprintf(os.Stderr, "load_system: can't write %s: %v\n", fname, err)
-		return err
+	if err := SysDataSave(filepath.Join(libdir, "sysdata.json")); err != nil {
+		return fmt.Errorf("save_system: %w", err)
 	}
-
-	olytime_print(fp, []byte("sysclock: "), &sysclock)
-	fprintf(fp, "game_num=%d\n", game_number)
-	fprintf(fp, "indep_player=%d\n", indep_player)
-	fprintf(fp, "gm_player=%d\n", gm_player)
-	fprintf(fp, "skill_player=%d\n", skill_player)
-	fprintf(fp, "from_host=%s\n", from_host)
-	fprintf(fp, "reply_host=%s\n", reply_host)
-	fprintf(fp, "seed0=%d\n", seed[0])
-	fprintf(fp, "seed1=%d\n", seed[1])
-	fprintf(fp, "seed2=%d\n", seed[2])
-	fprintf(fp, "post=%d\n", post_has_been_run)
-	fprintf(fp, "init=%d\n", seed_has_been_run)
-	fprintf(fp, "ds=%d\n", dist_sea_compute)
-	fprintf(fp, "nc=%d\n", near_city_init)
-	fprintf(fp, "mi=%d\n", cookie_init)
-	fprintf(fp, "fr=%d\n", faery_region)
-	fprintf(fp, "fp=%d\n", faery_player)
-	fprintf(fp, "hr=%d\n", hades_region)
-	fprintf(fp, "hp=%d\n", hades_pit)
-	fprintf(fp, "hl=%d\n", hades_player)
-	fprintf(fp, "np=%d\n", npc_pl)
-	fprintf(fp, "ms=%d\n", monster_subloc_init)
-	fprintf(fp, "pi=%d\n", population_init)
-	fprintf(fp, "cr=%d\n", cloud_region)
-	fprintf(fp, "cp=%d\n", combat_pl)
-	fprintf(fp, "xsize=%d\n", xsize)
-	fprintf(fp, "ysize=%d\n", ysize)
-	fprintf(fp, "turn_limit=%d\n", options.turn_limit)
-	fprintf(fp, "autodrop=%d\n", options.auto_drop)
-	fprintf(fp, "free=%d\n", options.free)
-	fprintf(fp, "turn_charge=%s\n", options.turn_charge)
-	fprintf(fp, "mp_antipathy=%d\n", options.mp_antipathy)
-	fprintf(fp, "survive_np=%d\n", options.survive_np)
-	fprintf(fp, "death_nps=%d\n", options.death_nps)
-	fprintf(fp, "guild_teaching=%d\n", options.guild_teaching)
-	fprintf(fp, "accounting_dir=%s\n", options.accounting_dir)
-	fprintf(fp, "accounting_prog=%s\n", options.accounting_prog)
-	fprintf(fp, "html_path=%s\n", options.html_path)
-	fprintf(fp, "html_passwords=%s\n", options.html_passwords)
-	fprintf(fp, "times_pay=%d\n", options.times_pay)
-	fprintf(fp, "open_ended=%d\n", options.open_ended)
-	fprintf(fp, "cpp=%s\n", options.cpp)
-	fprintf(fp, "full_markets=%d\n", options.full_markets)
-	fprintf(fp, "output_tags=%d\n", options.output_tags)
-	fprintf(fp, "num_books=%d\n", options.num_books)
-	fprintf(fp, "market_age=%d\n", options.market_age)
-	fprintf(fp, "min_piety=%d\n", options.min_piety)
-	fprintf(fp, "piety_limit=%d\n", options.piety_limit)
-	fprintf(fp, "head_priest_piety_limit=%d\n", options.head_priest_piety_limit)
-	fprintf(fp, "top_piety=%d\n", options.top_piety)
-	fprintf(fp, "middle_piety=%d\n", options.middle_piety)
-	fprintf(fp, "bottom_piety=%d\n", options.bottom_piety)
-	fprintf(fp, "claim_give=%d\n", options.claim_give)
-	fprintf(fp, "check_balance=%d\n", options.check_balance)
-	fprintf(fp, "free_np_limit=%d\n", options.free_np_limit)
-
-	_ = fp.Close()
-
 	return nil
 }
 
@@ -4751,11 +4652,14 @@ func load_db() error {
 	assert(linehash([]byte("ab ")) == `ab`)
 
 	if err := load_system(); err != nil {
-		log.Fatalf("load_db: %+v\n", err)
+		return fmt.Errorf("load_db: %w", err)
 	}
 
-	if !fast_scan() { /* pass 1: call alloc_box for each entity */
-		scan_all_boxes()
+	if err := fast_scan(); err != nil { /* pass 1: call alloc_box for each entity */
+		log.Printf("load_db: fast_scan failed\n")
+		if err := scan_all_boxes(); err != nil {
+			return fmt.Errorf("load_db: %w", err)
+		}
 	}
 
 	read_all_boxes() /* pass 2: read the entity attributes */

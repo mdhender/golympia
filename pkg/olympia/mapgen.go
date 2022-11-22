@@ -919,27 +919,6 @@ func dump_continents(name string) error {
 	return nil
 }
 
-func dump_gates(name string) error {
-	if buf, err := json.MarshalIndent(GatesFromMapGen(), "", "  "); err != nil {
-		return fmt.Errorf("dump_gates: %w", err)
-	} else if err = os.WriteFile(name, buf, 0666); err != nil {
-		return fmt.Errorf("dump_gates: %w", err)
-	}
-	log.Printf("dump_gates: created %s\n", name)
-	return nil
-}
-
-func dump_roads(name string) error {
-	if buf, err := json.MarshalIndent(RoadsFromMapGen(), "", "  "); err != nil {
-		return fmt.Errorf("dump_roads: %w", err)
-	} else if err = os.WriteFile(name, buf, 0666); err != nil {
-		return fmt.Errorf("dump_roads: %w", err)
-	}
-	log.Printf("dump_roads: created %s\n", name)
-
-	return nil
-}
-
 func fix_terrain_land() {
 	// todo: max_row vs MAX_ROW
 	for row := 0; row < MAX_ROW; row++ {
@@ -1541,7 +1520,7 @@ func random_city_name() string {
 		var data struct {
 			Cities []string `json:"cities"`
 		}
-		buf, err := os.ReadFile("city-names.json")
+		buf, err := os.ReadFile("cities.json")
 		if err != nil {
 			log.Printf("random_city_name: %+v\n", err)
 		} else if err = json.Unmarshal(buf, &data); err != nil {
@@ -1549,7 +1528,7 @@ func random_city_name() string {
 		} else {
 			_static_random_city_name.cities = data.Cities
 		}
-		log.Printf("%q: loaded %d city names\n", "city-names.json", len(_static_random_city_name.cities))
+		log.Printf("%q: loaded %d city names\n", "cities.json", len(_static_random_city_name.cities))
 		if _static_random_city_name.cities == nil {
 			_static_random_city_name.cities = []string{"T'othville"}
 		}

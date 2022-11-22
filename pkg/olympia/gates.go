@@ -19,7 +19,13 @@
 
 package olympia
 
-import "sort"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"sort"
+)
 
 type GateList []*Gate
 
@@ -84,4 +90,27 @@ func GatesFromMapGen() (gates GateList) {
 
 	sort.Sort(gates)
 	return gates
+}
+
+func GateDataLoad(name string) (GateList, error) {
+	log.Printf("GateDataLoad: loading %s\n", name)
+	data, err := os.ReadFile(name)
+	if err != nil {
+		return nil, fmt.Errorf("GateDataLoad: %w", err)
+	}
+	var js GateList
+	if err := json.Unmarshal(data, &js); err != nil {
+		return nil, fmt.Errorf("GateDataLoad: %w", err)
+	}
+	return nil, nil
+}
+
+func GateDataSave(name string) error {
+	if buf, err := json.MarshalIndent(GatesFromMapGen(), "", "  "); err != nil {
+		return fmt.Errorf("GateDataSave: %w", err)
+	} else if err = os.WriteFile(name, buf, 0666); err != nil {
+		return fmt.Errorf("GateDataSave: %w", err)
+	}
+	log.Printf("GateDataSave: created %s\n", name)
+	return nil
 }

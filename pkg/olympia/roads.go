@@ -19,7 +19,13 @@
 
 package olympia
 
-import "sort"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"sort"
+)
 
 type RoadList []*Road
 
@@ -84,4 +90,28 @@ func RoadsFromMapGen() (roads RoadList) {
 	sort.Sort(roads)
 
 	return roads
+}
+
+func RoadDataLoad(name string) (RoadList, error) {
+	log.Printf("RoadDataLoad: loading %s\n", name)
+	data, err := os.ReadFile(name)
+	if err != nil {
+		return nil, fmt.Errorf("RoadDataLoad: %w", err)
+	}
+	var js RoadList
+	if err := json.Unmarshal(data, &js); err != nil {
+		return nil, fmt.Errorf("RoadDataLoad: %w", err)
+	}
+	return nil, nil
+}
+
+func RoadDataSave(name string) error {
+	if buf, err := json.MarshalIndent(RoadsFromMapGen(), "", "  "); err != nil {
+		return fmt.Errorf("RoadDataSave: %w", err)
+	} else if err = os.WriteFile(name, buf, 0666); err != nil {
+		return fmt.Errorf("RoadDataSave: %w", err)
+	}
+	log.Printf("RoadDataSave: created %s\n", name)
+
+	return nil
 }

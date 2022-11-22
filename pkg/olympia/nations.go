@@ -26,46 +26,32 @@ import (
 	"os"
 )
 
-type item_ent_l []*item_ent
-
-func (ie item_ent_l) Len() int {
-	return len(ie)
-}
-
-func (ie item_ent_l) Less(i, j int) bool {
-	return ie[i].item < ie[j].item
-}
-
-func (ie item_ent_l) Swap(i, j int) {
-	ie[i], ie[j] = ie[j], ie[i]
-}
-
-type ItemList []*Item
-type Item struct {
+type NationList []*Nation
+type Nation struct {
 	Id   int    `json:"id"`             // identity of the item
 	Name string `json:"name,omitempty"` // name of the item
 }
 
-func ItemDataLoad(name string) (ItemList, error) {
-	log.Printf("ItemDataLoad: loading %s\n", name)
+func NationDataLoad(name string) (NationList, error) {
+	log.Printf("NationDataLoad: loading %s\n", name)
 	data, err := os.ReadFile(name)
 	if err != nil {
-		return nil, fmt.Errorf("ItemDataLoad: %w", err)
+		return nil, fmt.Errorf("NationDataLoad: %w", err)
 	}
-	var js ItemList
+	var js NationList
 	if err := json.Unmarshal(data, &js); err != nil {
-		return nil, fmt.Errorf("ItemDataLoad: %w", err)
+		return nil, fmt.Errorf("NationDataLoad: %w", err)
 	}
 	return nil, nil
 }
 
-func ItemDataSave(name string) error {
-	var js ItemList
+func NationDataSave(name string) error {
+	var js NationList
 	data, err := json.MarshalIndent(js, "", "  ")
 	if err != nil {
-		return fmt.Errorf("ItemDataSave: %w", err)
+		return fmt.Errorf("NationDataSave: %w", err)
 	} else if err := os.WriteFile(name, data, 0666); err != nil {
-		return fmt.Errorf("ItemDataSave: %w", err)
+		return fmt.Errorf("NationDataSave: %w", err)
 	}
 	return nil
 }
