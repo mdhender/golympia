@@ -21,6 +21,7 @@ package olympia
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -4567,154 +4568,85 @@ func write_master() error {
 //}
 //#endif
 
-/*
- *  The sysclock and the random number seed are stored separately
- *  from the entity data, in a file called "system".
- */
-
 func load_system() error {
-	fname := filepath.Join(libdir, "system")
-	fp, err := os.Open(fname)
+	fname := filepath.Join(libdir, "system.json")
+	data, err := os.ReadFile(fname)
 	if err != nil {
-		fprintf(os.Stderr, "load_system: can't read %s: %v\n", fname, err)
+		log.Printf("load_system: system: %v\n", err)
+		return err
+	}
+	var js xlat.SYSTEM
+	if err := json.Unmarshal(data, &js); err != nil {
+		log.Printf("load_system: system: %v\n", err)
 		return err
 	}
 
-	for s := getlin_ew(fp); s != nil; s = getlin_ew(fp) {
-		if len(s) == 0 || s[0] == '#' { /* comments and blank lines */
-			continue
-		}
-
-		if strncmp_bs(s, "sysclock:", 9) == 0 {
-			olytime_scan(s[9:], &sysclock)
-		} else if strncmp_bs(s, "game_num=", 9) == 0 {
-			game_number = atoi_b(s[9:])
-		} else if strncmp_bs(s, "from_host=", 10) == 0 {
-			from_host = string(s[10:])
-		} else if strncmp_bs(s, "reply_host=", 11) == 0 {
-			reply_host = string(s[11:])
-		} else if strncmp_bs(s, "indep_player=", 13) == 0 {
-			indep_player = atoi_b(s[13:])
-		} else if strncmp_bs(s, "gm_player=", 10) == 0 {
-			gm_player = atoi_b(s[10:])
-		} else if strncmp_bs(s, "skill_player=", 13) == 0 {
-			skill_player = atoi_b(s[13:])
-		} else if strncmp_bs(s, "seed0=", 6) == 0 {
-			seed[0] = atoi_b(s[6:])
-		} else if strncmp_bs(s, "seed1=", 6) == 0 {
-			seed[1] = atoi_b(s[6:])
-		} else if strncmp_bs(s, "seed2=", 6) == 0 {
-			seed[2] = atoi_b(s[6:])
-		} else if strncmp_bs(s, "post=", 5) == 0 {
-			post_has_been_run = atoi_b(s[5:])
-		} else if strncmp_bs(s, "init=", 5) == 0 {
-			seed_has_been_run = atoi_b(s[5:])
-		} else if strncmp_bs(s, "ds=", 3) == 0 {
-			dist_sea_compute = atoi_b(s[3:])
-		} else if strncmp_bs(s, "nc=", 3) == 0 {
-			near_city_init = atoi_b(s[3:])
-		} else if strncmp_bs(s, "mi=", 3) == 0 {
-			cookie_init = atoi_b(s[3:])
-		} else if strncmp_bs(s, "fr=", 3) == 0 {
-			faery_region = atoi_b(s[3:])
-		} else if strncmp_bs(s, "fp=", 3) == 0 {
-			faery_player = atoi_b(s[3:])
-		} else if strncmp_bs(s, "hr=", 3) == 0 {
-			hades_region = atoi_b(s[3:])
-		} else if strncmp_bs(s, "hp=", 3) == 0 {
-			hades_pit = atoi_b(s[3:])
-		} else if strncmp_bs(s, "hl=", 3) == 0 {
-			hades_player = atoi_b(s[3:])
-		} else if strncmp_bs(s, "np=", 3) == 0 {
-			npc_pl = atoi_b(s[3:])
-		} else if strncmp_bs(s, "ms=", 3) == 0 {
-			monster_subloc_init = atoi_b(s[3:]) != FALSE
-		} else if strncmp_bs(s, "pi=", 3) == 0 {
-			population_init = atoi_b(s[3:]) != FALSE
-		} else if strncmp_bs(s, "cr=", 3) == 0 {
-			cloud_region = atoi_b(s[3:])
-		} else if strncmp_bs(s, "cp=", 3) == 0 {
-			combat_pl = atoi_b(s[3:])
-		} else if strncmp_bs(s, "ysize=", 6) == 0 {
-			ysize = atoi_b(s[6:])
-		} else if strncmp_bs(s, "xsize=", 6) == 0 {
-			xsize = atoi_b(s[6:])
-		} else if strncmp_bs(s, "turn_limit=", 11) == 0 {
-			options.turn_limit = atoi_b(s[11:])
-		} else if strncmp_bs(s, "autodrop=", 9) == 0 {
-			options.auto_drop = atoi_b(s[9:]) != FALSE
-		} else if strncmp_bs(s, "free=", 5) == 0 {
-			options.free = atoi_b(s[5:]) != FALSE
-		} else if strncmp_bs(s, "turn_charge=", 12) == 0 {
-			options.turn_charge = string(s[12 : 12+23])
-		} else if strncmp_bs(s, "mp_antipathy=", 13) == 0 {
-			options.mp_antipathy = atoi_b(s[13:]) != FALSE
-		} else if strncmp_bs(s, "survive_np=", 11) == 0 {
-			options.survive_np = atoi_b(s[11:]) != FALSE
-		} else if strncmp_bs(s, "death_nps=", 10) == 0 {
-			options.death_nps = atoi_b(s[10:])
-		} else if strncmp_bs(s, "guild_teaching=", 15) == 0 {
-			options.guild_teaching = atoi_b(s[15:]) != FALSE
-		} else if strncmp_bs(s, "deserted_player=", 16) == 0 {
-			deserted_player = atoi_b(s[16:])
-		} else if strncmp_bs(s, "accounting_dir=", 15) == 0 {
-			options.accounting_dir = string(s[15:])
-			/* strncpy(options.accounting_dir, s[15:], 80); */
-		} else if strncmp_bs(s, "accounting_prog=", 16) == 0 {
-			options.accounting_prog = string(s[16:])
-			/* strncpy(options.accounting_prog, s[16:], 80); */
-		} else if strncmp_bs(s, "html_path=", 10) == 0 {
-			options.html_path = string(s[10:])
-		} else if strncmp_bs(s, "html_passwords=", 15) == 0 {
-			options.html_passwords = string(s[15:])
-		} else if strncmp_bs(s, "times_pay=", 10) == 0 {
-			options.times_pay = atoi_b(s[10:])
-		} else if strncmp_bs(s, "open_ended=", 11) == 0 {
-			options.open_ended = atoi_b(s[11:]) != FALSE
-		} else if strncmp_bs(s, "cpp=", 4) == 0 {
-			options.cpp = string(s[4 : 4+80])
-		} else if strncmp_bs(s, "full_markets=", 13) == 0 {
-			options.full_markets = atoi_b(s[13:]) != FALSE
-		} else if strncmp_bs(s, "output_tags=", 12) == 0 {
-			options.output_tags = atoi_b(s[12:])
-		} else if strncmp_bs(s, "num_books=", 10) == 0 {
-			options.num_books = atoi_b(s[10:])
-		} else if strncmp_bs(s, "market_age=", 11) == 0 {
-			options.market_age = atoi_b(s[11:])
-		} else if strncmp_bs(s, "min_piety=", 10) == 0 {
-			options.min_piety = atoi_b(s[10:])
-		} else if strncmp_bs(s, "piety_limit=", 12) == 0 {
-			options.piety_limit = atoi_b(s[12:])
-		} else if strncmp_bs(s, "head_priest_piety_limit=", 24) == 0 {
-			options.head_priest_piety_limit = atoi_b(s[24:])
-		} else if strncmp_bs(s, "top_piety=", 10) == 0 {
-			options.top_piety = atoi_b(s[10:])
-		} else if strncmp_bs(s, "middle_piety=", 13) == 0 {
-			options.middle_piety = atoi_b(s[13:])
-		} else if strncmp_bs(s, "bottom_piety=", 13) == 0 {
-			options.bottom_piety = atoi_b(s[13:])
-		} else if strncmp_bs(s, "claim_give=", 11) == 0 {
-			options.claim_give = atoi_b(s[11:])
-		} else if strncmp_bs(s, "check_balance=", 14) == 0 {
-			options.check_balance = atoi_b(s[14:])
-		} else if strncmp_bs(s, "free_np_limit=", 14) == 0 {
-			options.free_np_limit = atoi_b(s[14:])
-		} else {
-			fprintf(os.Stderr, "load_system: unrecognized line: %s\n", s)
-		}
+	cloud_region = js.CloudRegion
+	combat_pl = js.CombatPlayer
+	cookie_init = js.CookieInit
+	deserted_player = js.DesertedPlayer
+	dist_sea_compute = js.DistSeaCompute
+	faery_player = js.FaeryPlayer
+	faery_region = js.FaeryRegion
+	from_host = js.FromHost
+	game_number = js.GameNumber
+	gm_player = js.GMPlayer
+	hades_pit = js.HadesPit
+	hades_player = js.HadesPlayer
+	hades_region = js.HadesRegion
+	indep_player = js.IndepPlayer
+	monster_subloc_init = js.MonsterSublocInit
+	near_city_init = js.NearCityInit
+	npc_pl = js.NPCPlayer
+	sysclock.day = js.SysClock.Day
+	sysclock.turn = js.SysClock.Turn
+	sysclock.days_since_epoch = js.SysClock.DaysSinceEpoch
+	options.accounting_dir = js.AccountingDir
+	options.accounting_prog = js.AccountingProg
+	options.auto_drop = js.AutoDrop
+	options.bottom_piety = js.BottomPiety
+	options.check_balance = js.CheckBalance
+	options.claim_give = js.ClaimGive
+	options.cpp = js.CPP
+	options.death_nps = js.DeathNPs
+	options.free = js.Free
+	options.free_np_limit = js.FreeNPLimit
+	options.full_markets = js.FullMarkets
+	options.guild_teaching = js.GuildTeaching
+	options.head_priest_piety_limit = js.HeadPriestPietyLimit
+	options.html_passwords = js.HTMLPasswords
+	options.html_path = js.HTMLPath
+	options.market_age = js.MarketAge
+	options.middle_piety = js.MiddlePiety
+	options.min_piety = js.MinPiety
+	options.mp_antipathy = js.MPAntipathy
+	options.num_books = js.NumBooks
+	options.open_ended = js.OpenEnded
+	options.output_tags = js.OutputTags
+	options.piety_limit = js.PietyLimit
+	options.survive_np = js.SurviveNP
+	options.times_pay = js.TimesPay
+	options.top_piety = js.TopPiety
+	options.turn_charge = js.TurnCharge
+	options.turn_limit = js.TurnLimit
+	population_init = js.PopulationInit
+	if js.PostHasBeenRun {
+		post_has_been_run = TRUE
+	} else {
+		post_has_been_run = FALSE
 	}
-
-	/*
-	 *  Provide default values for piety if necessary.
-	 *
-	 */
-	if options.top_piety == 0 && options.middle_piety == 0 && options.bottom_piety == 0 {
-		options.top_piety = 12
-		options.middle_piety = 6
-		options.bottom_piety = 3
+	reply_host = js.ReplyHost
+	seed[0] = js.Seed[0]
+	seed[1] = js.Seed[1]
+	seed[2] = js.Seed[2]
+	if js.SeedHasBeenRun {
+		seed_has_been_run = TRUE
+	} else {
+		seed_has_been_run = FALSE
 	}
-
-	_ = fp.Close()
+	skill_player = js.SkillPlayer
+	xsize = js.XSize
+	ysize = js.YSize
 
 	return nil
 }
