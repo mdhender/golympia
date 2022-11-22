@@ -21,6 +21,7 @@ package olympia
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 	"time"
@@ -1811,19 +1812,7 @@ func ship_cap(ship int) int {
 	return sc
 }
 
-/*
- *  Sat Apr 15 11:56:33 2000 -- Scott Turner
- *
- *  Lock up; prevents multiple TAGS in same Lib
- *
- */
+// prevent multiple TAGS running in same path
 func lock_tag() {
-	//char *name = sout("%s/lock", libdir);
-	//int fd = open(name, O_RDONLY | O_CREAT, S_IRUSR);
-	//if (fd == -1) {
-	//    fprintf(stderr, "Problem opening lock file?");
-	//    exit(-1);
-	//}
-	//file_lock(name, fd);
-	panic("!implemented")
+	log.Printf("lock_tag: not implemented\n")
 }
