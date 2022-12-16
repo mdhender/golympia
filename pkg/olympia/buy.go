@@ -368,7 +368,7 @@ func attempt_trade(buyer, seller *trade, cost int) int {
 		 *
 		 */
 		if art = has_artifact(buyer.who, ART_BARGAIN, 0, 0, 0); art != FALSE {
-			discount := (cost * rp_item_artifact(art).param1) / 100
+			discount := (cost * rp_item_artifact(art).Param1) / 100
 			wout(buyer.who,
 				"The merchant admires your artifact and gives you a %d discount.",
 				discount)
@@ -1255,7 +1255,7 @@ func trade_suffuse_ring(where int) {
 
 	for _, t = range loop_trade(where) {
 		if subkind(t.item) == sub_magic_artifact &&
-			rp_item_artifact(t.item).type_ == ART_DESTROY &&
+			rp_item_artifact(t.item).Type == ART_DESTROY &&
 			t.kind == SELL && t.qty > 0 {
 			found = TRUE
 		}
@@ -1299,7 +1299,7 @@ func trade_suffuse_ring(where int) {
 func add_scrolls(where int) {
 	found := 0
 	for _, t := range loop_trade(where) {
-		if rp_item_magic(t.item) != nil && len(rp_item_magic(t.item).may_study) != 0 {
+		if rp_item_magic(t.item) != nil && len(rp_item_magic(t.item).MayStudy) != 0 {
 			found++
 		}
 	}
@@ -1324,7 +1324,7 @@ func add_scrolls(where int) {
 
 	t := new_trade(where, SELL, newBook)
 	t.qty = 1
-	t.cost = 100 + p_item_magic(newBook).orb_use_count*25 + rnd(0, 6)*50
+	t.cost = 100 + p_item_magic(newBook).OrbUseCount*25 + rnd(0, 6)*50
 	p_item(newBook).base_price = t.cost
 	t.cloak = FALSE
 	t.counter = 0

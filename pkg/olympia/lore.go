@@ -157,7 +157,7 @@ func deliver_skill_lore(who, sk int, show_research, use_texi bool) {
 		out(who, "%-*s  %-34s %13s", CHAR_FIELD, "num", "skill", "time to learn")
 		out(who, "%-*s  %-34s %13s", CHAR_FIELD, "---", "-----", "-------------")
 
-		for i := 0; i < ilist_len(p.research); i++ {
+		for i := 0; i < len(p.research); i++ {
 			out_skill_line(who, p.research[i])
 		}
 
@@ -182,7 +182,7 @@ func deliver_skill_lore(who, sk int, show_research, use_texi bool) {
 		out(who, "%-*s  %-34s %13s", CHAR_FIELD, "num", "skill", "time to learn")
 		out(who, "%-*s  %-34s %13s", CHAR_FIELD, "---", "-----", "-------------")
 
-		for i := 0; i < ilist_len(p.guild); i++ {
+		for i := 0; i < len(p.guild); i++ {
 			out_skill_line(who, p.guild[i])
 		}
 
@@ -411,7 +411,7 @@ func queue_lore(who, num int, anyway bool) {
 		return
 	}
 	p := p_player(pl)
-	p.deliver_lore = append(p.deliver_lore, num)
+	p.deliverLore = append(p.deliverLore, num)
 	set_known(pl, num)
 }
 
@@ -442,17 +442,17 @@ func show_lore_sheets() {
 
 	for _, pl := range loop_player() {
 		p := rp_player(pl)
-		if p == nil || len(p.deliver_lore) <= 0 {
+		if p == nil || len(p.deliverLore) <= 0 {
 			continue
 		}
 
-		sort.Ints(p.deliver_lore)
-		for i := 0; i < ilist_len(p.deliver_lore); i++ {
+		sort.Ints(p.deliverLore)
+		for i := 0; i < len(p.deliverLore); i++ {
 			// weed out duplicates in p.deliver_lore
-			if i > 0 && p.deliver_lore[i] == p.deliver_lore[i-1] {
+			if i > 0 && p.deliverLore[i] == p.deliverLore[i-1] {
 				continue
 			}
-			deliver_lore(pl, p.deliver_lore[i])
+			deliver_lore(pl, p.deliverLore[i])
 		}
 	}
 

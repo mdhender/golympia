@@ -144,7 +144,7 @@ func bottom_out(pl, who, unit int, s string) {
  *  is one which a garrison would see, show it to them, unless it is
  *  in a hidden loc, which garrisons can't see into.
  */
-func can_view_loc(pl int, p *entity_player, where int, outer int) int {
+func can_view_loc(pl int, p *EntityPlayer, where int, outer int) int {
 	if test_bit(p.locs, where) {
 		return TRUE
 	} else if test_bit(p.locs, outer) {
@@ -303,7 +303,7 @@ func out_garrison(garr int, s string) {
 
 func out_sup(who int, s string) {
 	if who == VECT {
-		for i := 0; i < ilist_len(out_vector); i++ {
+		for i := 0; i < len(out_vector); i++ {
 			if out_vector[i] == VECT {
 				panic("assert(out_vector[i] != VECT)")
 			}

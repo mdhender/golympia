@@ -57,7 +57,7 @@ func create_hades() {
 	hades_player = 205
 	alloc_box(hades_player, T_player, sub_pl_npc)
 	set_name(hades_player, "King of Hades")
-	p_player(hades_player).password = DEFAULT_PASSWORD
+	p_player(hades_player).Password = DEFAULT_PASSWORD
 
 	// fill hmap[row,col] with locations
 	for r := 0; r <= SZ; r++ {
@@ -161,7 +161,7 @@ func create_hades_nasty() {
 	if p == nil {
 		panic("assert(p)")
 	}
-	where := p.here_list[rnd(0, ilist_len(p.here_list)-1)]
+	where := p.here_list[rnd(0, len(p.here_list)-1)]
 
 	var nasty int
 	switch rnd(1, 5) {

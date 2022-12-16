@@ -437,24 +437,22 @@ func compute_nearby_graves() {
 }
 
 func compute_dist() {
-	var i int
-
 	stage("INIT: compute_dist()")
 	compute_dist_generic(sub_ocean)
 
-	for _, i = range loop_province() {
+	for _, i := range loop_province() {
 		p_loc(i).dist_from_sea = bx[i].temp
 	}
 
 	compute_dist_generic(sub_swamp)
 
-	for _, i = range loop_province() {
+	for _, i := range loop_province() {
 		p_loc(i).dist_from_swamp = bx[i].temp
 	}
 
 	compute_dist_gate()
 
-	for _, i = range loop_province() {
+	for _, i := range loop_province() {
 		p_loc(i).dist_from_gate = bx[i].temp
 	}
 

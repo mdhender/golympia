@@ -163,7 +163,7 @@ func summary_provinces() {
 	for _, pl := range loop_kind(T_player) {
 		clear_temps(T_loc)
 
-		for _, i := range known_sparse_loop(p_player(pl).known) {
+		for _, i := range known_sparse_loop(p_player(pl).Known) {
 			bx[i].temp++
 		}
 
@@ -334,7 +334,7 @@ func summary_sublocs() {
 	for _, pl := range loop_kind(T_player) {
 		clear_temps(T_loc)
 
-		for _, i := range known_sparse_loop(p_player(pl).known) {
+		for _, i := range known_sparse_loop(p_player(pl).Known) {
 			bx[i].temp++
 		}
 

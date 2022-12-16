@@ -1211,6 +1211,7 @@ func boxlist_scan(s []byte, box_num int, l []int) []int {
 	return l
 }
 
+// todo: will be replaced by ToBoxList()
 func boxlist_print(fp *os.File, header []byte, l []int) {
 	if l == nil {
 		return
@@ -1233,21 +1234,21 @@ func boxlist_print(fp *os.File, header []byte, l []int) {
 	}
 }
 
-func admit_print_sup(fp *os.File, p *admit) {
-	if !valid_box(p.targ) {
+func admit_print_sup(fp *os.File, p *Admit) {
+	if !valid_box(p.Targ) {
 		return
-	} else if p.sense == 0 && len(p.l) == 0 {
+	} else if p.Sense == 0 && len(p.List) == 0 {
 		return
 	}
-	fprintf(fp, " am %d %d ", p.targ, p.sense)
+	fprintf(fp, " am %d %d ", p.Targ, p.Sense)
 	count := 2
-	for i := 0; i < len(p.l); i++ {
-		if valid_box(p.l[i]) {
+	for i := 0; i < len(p.List); i++ {
+		if valid_box(p.List[i]) {
 			count++
 			if count%11 == 10 { // continuation line
 				fputs("\\\n\t", fp)
 			}
-			fprintf(fp, "%d ", p.l[i])
+			fprintf(fp, "%d ", p.List[i])
 		}
 	}
 	if count != 0 {
@@ -1255,14 +1256,14 @@ func admit_print_sup(fp *os.File, p *admit) {
 	}
 }
 
-func admit_print(fp *os.File, p *entity_player) {
-	for i := 0; i < len(p.admits); i++ {
-		admit_print_sup(fp, p.admits[i])
+func admit_print(fp *os.File, p *EntityPlayer) {
+	for i := 0; i < len(p.Admits); i++ {
+		admit_print_sup(fp, p.Admits[i])
 	}
 }
 
-func admit_scan(s []byte, box_num int, pp *entity_player) {
-	p := &admit{}
+func admit_scan(s []byte, box_num int, pp *EntityPlayer) {
+	p := &Admit{}
 
 	count := 0
 	for len(s) != 0 {
@@ -1275,10 +1276,10 @@ func admit_scan(s []byte, box_num int, pp *entity_player) {
 			n := atoi_b(s)
 			switch count {
 			case 1:
-				p.targ = n
+				p.Targ = n
 				break
 			case 2:
-				p.sense = n
+				p.Sense = n
 				break
 			default:
 				/* Temp fix for nations */
@@ -1286,7 +1287,7 @@ func admit_scan(s []byte, box_num int, pp *entity_player) {
 					n -= 3
 				}
 				if valid_box(n) {
-					p.l = append(p.l, n)
+					p.List = append(p.List, n)
 				} else {
 					fprintf(os.Stderr, "admit_scan(%d): bad box reference: %d\n", box_num, n)
 				}
@@ -1299,12 +1300,12 @@ func admit_scan(s []byte, box_num int, pp *entity_player) {
 		}
 	}
 
-	if !valid_box(p.targ) {
-		fprintf(os.Stderr, "admit_scan(%d): bad targ %d\n", box_num, p.targ)
+	if !valid_box(p.Targ) {
+		fprintf(os.Stderr, "admit_scan(%d): bad targ %d\n", box_num, p.Targ)
 		return
 	}
 
-	pp.admits = append(pp.admits, p)
+	pp.Admits = append(pp.Admits, p)
 }
 
 func ilist_print(fp *os.File, header []byte, l []int) {
@@ -1778,6 +1779,7 @@ func zero_check(p interface{}) bool {
 	return p == nil || reflect.ValueOf(p).IsZero()
 }
 
+// todo: will be replaced by ToLocationInfo()
 func print_loc_info(fp *os.File, p *loc_info) {
 	if zero_check(*p) {
 		return
@@ -1813,6 +1815,7 @@ func scan_loc_info(p *loc_info, box_num int) {
 	}
 }
 
+// todo: replace with ToCharMagic()
 func print_magic(fp *os.File, p *char_magic) {
 	if zero_check(*p) {
 		return
@@ -1948,31 +1951,31 @@ func scan_magic(p *char_magic, box_num int) {
 	}
 }
 
-func print_artifact(fp *os.File, p *entity_artifact) {
+func print_artifact(fp *os.File, p *EntityArtifact) {
 	if zero_check(*p) {
 		return
 	}
 
 	fprintf(fp, "AR\n")
 
-	if p.type_ != FALSE {
-		fprintf(fp, " ty %d\n", p.type_)
+	if p.Type != FALSE {
+		fprintf(fp, " ty %d\n", p.Type)
 	}
 
-	if p.param1 != FALSE {
-		fprintf(fp, " p1 %d\n", p.param1)
+	if p.Param1 != FALSE {
+		fprintf(fp, " p1 %d\n", p.Param1)
 	}
 
-	if p.param2 != FALSE {
-		fprintf(fp, " p2 %d\n", p.param2)
+	if p.Param2 != FALSE {
+		fprintf(fp, " p2 %d\n", p.Param2)
 	}
 
-	if p.uses != FALSE {
-		fprintf(fp, " us %d\n", p.uses)
+	if p.Uses != FALSE {
+		fprintf(fp, " us %d\n", p.Uses)
 	}
 }
 
-func scan_artifact(p *entity_artifact, box_num int) {
+func scan_artifact(p *EntityArtifact, box_num int) {
 	advance()
 	for line != nil && len(line) != 0 && iswhite(line[0]) {
 		if line[0] == '#' { // todo: should this check be above?
@@ -1985,16 +1988,16 @@ func scan_artifact(p *entity_artifact, box_num int) {
 
 		switch c {
 		case `ty`:
-			p.type_ = atoi_b(t)
+			p.Type = atoi_b(t)
 			break
 		case `p1`:
-			p.param1 = atoi_b(t)
+			p.Param1 = atoi_b(t)
 			break
 		case `p2`:
-			p.param2 = atoi_b(t)
+			p.Param2 = atoi_b(t)
 			break
 		case `us`:
-			p.uses = atoi_b(t)
+			p.Uses = atoi_b(t)
 			break
 		default:
 			fprintf(os.Stderr, "scan_artifact(%d):  bad line: %s\n",
@@ -2021,6 +2024,7 @@ func accept_print(fp *os.File, p *entity_char) {
 	}
 }
 
+// todo: replace with ToEntityChar()
 func print_char(fp *os.File, p *entity_char) {
 
 	fprintf(fp, "CH\n")
@@ -2297,6 +2301,7 @@ func mine_info_scan(s []byte, l *entity_mine, bn int) *entity_mine {
 	return m
 }
 
+// todo: replace with ToEntityLoc()
 func print_loc(fp *os.File, p *entity_loc) {
 
 	if zero_check(*p) {
@@ -2505,6 +2510,7 @@ func scan_ship(p *entity_ship, box_num int) {
 	}
 }
 
+// todo: replace with ToSubLoc()
 func print_subloc(fp *os.File, p *entity_subloc) {
 
 	fprintf(fp, "SL\n")
@@ -2750,6 +2756,7 @@ func scan_subloc(p *entity_subloc, box_num int) {
 
 }
 
+// todo: move to ToEntityItem()
 func print_item(fp *os.File, p *entity_item) {
 
 	if zero_check(*p) {
@@ -2917,7 +2924,8 @@ func scan_item(p *entity_item, box_num int) {
 	}
 }
 
-func print_item_magic(fp *os.File, p *item_magic) {
+// todo: move to ToEntityItemMagic()
+func print_item_magic(fp *os.File, p *ItemMagic) {
 
 	if zero_check(*p) {
 		return
@@ -2925,77 +2933,77 @@ func print_item_magic(fp *os.File, p *item_magic) {
 
 	fprintf(fp, "IM\n")
 
-	if p.religion != FALSE {
-		fprintf(fp, " rl %d\n", p.religion)
+	if p.Religion != FALSE {
+		fprintf(fp, " rl %d\n", p.Religion)
 	}
 
-	if p.aura != FALSE {
-		fprintf(fp, " au %d\n", p.aura)
+	if p.Aura != FALSE {
+		fprintf(fp, " au %d\n", p.Aura)
 	}
 
-	if p.curse_loyalty != FALSE {
-		fprintf(fp, " cl %d\n", p.curse_loyalty)
+	if p.CurseLoyalty != FALSE {
+		fprintf(fp, " cl %d\n", p.CurseLoyalty)
 	}
 
-	if p.cloak_region != FALSE {
-		fprintf(fp, " cr %d\n", p.cloak_region)
+	if p.CloakRegion != FALSE {
+		fprintf(fp, " cr %d\n", p.CloakRegion)
 	}
 
-	if p.cloak_creator != FALSE {
-		fprintf(fp, " cc %d\n", p.cloak_creator)
+	if p.CloakCreator != FALSE {
+		fprintf(fp, " cc %d\n", p.CloakCreator)
 	}
 
-	if p.use_key != FALSE {
-		fprintf(fp, " uk %d\n", p.use_key)
+	if p.UseKey != FALSE {
+		fprintf(fp, " uk %d\n", p.UseKey)
 	}
 
-	if p.quick_cast != FALSE {
-		fprintf(fp, " qc %d\n", p.quick_cast)
+	if p.QuickCast != FALSE {
+		fprintf(fp, " qc %d\n", p.QuickCast)
 	}
 
-	if p.attack_bonus != FALSE {
-		fprintf(fp, " ab %d\n", p.attack_bonus)
+	if p.AttackBonus != FALSE {
+		fprintf(fp, " ab %d\n", p.AttackBonus)
 	}
 
-	if p.defense_bonus != FALSE {
-		fprintf(fp, " db %d\n", p.defense_bonus)
+	if p.DefenseBonus != FALSE {
+		fprintf(fp, " db %d\n", p.DefenseBonus)
 	}
 
-	if p.missile_bonus != FALSE {
-		fprintf(fp, " mb %d\n", p.missile_bonus)
+	if p.MissileBonus != FALSE {
+		fprintf(fp, " mb %d\n", p.MissileBonus)
 	}
 
-	if p.aura_bonus != FALSE {
-		fprintf(fp, " ba %d\n", p.aura_bonus)
+	if p.AuraBonus != FALSE {
+		fprintf(fp, " ba %d\n", p.AuraBonus)
 	}
 
-	if p.token_num != FALSE {
-		fprintf(fp, " tn %d\n", p.token_num)
+	if p.TokenNum != FALSE {
+		fprintf(fp, " tn %d\n", p.TokenNum)
 	}
 
-	if p.orb_use_count != FALSE {
-		fprintf(fp, " oc %d\n", p.orb_use_count)
+	if p.OrbUseCount != FALSE {
+		fprintf(fp, " oc %d\n", p.OrbUseCount)
 	}
 
-	box_print(fp, []byte(" ti "), p.token_ni)
+	box_print(fp, []byte(" ti "), p.TokenNI)
 
 	//#if 0
 	//    box_print(fp, " rc ", p.region_created);
 	//#endif
 
-	if valid_box(p.project_cast) {
-		box_print(fp, []byte(" pc "), p.project_cast)
+	if valid_box(p.ProjectCast) {
+		box_print(fp, []byte(" pc "), p.ProjectCast)
 	}
-	box_print(fp, []byte(" ct "), p.creator)
-	if p.lore != FALSE {
-		fprintf(fp, " lo %d\n", p.lore)
+	box_print(fp, []byte(" ct "), p.Creator)
+	if p.Lore != FALSE {
+		fprintf(fp, " lo %d\n", p.Lore)
 	}
 
-	boxlist_print(fp, []byte(" mu "), p.may_use)
-	boxlist_print(fp, []byte(" ms "), p.may_study)
+	boxlist_print(fp, []byte(" mu "), p.MayUse)
+	boxlist_print(fp, []byte(" ms "), p.MayStudy)
 }
 
-func scan_item_magic(p *item_magic, box_num int) {
+func scan_item_magic(p *ItemMagic, box_num int) {
 	advance()
 	for line != nil && len(line) != 0 && iswhite(line[0]) {
 		if line[0] == '#' { // todo: should this check be above?
@@ -3008,66 +3016,66 @@ func scan_item_magic(p *item_magic, box_num int) {
 
 		switch c {
 		case `au`:
-			p.aura = atoi_b(t)
+			p.Aura = atoi_b(t)
 			break
 		case `cl`:
-			p.curse_loyalty = atoi_b(t)
+			p.CurseLoyalty = atoi_b(t)
 			break
 		case `cr`:
-			p.cloak_region = atoi_b(t)
+			p.CloakRegion = atoi_b(t)
 			break
 		case `cc`:
-			p.cloak_creator = atoi_b(t)
+			p.CloakCreator = atoi_b(t)
 			break
 		case `uk`:
-			p.use_key = atoi_b(t)
+			p.UseKey = atoi_b(t)
 			break
 		case `rc`:
 			/* p.region_created = box_scan(t); */
 			break
 		case `pc`:
-			p.project_cast = box_scan(t)
+			p.ProjectCast = box_scan(t)
 			break
 		case `ct`:
-			p.creator = box_scan(t)
+			p.Creator = box_scan(t)
 			break
 		case `lo`:
-			p.lore = box_scan(t)
+			p.Lore = box_scan(t)
 			break
 		case `qc`:
-			p.quick_cast = atoi_b(t)
+			p.QuickCast = atoi_b(t)
 			break
 		case `ab`:
-			p.attack_bonus = atoi_b(t)
+			p.AttackBonus = atoi_b(t)
 			break
 		case `db`:
-			p.defense_bonus = atoi_b(t)
+			p.DefenseBonus = atoi_b(t)
 			break
 		case `mb`:
-			p.missile_bonus = atoi_b(t)
+			p.MissileBonus = atoi_b(t)
 			break
 		case `ba`:
-			p.aura_bonus = atoi_b(t)
+			p.AuraBonus = atoi_b(t)
 			break
 		case `tn`:
-			p.token_num = atoi_b(t)
+			p.TokenNum = atoi_b(t)
 			break
 		case `ti`:
-			p.token_ni = atoi_b(t)
+			p.TokenNI = atoi_b(t)
 			break
 		case `oc`:
-			p.orb_use_count = atoi_b(t)
+			p.OrbUseCount = atoi_b(t)
 			break
 		case `rl`:
-			p.religion = atoi_b(t)
+			p.Religion = atoi_b(t)
 			break
 
 		case `mu`:
-			p.may_use = boxlist_scan(t, box_num, (p.may_use))
+			p.MayUse = boxlist_scan(t, box_num, (p.MayUse))
 			break
 
 		case `ms`:
-			p.may_study = boxlist_scan(t, box_num, (p.may_study))
+			p.MayStudy = boxlist_scan(t, box_num, (p.MayStudy))
 			break
 
 		default:
@@ -3077,101 +3085,101 @@ func scan_item_magic(p *item_magic, box_num int) {
 	}
 }
 
-func print_player(fp *os.File, p *entity_player) {
+func print_player(fp *os.File, p *EntityPlayer) {
 
 	fprintf(fp, "PL\n")
 
-	if len(p.full_name) != 0 {
-		fprintf(fp, " fn %s\n", p.full_name)
+	if len(p.FullName) != 0 {
+		fprintf(fp, " fn %s\n", p.FullName)
 	}
 
-	if len(p.email) != 0 {
-		fprintf(fp, " em %s\n", p.email)
+	if len(p.EMail) != 0 {
+		fprintf(fp, " em %s\n", p.EMail)
 	}
 
-	if len(p.vis_email) != 0 {
-		fprintf(fp, " ve %s\n", p.vis_email)
+	if len(p.VisEMail) != 0 {
+		fprintf(fp, " ve %s\n", p.VisEMail)
 	}
 
-	if len(p.password) != 0 {
-		fprintf(fp, " pw %s\n", p.password)
+	if len(p.Password) != 0 {
+		fprintf(fp, " pw %s\n", p.Password)
 	}
 
-	if p.noble_points != FALSE {
-		fprintf(fp, " np %d\n", p.noble_points)
+	if p.NoblePoints != FALSE {
+		fprintf(fp, " np %d\n", p.NoblePoints)
 	}
 
-	if p.first_turn != FALSE {
-		fprintf(fp, " ft %d\n", p.first_turn)
+	if p.FirstTurn != FALSE {
+		fprintf(fp, " ft %d\n", p.FirstTurn)
 	}
 
-	if p.format != FALSE {
-		fprintf(fp, " fo %d\n", p.format)
+	if p.Format != FALSE {
+		fprintf(fp, " fo %d\n", p.Format)
 	}
 
-	if len(p.rules_path) != 0 {
-		fprintf(fp, " rp %s\n", p.rules_path)
+	if len(p.RulesPath) != 0 {
+		fprintf(fp, " rp %s\n", p.RulesPath)
 	}
 
-	if len(p.db_path) != 0 {
-		fprintf(fp, " db%s\n", p.db_path)
+	if len(p.DBPath) != 0 {
+		fprintf(fp, " db%s\n", p.DBPath)
 	}
 
-	if p.notab {
+	if p.NoTab {
 		fprintf(fp, " nt %d\n", TRUE) // mdhender: changed to TRUE
 	}
 
-	if p.first_tower != FALSE {
-		fprintf(fp, " tf %d\n", p.first_tower)
+	if p.FirstTower != FALSE {
+		fprintf(fp, " tf %d\n", p.FirstTower)
 	}
 
-	if p.split_lines != FALSE {
-		fprintf(fp, " sl %d\n", p.split_lines)
+	if p.SplitLines != FALSE {
+		fprintf(fp, " sl %d\n", p.SplitLines)
 	}
 
-	if p.split_bytes != FALSE {
-		fprintf(fp, " sb %d\n", p.split_bytes)
+	if p.SplitBytes != FALSE {
+		fprintf(fp, " sb %d\n", p.SplitBytes)
 	}
 
-	if p.sent_orders != FALSE {
-		fprintf(fp, " so %d\n", p.sent_orders)
+	if p.SentOrders != FALSE {
+		fprintf(fp, " so %d\n", p.SentOrders)
 	}
 
-	if p.dont_remind != FALSE {
-		fprintf(fp, " dr %d\n", p.dont_remind)
+	if p.DontRemind != FALSE {
+		fprintf(fp, " dr %d\n", p.DontRemind)
 	}
 
-	if p.compuserve {
+	if p.CompuServe {
 		fprintf(fp, " ci %d\n", TRUE) // mdhender: changed to TRUE
 	}
 
-	if p.broken_mailer != FALSE {
-		fprintf(fp, " bm %d\n", p.broken_mailer)
+	if p.BrokenMailer != FALSE {
+		fprintf(fp, " bm %d\n", p.BrokenMailer)
 	}
 
-	if p.last_order_turn != FALSE {
-		fprintf(fp, " lt %d\n", p.last_order_turn)
+	if p.LastOrderTurn != FALSE {
+		fprintf(fp, " lt %d\n", p.LastOrderTurn)
 	}
 
-	if p.nation != FALSE {
-		fprintf(fp, " na %d\n", p.nation)
+	if p.Nation != FALSE {
+		fprintf(fp, " na %d\n", p.Nation)
 	}
 
-	if p.magic != FALSE {
-		fprintf(fp, " ma %d\n", p.magic)
+	if p.Magic != FALSE {
+		fprintf(fp, " ma %d\n", p.Magic)
 	}
 
-	if p.jump_start != FALSE {
-		fprintf(fp, " js %d\n", p.jump_start)
+	if p.JumpStart != FALSE {
+		fprintf(fp, " js %d\n", p.JumpStart)
 	}
 
-	known_print(fp, []byte(" kn "), p.known)
-	boxlist_print(fp, []byte(" un "), p.units)
-	boxlist_print(fp, []byte(" uf "), p.unformed)
+	known_print(fp, []byte(" kn "), p.Known)
+	boxlist_print(fp, []byte(" un "), p.Units)
+	boxlist_print(fp, []byte(" uf "), p.Unformed)
 	admit_print(fp, p)
 }
 
-func scan_player(p *entity_player, box_num int) {
+func scan_player(p *EntityPlayer, box_num int) {
 	advance()
 	for line != nil && len(line) != 0 && iswhite(line[0]) {
 		if line[0] == '#' { // todo: should this check be above?
@@ -3184,88 +3192,89 @@ func scan_player(p *entity_player, box_num int) {
 
 		switch c {
 		case `fn`:
-			p.full_name = string(t)
+			p.FullName = string(t)
 			break
 		case `em`:
-			p.email = string(t)
+			p.EMail = string(t)
 			break
 		case `ve`:
-			p.vis_email = string(t)
+			p.VisEMail = string(t)
 			break
 		case `pw`:
-			p.password = string(t)
+			p.Password = string(t)
 			break
 		case `np`:
-			p.noble_points = atoi_b(t)
+			p.NoblePoints = atoi_b(t)
 			break
 		case `ft`:
-			p.first_turn = atoi_b(t)
+			p.FirstTurn = atoi_b(t)
 			break
 		case `fo`:
-			p.format = atoi_b(t)
+			p.Format = atoi_b(t)
 			break
 		case `rp`:
-			p.rules_path = string(t)
+			p.RulesPath = string(t)
 			break
 		case `fp`:
+			fallthrough // todo: was this really a fall through?
 		case `db`:
-			p.db_path = string(t)
+			p.DBPath = string(t)
 			break
 		case `nt`:
-			p.notab = atoi_b(t) != FALSE
+			p.NoTab = atoi_b(t) != FALSE
 			break
 		case `tf`:
-			p.first_tower = atoi_b(t)
+			p.FirstTower = atoi_b(t)
 			break
 		case `so`:
-			p.sent_orders = atoi_b(t)
+			p.SentOrders = atoi_b(t)
 			break
 		case `lt`:
-			p.last_order_turn = atoi_b(t)
+			p.LastOrderTurn = atoi_b(t)
 			break
 		case `sl`:
-			p.split_lines = atoi_b(t)
+			p.SplitLines = atoi_b(t)
 			break
 		case `sb`:
-			p.split_bytes = atoi_b(t)
+			p.SplitBytes = atoi_b(t)
 			break
 		case `ci`:
-			p.compuserve = atoi_b(t) != FALSE
+			p.CompuServe = atoi_b(t) != FALSE
 			break
 		case `ti`: /* ignore it... */
 			break
 		case `bm`:
-			p.broken_mailer = atoi_b(t)
+			p.BrokenMailer = atoi_b(t)
 			break
 		case `dr`:
-			p.dont_remind = atoi_b(t)
+			p.DontRemind = atoi_b(t)
 			break
 		case `na`:
 			{
-				p.nation = atoi_b(t)
+				p.Nation = atoi_b(t)
 				/* temp fix */ // todo: fix temp fix
-				if p.nation <= 1002 && p.nation >= 1000 {
-					p.nation -= 3
+				if p.Nation <= 1002 && p.Nation >= 1000 {
+					p.Nation -= 3
 				}
 				break
 			}
 		case `ma`:
-			p.magic = atoi_b(t)
+			p.Magic = atoi_b(t)
 			break
 		case `js`:
-			p.jump_start = atoi_b(t)
+			p.JumpStart = atoi_b(t)
 			break
 
 		case `kn`:
-			p.known = known_scan(t, p.known, box_num)
+			p.Known = known_scan(t, p.Known, box_num)
 			break
 
 		case `un`:
-			p.units = boxlist_scan(t, box_num, (p.units))
+			p.Units = boxlist_scan(t, box_num, (p.Units))
 			break
 
 		case `uf`:
-			p.unformed = boxlist_scan(t, box_num, (p.unformed))
+			p.Unformed = boxlist_scan(t, box_num, (p.Unformed))
 			break
 
 		case `am`:
@@ -4018,62 +4027,73 @@ func print_nation(fp *os.File, n *entity_nation) {
 	fprintf(fp, "\n")
 }
 
-func save_box(fp *os.File, n int) {
+// todo: save_box should return a struct that can save as JSON
+// todo: must move id into entity_item
+func save_box(fp *os.File, n int) (*Box, error) {
+	log.Printf("save_box: please make this JSON\n")
 	if kind(n) == T_deleted {
-		return
+		return nil, nil
 	}
 
 	assert(valid_box(n))
 
 	p := bx[n]
 
-	if bx[n].skind != FALSE {
-		fprintf(fp, "%d %s %s\n", n, kind_s[bx[n].kind], subkind_s[bx[n].skind])
-	} else {
-		fprintf(fp, "%d %s 0\n", n, kind_s[bx[n].kind])
+	b := &Box{
+		Id:      n,
+		Name:    p.name,
+		Kind:    p.kind,
+		SubKind: p.skind,
+		//if pd := rp_disp(n); pd != nil {
+		//	boxlist_print(fp, []byte("an "), pd.neutral)
+		//	boxlist_print(fp, []byte("ad "), pd.defend)
+		//	boxlist_print(fp, []byte("ah "), pd.hostile)
+		//}
+		Attitudes: p.ToAttitudes(),
+		//if vp := rp_magic(n); vp != nil {
+		//	print_magic(fp, vp)
+		//}
+		CharMagic: p.ToCharMagic(),
+		//effect_list_print(fp, []byte("el\t"), p.effects)
+		Effects: p.ToEffectList(),
+		//if vp := rp_item_artifact(n); vp != nil {
+		//	print_artifact(fp, vp)
+		//}
+		EntityArtifact: p.ToEntityArtifact(n),
+		//if vp := rp_char(n); vp != nil {
+		//	print_char(fp, vp)
+		//}
+		EntityChar: p.ToEntityChar(),
+		//if vp := rp_item(n); vp != nil {
+		//	print_item(fp, vp)
+		//}
+		EntityItem: p.ToEntityItem(n),
+		//if vp := rp_loc(n); vp != nil {
+		//	print_loc(fp, vp)
+		//}
+		EntityLoc: p.ToEntityLoc(),
+		//if vp := rp_player(n); vp != nil {
+		//	print_player(fp, vp)
+		//}
+		EntityPlayer: p.ToEntityPlayer(),
+		//if vp := rp_subloc(n); vp != nil {
+		//	print_subloc(fp, vp)
+		//}
+		EntitySubLoc: p.ToEntitySubLoc(),
+		//if vp := rp_item_magic(n); vp != nil {
+		//	print_item_magic(fp, vp)
+		//}
+		ItemMagic: p.ToItemMagic(n),
+		//item_list_print(fp, []byte("il\t"), p.items)
+		Items: p.ToInventoryList(),
+		//if vp := rp_loc_info(n); vp != nil {
+		//	print_loc_info(fp, vp)
+		//}
+		LocationInfo: p.ToLocationInfo(),
+		//trade_list_print(fp, []byte("tl\t"), p.trades)
+		Trades: p.ToTradeList(),
 	}
 
-	if len(p.name) != 0 {
-		fprintf(fp, "na %s\n", p.name)
-	}
-
-	item_list_print(fp, []byte("il\t"), p.items)
-	trade_list_print(fp, []byte("tl\t"), p.trades)
-	effect_list_print(fp, []byte("el\t"), p.effects)
-
-	if pd := rp_disp(n); pd != nil {
-		boxlist_print(fp, []byte("an "), pd.neutral)
-		boxlist_print(fp, []byte("ad "), pd.defend)
-		boxlist_print(fp, []byte("ah "), pd.hostile)
-	}
-
-	if vp := rp_loc_info(n); vp != nil {
-		print_loc_info(fp, vp)
-	}
-	if vp := rp_char(n); vp != nil {
-		print_char(fp, vp)
-	}
-	if vp := rp_magic(n); vp != nil {
-		print_magic(fp, vp)
-	}
-	if vp := rp_loc(n); vp != nil {
-		print_loc(fp, vp)
-	}
-	if vp := rp_subloc(n); vp != nil {
-		print_subloc(fp, vp)
-	}
-	if vp := rp_item(n); vp != nil {
-		print_item(fp, vp)
-	}
-	if vp := rp_item_magic(n); vp != nil {
-		print_item_magic(fp, vp)
-	}
-	if vp := rp_item_artifact(n); vp != nil {
-		print_artifact(fp, vp)
-	}
-	if vp := rp_player(n); vp != nil {
-		print_player(fp, vp)
-	}
 	if vp := rp_skill(n); vp != nil {
 		print_skill(fp, vp)
 	}
@@ -4106,6 +4126,8 @@ func save_box(fp *os.File, n int) {
 	fprintf(fp, "\n")
 
 	bx[n].temp = 1 /* mark for write_leftovers() */
+
+	return b, fmt.Errorf("not implemented")
 }
 
 func open_write_fp(fnam string) (*os.File, error) {
@@ -4118,61 +4140,77 @@ func open_write_fp(fnam string) (*os.File, error) {
 	return fp, nil
 }
 
-func write_kind(box_kind int, fnam string) {
+func write_kind(box_kind int, fnam string) error {
 	fp, err := open_write_fp(fnam)
 	if err != nil {
-		log.Printf("write_kind: %+v\n", err)
-		return
+		return fmt.Errorf("write_kind: %w", err)
 	}
 	for _, i := range loop_kind(box_kind) {
-		save_box(fp, i)
+		if _, err := save_box(fp, i); err != nil {
+			return fmt.Errorf("write_kind: %w", err)
+		}
 	}
 
 	_ = fp.Close()
+
+	return nil
 }
 
-func write_player(pl int) {
+func write_player(pl int) error {
 	fp, err := open_write_fp(sout("fact/%d", pl))
 	if err != nil {
-		log.Printf("write_player: %+v\n", err)
-		return
+		return fmt.Errorf("write_player: %w", err)
+	} else if _, err = save_box(fp, pl); err != nil {
+		return fmt.Errorf("write_player: %w", err)
 	}
-
-	save_box(fp, pl)
 
 	for _, who := range loop_units(pl) {
 		assert(kind(who) == T_char || kind(who) == T_deleted)
-		save_box(fp, who)
+		if _, err = save_box(fp, who); err != nil {
+			return fmt.Errorf("write_player: %w", err)
+		}
 	}
 
 	_ = fp.Close()
+
+	return nil
 }
 
-func write_chars() {
+func write_chars() error {
 	for _, pl := range loop_player() {
-		write_player(pl)
+		if err := write_player(pl); err != nil {
+			return fmt.Errorf("write_chars: %w", err)
+		}
 	}
+	return nil
 }
 
-func write_leftovers() {
+func write_leftovers() error {
 	fp, err := open_write_fp("misc")
 	if err != nil {
-		log.Printf("write_leftovers: %+v\n", err)
-		return
+		return fmt.Errorf("write_leftovers: %w", err)
 	}
 
 	for i := 0; i < MAX_BOXES; i++ {
 		if bx[i] != nil && kind(i) != T_nation && bx[i].temp == 0 {
 			if kind(i) != T_deleted {
-				save_box(fp, i)
+				if _, err = save_box(fp, i); err != nil {
+					return fmt.Errorf("write_player: %w", err)
+				}
 			}
 		}
 	}
 
 	_ = fp.Close()
+
+	return nil
 }
 
 func read_boxes(fnam string) {
+	if fnam != "okay-doay" {
+		panic("!")
+	}
+
 	fnam = filepath.Join(libdir, fnam)
 	if !readfile(fnam) {
 		return
@@ -4356,102 +4394,170 @@ func scan_chars() error {
 func scan_all_boxes() error {
 	stage("scan_all_boxes")
 
+	scanOnly := true
+
 	//scan_boxes("loc")
-	if _, err := LocationDataLoad(filepath.Join(libdir, "locations.json")); err != nil {
+	if _, err := LocationDataLoad(filepath.Join(libdir, "locations.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "loc", err)
 	}
 
 	//scan_boxes("item")
-	if _, err := ItemDataLoad(filepath.Join(libdir, "items.json")); err != nil {
+	if _, err := EntityItemDataLoad(filepath.Join(libdir, "items.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "items", err)
 	}
 
 	//scan_boxes("skill")
-	if _, err := SkillDataLoad(filepath.Join(libdir, "skills.json")); err != nil {
+	if _, err := SkillDataLoad(filepath.Join(libdir, "skills.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "skills", err)
 	}
 
 	//scan_boxes("gate")
-	if _, err := GateDataLoad(filepath.Join(libdir, "gates.json")); err != nil {
+	if _, err := GateDataLoad(filepath.Join(libdir, "gates.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "gates", err)
 	}
 
 	//scan_boxes("road")
-	if _, err := RoadDataLoad(filepath.Join(libdir, "roads.json")); err != nil {
+	if _, err := RoadDataLoad(filepath.Join(libdir, "roads.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "roads", err)
 	}
 
 	//scan_boxes("ship")
-	if _, err := ShipDataLoad(filepath.Join(libdir, "ships.json")); err != nil {
+	if _, err := ShipDataLoad(filepath.Join(libdir, "ships.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "ships", err)
 	}
 
 	//scan_boxes("unform")
-	if _, err := UnformDataLoad(filepath.Join(libdir, "unform.json")); err != nil {
+	if _, err := UnformDataLoad(filepath.Join(libdir, "unform.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "unform", err)
 	}
 
 	//scan_boxes("misc")
-	if _, err := MiscDataLoad(filepath.Join(libdir, "misc.json")); err != nil {
+	if _, err := MiscDataLoad(filepath.Join(libdir, "misc.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "misc", err)
 	}
 
 	//scan_boxes("nation")
-	if _, err := NationDataLoad(filepath.Join(libdir, "nations.json")); err != nil {
+	if _, err := NationDataLoad(filepath.Join(libdir, "nations.json"), scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "nations", err)
 	}
 
 	//if err := scan_chars(); err != nil {
 	//	log.Printf("scan_all_boxes: %+v\n", err)
 	//}
-	if err := CharactersLoad(); err != nil {
+	if err := CharactersLoad(scanOnly); err != nil {
 		return fmt.Errorf("scan_all_boxes: %s: %w", "characters", err)
 	}
 
 	return nil
 }
 
-func read_all_boxes() {
-	read_boxes("loc")
-	read_boxes("item")
-	read_boxes("skill")
-	read_boxes("gate")
-	read_boxes("road")
-	read_boxes("ship")
-	read_boxes("unform")
-	read_boxes("misc")
-	read_boxes("nation")
+func read_all_boxes() error {
+	stage("read_all_boxes")
 
-	if err := read_chars(); err != nil {
-		panic(fmt.Sprintf("read_all_boxes: %+v\n", err))
+	scanOnly := false
+
+	//read_boxes("loc")
+	if _, err := LocationDataLoad(filepath.Join(libdir, "locations.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "loc", err)
 	}
+
+	//read_boxes("item")
+	if _, err := EntityItemDataLoad(filepath.Join(libdir, "items.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "items", err)
+	}
+
+	//read_boxes("skill")
+	if _, err := SkillDataLoad(filepath.Join(libdir, "skills.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "skills", err)
+	}
+
+	//read_boxes("gate")
+	if _, err := GateDataLoad(filepath.Join(libdir, "gates.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "gates", err)
+	}
+
+	//read_boxes("road")
+	if _, err := RoadDataLoad(filepath.Join(libdir, "roads.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "roads", err)
+	}
+
+	//read_boxes("ship")
+	if _, err := ShipDataLoad(filepath.Join(libdir, "ships.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "ships", err)
+	}
+
+	//read_boxes("unform")
+	if _, err := UnformDataLoad(filepath.Join(libdir, "unform.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "unform", err)
+	}
+
+	//read_boxes("misc")
+	if _, err := MiscDataLoad(filepath.Join(libdir, "misc.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "misc", err)
+	}
+
+	//read_boxes("nation")
+	if _, err := NationDataLoad(filepath.Join(libdir, "nations.json"), scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "nations", err)
+	}
+
+	//if err := read_chars(); err != nil {
+	//	log.Printf("read_all_boxes: %+v\n", err)
+	//}
+	if err := CharactersLoad(scanOnly); err != nil {
+		return fmt.Errorf("read_all_boxes: %s: %w", "characters", err)
+	}
+
+	return nil
 }
 
-func write_all_boxes() {
-	for i := 0; i < MAX_BOXES; i++ {
-		if bx[i] != nil {
-			bx[i].temp = 0
+func write_all_boxes() error {
+	for _, v := range bx {
+		if v != nil {
+			v.temp = 0
 		}
 	}
 
 	dirFact := filepath.Join(libdir, "fact")
 	if err := rmdir(dirFact); err != nil {
-		log.Fatalf("write_all_boxes: %+v\n", err)
+		return fmt.Errorf("write_all_boxes: %w", err)
 	} else if err := mkdir(dirFact); err != nil {
-		log.Fatalf("write_all_boxes: %+v\n", err)
+		return fmt.Errorf("write_all_boxes: %w", err)
 	}
 
-	write_kind(T_loc, "loc")
-	write_kind(T_item, "item")
-	write_kind(T_skill, "skill")
-	write_kind(T_gate, "gate")
-	write_kind(T_road, "road")
-	write_kind(T_ship, "ship")
-	write_kind(T_unform, "unform")
-	write_kind(T_nation, "nation")
+	if err := write_kind(T_loc, "loc"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_kind(T_item, "item"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_kind(T_skill, "skill"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_kind(T_gate, "gate"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_kind(T_road, "road"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_kind(T_ship, "ship"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_kind(T_unform, "unform"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_kind(T_nation, "nation"); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
 
-	write_chars()
-	write_leftovers()
+	if err := write_chars(); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+	if err := write_leftovers(); err != nil {
+		return fmt.Errorf("write_all_boxes: %w", err)
+	}
+
+	return nil
 }
 
 func write_master() error {
@@ -4655,14 +4761,19 @@ func load_db() error {
 		return fmt.Errorf("load_db: %w", err)
 	}
 
-	if err := fast_scan(); err != nil { /* pass 1: call alloc_box for each entity */
+	// pass 1: call alloc_box for each entity
+	if err := fast_scan(); err != nil {
 		log.Printf("load_db: fast_scan failed\n")
 		if err := scan_all_boxes(); err != nil {
 			return fmt.Errorf("load_db: %w", err)
 		}
 	}
 
-	read_all_boxes() /* pass 2: read the entity attributes */
+	// pass 2: read the entity attributes
+	if err := read_all_boxes(); err != nil {
+		return fmt.Errorf("load_db: %w", err)
+	}
+
 	/*
 	 *  At this point we should be able to set the MAX_MM
 	 *  to be that of a dragon.
@@ -4673,19 +4784,26 @@ func load_db() error {
 	 *
 	 */
 	//MAX_MM = MM(item_nazgul);
-	if !(MAX_MM < MM(item_nazgul)) {
-		panic("assert(MM(item_nazgul) <= MAX_MM)")
+	log.Printf("load_db: nazgul %d: mm %d: max mm %d\n", item_nazgul, MM(item_nazgul), MAX_MM)
+	if !(MM(item_nazgul) <= MAX_MM) {
+		return fmt.Errorf("load_db: assert(MM(item_nazgul) <= MAX_MM)")
 	}
 
 	if err := load_orders(); err != nil {
-		log.Fatalf("load_db: %+v\n")
+		log.Printf("load_db: load_orders is not implemented\n")
+		//return fmt.Errorf("load_db: %w", err)
 	}
 
 	//#if 0
 	//    scan_nations();         /* Here so the boxes are valid... */
 	//#endif
 
-	check_db()            /* check database integrity */
+	// check database integrity
+	if err := check_db(); err != nil {
+		return fmt.Errorf("load_db: %w", err)
+	}
+	log.Printf("load_db: check_db passed\n")
+
 	determine_map_edges() /* initialization for map routines */
 
 	if post_has_been_run == FALSE {
@@ -4741,7 +4859,7 @@ func load_db() error {
 
 		alloc_box(combat_pl, T_player, sub_pl_npc)
 		set_name(combat_pl, "Combat log")
-		p_player(combat_pl).password = DEFAULT_PASSWORD
+		p_player(combat_pl).Password = DEFAULT_PASSWORD
 		fprintf(os.Stderr, "\tcreated combat player %d\n", combat_pl)
 	}
 
@@ -4761,26 +4879,25 @@ func cleanup_posts() {
 func save_logdir() error {
 	system(sout("rm -rf %s/save/%d", libdir, sysclock.turn))
 	if err := mkdir(filepath.Join(libdir, "save")); err != nil {
-		return err
+		return fmt.Errorf("save_logdir: %w", err)
 	}
 
 	s := filepath.Join(libdir, "log")
 	t := filepath.Join(libdir, "save", fmt.Sprintf("%d", sysclock.turn))
 
 	if err := rename(s, t); err != nil {
-		fprintf(os.Stderr, "couldn't rename %s to %s: %v\n", s, t, err)
-		return err
+		return fmt.Errorf("save_logdir: %w", err)
 	}
 
 	s = filepath.Join(libdir, "players.html", libdir)
 	t = filepath.Join(libdir, "save", fmt.Sprintf("%d", sysclock.turn), "players.html")
 
 	if err := rename(s, t); err != nil {
-		fprintf(os.Stderr, "couldn't rename %s to %s: %v\n", s, t, err)
-		return err
+		return fmt.Errorf("save_logdir: %w", err)
+	} else if err := mkdir(filepath.Join(libdir, "log")); err != nil {
+		return fmt.Errorf("save_logdir: %w", err)
 	}
-
-	return mkdir(filepath.Join(libdir, "log"))
+	return nil
 }
 
 func save_db() error {
@@ -4788,16 +4905,16 @@ func save_db() error {
 
 	cleanup_posts()
 	if err := save_system(); err != nil {
-		log.Printf("save_db: %v\n", err)
-		return err
+		return fmt.Errorf("save_db: %w", err)
+	} else if err = write_all_boxes(); err != nil {
+		return fmt.Errorf("save_db: %w", err)
+	} else if err = write_master(); err != nil {
+		return fmt.Errorf("save_db: %w", err)
+	} else if err = save_orders(); err != nil {
+		return fmt.Errorf("save_db: %w", err)
+	} else if err = rename_act_join_files(); err != nil {
+		return fmt.Errorf("save_db: %w", err)
 	}
-	write_all_boxes()
-	if err := write_master(); err != nil {
-		log.Printf("save_db: %v\n", err)
-		return err
-	}
-	save_orders()
-	rename_act_join_files()
 
 	return nil
 }

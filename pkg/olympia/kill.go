@@ -50,11 +50,11 @@ func nearby_grave(where int) int {
 		l = append(l, i)
 	}
 
-	assert(ilist_len(l) > 0)
+	assert(len(l) > 0)
 
 	ilist_scramble(l)
 
-	return l[rnd(0, ilist_len(l)-1)]
+	return l[rnd(0, len(l)-1)]
 }
 
 func remove_follower(who int) {
@@ -540,8 +540,8 @@ func kill_char(who int, inherit int, status int) {
 			 *  Now fix up the artifact.
 			 *
 			 */
-			rp_item_artifact(a).uses--
-			if rp_item_artifact(a).uses == 0 {
+			rp_item_artifact(a).Uses--
+			if rp_item_artifact(a).Uses == 0 {
 				wout(who, "%s vanishes.", box_name(a))
 				destroy_unique_item(who, a)
 			}
@@ -558,10 +558,10 @@ func kill_char(who int, inherit int, status int) {
 		if token_item != 0 {
 			who_has := item_unique(token_item)
 			token_pl := p_player(token_item)
-			token_pl.units = rem_value(token_pl.units, who)
+			token_pl.Units = rem_value(token_pl.Units, who)
 
 			if char_melt_me(who) == 0 {
-				p_item_magic(token_item).token_num--
+				p_item_magic(token_item).TokenNum--
 			}
 
 			if item_token_num(token_item) <= 0 {

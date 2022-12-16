@@ -19,6 +19,8 @@
 
 package olympia
 
+import "fmt"
+
 func add_char_here(who int, l []int) []int {
 	if !valid_box(who) {
 		panic("assert(valid_box(who))")
@@ -61,9 +63,12 @@ func add_to_here_list(loc, who int) {
 	if in_here_list(loc, who) {
 		panic("assert(!in_here_list(loc, who))")
 	}
+	if p_loc_info(loc) == nil {
+		panic(fmt.Sprintf("assert(p_loc_info(%d) != nil)", loc))
+	}
 	p_loc_info(loc).here_list = append(p_loc_info(loc).here_list, who)
 	if !in_here_list(loc, who) {
-		panic("assert(in_here_list(loc, who))")
+		panic(fmt.Sprintf("assert(in_here_list(%d, %d))", loc, who))
 	}
 }
 
@@ -267,13 +272,12 @@ func remove_from_here_list(loc, who int) {
 	}
 }
 
+/*
+ *  This check could be expanded to make sure that new_loc is
+ *  not anywhere inside of who, by walking up new_loc to the top
+ *  and making sure we don't go through who
+ */
 func set_where(who, new_loc int) {
-	/*
-	 *  This check could be expanded to make sure that new_loc is
-	 *  not anywhere inside of who, by walking up new_loc to the top
-	 *  and making sure we don't go through who
-	 */
-
 	if who == new_loc {
 		panic("assert(who != new_loc)")
 	}
@@ -281,13 +285,10 @@ func set_where(who, new_loc int) {
 	if old_loc > 0 {
 		remove_from_here_list(old_loc, who)
 	}
-
 	if new_loc > 0 {
 		add_to_here_list(new_loc, who)
 	}
-
 	p_loc_info(who).where = new_loc
-
 	//if is_loc_or_ship(loc(who)) {
 	//	if is_prisoner(who) {
 	//		panic("assert(!is_prisoner(who))")

@@ -41,6 +41,10 @@ func GenerateMap(options ...Option) error {
 	log.Printf("%-18s == %q\n", "road data", roadDataFilename)
 	log.Printf("%-18s == %q\n", "seed data", seedDataFilename)
 
+	if _, err := SysDataLoad(filepath.Join(libdir, "sysdata.json")); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+
 	clear_alloc_flag()
 	dir_assert()
 	load_seed(seedDataFilename)
@@ -69,6 +73,12 @@ func GenerateMap(options ...Option) error {
 	count_subloc_coverage()
 	count_tiles()
 
+	// add in the items that the engine expects to always have
+	for _, monster := range monster_tbl {
+		BoxAlloc(monster.Id, strKind[monster.Kind], strSubKind[monster.SubKind])
+		bx[monster.Id].x_item = monster.toBox()
+	}
+
 	log.Printf("max row, col     = (%2d,%2d)\n", max_row, max_col)
 	log.Printf("subloc_low       = %8d\n", SUBLOC_LOW)
 	log.Printf("highest province = %8d\n", map_[max_row][max_col].region)
@@ -80,6 +90,15 @@ func GenerateMap(options ...Option) error {
 
 	log.Println("")
 	log.Println("")
+
+	/* check database integrity */
+	if err := check_db(); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
+	// and save
+	if err := save_db(); err != nil {
+		return fmt.Errorf("GenerateMap: %w", err)
+	}
 
 	if err := print_map(filepath.Join(libdir, "map-data.json")); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
@@ -96,14 +115,14 @@ func GenerateMap(options ...Option) error {
 	if err := GateDataSave(filepath.Join(libdir, gateDataFilename)); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
-
 	if err := CharacterDataSave(filepath.Join(libdir, "characters")); err != nil {
-		return fmt.Errorf("GenerateMap: %w", err)
+		log.Println(fmt.Errorf("GenerateMap: %w", err))
+		//return fmt.Errorf("GenerateMap: %w", err)
 	}
 	if err := LocationDataSave(filepath.Join(libdir, "locations.json")); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
-	if err := ItemDataSave(filepath.Join(libdir, "items.json")); err != nil {
+	if err := EntityItemDataSave(filepath.Join(libdir, "items.json")); err != nil {
 		return fmt.Errorf("GenerateMap: %w", err)
 	}
 	if err := MiscDataSave(filepath.Join(libdir, "misc.json")); err != nil {

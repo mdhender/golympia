@@ -28,26 +28,34 @@ import (
 
 type MiscList []*Misc
 type Misc struct {
-	Id   int    `json:"id"`             // identity of the thing
-	Name string `json:"name,omitempty"` // name of the thing
+	Id      int    `json:"id"`             // identity of the thing
+	Name    string `json:"name,omitempty"` // name of the thing
+	Kind    string `json:"kind,omitempty"`
+	SubKind string `json:"sub-kind,omitempty"`
 }
 
-func MiscDataLoad(name string) (MiscList, error) {
+func MiscDataLoad(name string, scanOnly bool) (MiscList, error) {
 	log.Printf("MiscDataLoad: loading %s\n", name)
 	data, err := os.ReadFile(name)
 	if err != nil {
 		return nil, fmt.Errorf("MiscDataLoad: %w", err)
 	}
-	var js MiscList
-	if err := json.Unmarshal(data, &js); err != nil {
+	var list MiscList
+	if err := json.Unmarshal(data, &list); err != nil {
 		return nil, fmt.Errorf("MiscDataLoad: %w", err)
+	}
+	if scanOnly {
+		return nil, nil
+	}
+	for _, e := range list {
+		BoxAlloc(e.Id, strKind[e.Kind], strSubKind[e.SubKind])
 	}
 	return nil, nil
 }
 
 func MiscDataSave(name string) error {
-	var js MiscList
-	data, err := json.MarshalIndent(js, "", "  ")
+	var list MiscList
+	data, err := json.MarshalIndent(list, "", "  ")
 	if err != nil {
 		return fmt.Errorf("MiscDataSave: %w", err)
 	} else if err := os.WriteFile(name, data, 0666); err != nil {

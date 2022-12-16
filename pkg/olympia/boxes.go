@@ -25,14 +25,131 @@ import (
 
 // BoxAlloc replaces alloc_box()
 func BoxAlloc(id, kind, skind int) {
-	if !(0 < id && id < MAX_BOXES) {
-		panic(fmt.Sprintf("assert(0 < %d < MAX_BOXES)", id))
+	if bx == nil {
+		panic("assert(bx != nil)")
 	} else if !(bx[id] == nil) {
-		panic(fmt.Sprintf("assert(bx[%]d == nil)", id))
+		panic(fmt.Sprintf("assert(bx[%d] == nil)", id))
 	}
-
 	bx[id] = &box{
 		kind:  schar(kind),
 		skind: schar(skind),
 	}
+	add_next_chain(id)
+	add_sub_chain(id)
+}
+
+type Box struct {
+	Id             int             `json:"id"`             // identity of the thing
+	Name           string          `json:"name,omitempty"` // name of the thing
+	Kind           int             `json:"kind,omitempty"`
+	SubKind        int             `json:"sub-kind,omitempty"`
+	Attitudes      *Attitudes      `json:"attitudes,omitempty"`
+	CharMagic      *CharMagic      `json:"char-magic,omitempty"`
+	Effects        EffectList      `json:"effects,omitempty"`
+	EntityArtifact *EntityArtifact `json:"entity-artifact,omitempty"`
+	EntityChar     *EntityChar     `json:"entity-char,omitempty"`
+	EntityItem     *EntityItem     `json:"entity-item,omitempty"`
+	EntityLoc      *EntityLoc      `json:"entity-loc,omitempty"`
+	EntityPlayer   *EntityPlayer   `json:"entity-player,omitempty"`
+	EntitySubLoc   *EntitySubLoc   `json:"entity-subloc,omitempty"`
+	ItemMagic      *ItemMagic      `json:"item-magic,omitempty"`
+	Items          InventoryList   `json:"items,omitempty"`
+	LocationInfo   *LocationInfo   `json:"location-info,omitempty"`
+	Trades         TradeList       `json:"trades,omitempty"`
+}
+
+// ToBoxList replaces boxlist_print
+func (l ints_l) ToBoxList() (il ints_l) {
+	for _, e := range l {
+		// todo: why carve out the monster attitude?
+		if !(valid_box(e) || e == MONSTER_ATT) {
+			continue
+		}
+		il = append(il, e)
+	}
+	return il
+}
+
+func (b *box) ToAttitudes() *Attitudes {
+	if b == nil {
+		return nil
+	}
+	return b.x_disp.ToAttitudes()
+}
+
+func (b *box) ToCharMagic() *CharMagic {
+	if b == nil || b.x_char == nil {
+		return nil
+	}
+	return b.x_char.x_char_magic.ToCharMagic()
+}
+
+func (b *box) ToEffectList() EffectList {
+	if b == nil {
+		return nil
+	}
+	return b.effects.ToEffectList()
+}
+
+func (b *box) ToEntityArtifact(id int) *EntityArtifact {
+	if b == nil || b.x_item == nil {
+		return nil
+	}
+	return b.x_item.ToEntityArtifact(id)
+}
+
+func (b *box) ToEntityChar() *EntityChar {
+	if b == nil {
+		return nil
+	}
+	return b.x_char.ToEntityChar()
+}
+
+func (b *box) ToEntityItem(id int) *EntityItem {
+	if b == nil {
+		return nil
+	}
+	return b.x_item.ToEntityItem(id)
+}
+
+func (b *box) ToEntityLoc() *EntityLoc {
+	if b == nil {
+		return nil
+	}
+	return b.x_loc.ToEntityLoc()
+}
+
+func (b *box) ToEntityPlayer() *EntityPlayer {
+	if b == nil {
+		return nil
+	}
+	return b.x_player
+}
+
+func (b *box) ToEntitySubLoc() *EntitySubLoc {
+	if b == nil {
+		return nil
+	}
+	return b.x_subloc.ToEntitySubLoc()
+}
+
+func (b *box) ToInventoryList() InventoryList {
+	if b == nil {
+		return nil
+	}
+	return b.items.ToInventoryList()
+}
+
+func (b *box) ToItemMagic(id int) *ItemMagic {
+	if b == nil || b.x_item == nil {
+		return nil
+	}
+	return b.x_item.ToItemMagic(id)
+}
+
+func (b *box) ToTradeList() TradeList {
+	if b == nil {
+		return nil
+	}
+	return b.trades.ToTradeList()
 }

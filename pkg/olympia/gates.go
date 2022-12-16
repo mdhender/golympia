@@ -47,9 +47,11 @@ type GateLink struct {
 }
 
 type Gate struct {
-	Id    int         `json:"id"`    // identity of the gate
-	Where int         `json:"where"` // where this gate is located (region or location)
-	Links []*GateLink `json:"links,omitempty"`
+	Id      int         `json:"id"` // identity of the gate
+	Kind    string      `json:"kind,omitempty"`
+	SubKind string      `json:"sub-kind,omitempty"`
+	Where   int         `json:"where"` // where this gate is located (region or location)
+	Links   []*GateLink `json:"links,omitempty"`
 }
 
 // GatesFromMapGen loads gates from the globals created by the map generator.
@@ -92,21 +94,29 @@ func GatesFromMapGen() (gates GateList) {
 	return gates
 }
 
-func GateDataLoad(name string) (GateList, error) {
+func GateDataLoad(name string, scanOnly bool) (GateList, error) {
 	log.Printf("GateDataLoad: loading %s\n", name)
 	data, err := os.ReadFile(name)
 	if err != nil {
 		return nil, fmt.Errorf("GateDataLoad: %w", err)
 	}
-	var js GateList
-	if err := json.Unmarshal(data, &js); err != nil {
+	var list GateList
+	if err := json.Unmarshal(data, &list); err != nil {
 		return nil, fmt.Errorf("GateDataLoad: %w", err)
+	}
+	if scanOnly {
+		return nil, nil
+	}
+	for _, e := range list {
+		BoxAlloc(e.Id, strKind[e.Kind], strSubKind[e.SubKind])
 	}
 	return nil, nil
 }
 
 func GateDataSave(name string) error {
-	if buf, err := json.MarshalIndent(GatesFromMapGen(), "", "  "); err != nil {
+	list := GatesFromMapGen()
+	sort.Sort(list)
+	if buf, err := json.MarshalIndent(list, "", "  "); err != nil {
 		return fmt.Errorf("GateDataSave: %w", err)
 	} else if err = os.WriteFile(name, buf, 0666); err != nil {
 		return fmt.Errorf("GateDataSave: %w", err)

@@ -916,9 +916,9 @@ func start_build(c *command, bi *build_ent, id int) bool {
 	 *  First tower a player builds take no workers, materials or time
 	 */
 	if bi.finished_subkind == sub_tower &&
-		p_player(pl).first_tower == FALSE {
+		p_player(pl).FirstTower == FALSE {
 		instant_build = true
-		p_player(pl).first_tower = TRUE
+		p_player(pl).FirstTower = TRUE
 	}
 
 	if !instant_build && !build_materials_check(c, bi) {
@@ -927,7 +927,7 @@ func start_build(c *command, bi *build_ent, id int) bool {
 
 	if id != FALSE {
 		if kind(id) != T_unform ||
-			ilist_lookup(p_player(player(c.who)).unformed, id) < 0 {
+			ilist_lookup(p_player(player(c.who)).Unformed, id) < 0 {
 			wout(c.who, "%s is not a valid unformed entity.", box_code(id))
 			wout(c.who, "I will use a random identifier.")
 			id = 0
@@ -945,7 +945,7 @@ func start_build(c *command, bi *build_ent, id int) bool {
 		new_ent_prime = false
 	}
 
-	p_player(player(c.who)).unformed = rem_value((p_player(player(c.who)).unformed), id)
+	p_player(player(c.who)).Unformed = rem_value((p_player(player(c.who)).Unformed), id)
 	set_where(newt, where)
 
 	if numargs(c) < 2 || c.parse[2] == nil || len(c.parse[2]) == 0 {

@@ -24,30 +24,53 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 )
 
 type NationList []*Nation
-type Nation struct {
-	Id   int    `json:"id"`             // identity of the item
-	Name string `json:"name,omitempty"` // name of the item
+
+func (l NationList) Len() int {
+	return len(l)
 }
 
-func NationDataLoad(name string) (NationList, error) {
+func (l NationList) Less(i, j int) bool {
+	return l[i].Id < l[j].Id
+}
+
+func (l NationList) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
+}
+
+type Nation struct {
+	Id      int    `json:"id"`             // identity of the item
+	Name    string `json:"name,omitempty"` // name of the item
+	Kind    string `json:"kind,omitempty"`
+	SubKind string `json:"sub-kind,omitempty"`
+}
+
+func NationDataLoad(name string, scanOnly bool) (NationList, error) {
 	log.Printf("NationDataLoad: loading %s\n", name)
 	data, err := os.ReadFile(name)
 	if err != nil {
 		return nil, fmt.Errorf("NationDataLoad: %w", err)
 	}
-	var js NationList
-	if err := json.Unmarshal(data, &js); err != nil {
+	var list NationList
+	if err := json.Unmarshal(data, &list); err != nil {
 		return nil, fmt.Errorf("NationDataLoad: %w", err)
+	}
+	if scanOnly {
+		return nil, nil
+	}
+	for _, e := range list {
+		BoxAlloc(e.Id, strKind[e.Kind], strSubKind[e.SubKind])
 	}
 	return nil, nil
 }
 
 func NationDataSave(name string) error {
-	var js NationList
-	data, err := json.MarshalIndent(js, "", "  ")
+	list := NationList{}
+	sort.Sort(list)
+	data, err := json.MarshalIndent(list, "", "  ")
 	if err != nil {
 		return fmt.Errorf("NationDataSave: %w", err)
 	} else if err := os.WriteFile(name, data, 0666); err != nil {

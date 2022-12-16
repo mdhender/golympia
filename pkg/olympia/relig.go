@@ -71,7 +71,7 @@ func has_holy_symbol(who int) bool {
 
 	for _, e := range loop_inventory(who) {
 		if subkind(e.item) == sub_holy_symbol {
-			if rp_item_magic(e.item).religion == is_priest(who) {
+			if rp_item_magic(e.item).Religion == is_priest(who) {
 				return true
 			}
 		}
@@ -715,8 +715,8 @@ func d_create_holy_symbol(c *command) int {
 	p.weight = rnd(1, 3)
 
 	pm := p_item_magic(newt)
-	pm.creator = c.who
-	pm.religion = is_priest(c.who)
+	pm.Creator = c.who
+	pm.Religion = is_priest(c.who)
 
 	wout(c.who, "%s created.", box_name(newt))
 

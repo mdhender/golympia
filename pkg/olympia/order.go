@@ -137,7 +137,7 @@ func load_orders() error {
 func load_player_orders(pl int) error {
 	if !valid_box(pl) {
 		panic("assert(valid_box(pl))")
-	} else if rp_player(pl).orders != nil {
+	} else if rp_player(pl).Orders != nil {
 		panic("assert(rp_player(pl).orders == nil)")
 	} else if !io.ReadFile(filepath.Join(libdir, "orders", fmt.Sprintf("%d", pl))) {
 		return nil
@@ -167,18 +167,18 @@ func orders_other(who, pl int) {
 	}
 
 	first := true
-	for i := 0; i < len(p.orders); i++ {
-		if pl == p.orders[i].unit || !valid_box(p.orders[i].unit) || kind(p.orders[i].unit) == T_deadchar {
+	for i := 0; i < len(p.Orders); i++ {
+		if pl == p.Orders[i].unit || !valid_box(p.Orders[i].unit) || kind(p.Orders[i].unit) == T_deadchar {
 			continue
-		} else if ilist_lookup(p.units, p.orders[i].unit) >= 0 {
+		} else if ilist_lookup(p.Units, p.Orders[i].unit) >= 0 {
 			continue
 		}
 
 		/*
 		 *  Don't output an empty template for a unit we swore away this turn
 		 */
-		c := rp_command(p.orders[i].unit)
-		l := rp_order_head(pl, p.orders[i].unit)
+		c := rp_command(p.Orders[i].unit)
+		l := rp_order_head(pl, p.Orders[i].unit)
 		if (c == nil || c.state == DONE) && (l == nil || len(l.l) == 0) {
 			continue
 		}
@@ -189,7 +189,7 @@ func orders_other(who, pl int) {
 			out(who, "#")
 			first = false
 		}
-		orders_template_sup(who, p.orders[i].unit, pl)
+		orders_template_sup(who, p.Orders[i].unit, pl)
 	}
 }
 
@@ -197,7 +197,7 @@ func orders_template(who, pl int) {
 	var pass string
 	p := rp_player(pl)
 	if p != nil {
-		if p.password != "" {
+		if p.Password != "" {
 			pass = sout(" \"*******\"")
 		}
 		/*	pass = sout(" \"%s\"", p.password); */
@@ -313,14 +313,14 @@ func orders_template_sup(who, num, pl int) {
 
 func p_order_head(pl, who int) *order_list {
 	p := p_player(pl)
-	for i := 0; i < len(p.orders); i++ {
-		if p.orders[i].unit == who {
-			return p.orders[i]
+	for i := 0; i < len(p.Orders); i++ {
+		if p.Orders[i].unit == who {
+			return p.Orders[i]
 		}
 	}
 
 	ol := &order_list{unit: who}
-	p.orders = append(p.orders, ol)
+	p.Orders = append(p.Orders, ol)
 
 	return ol
 }
@@ -362,26 +362,26 @@ func rp_order_head(pl, who int) *order_list {
 	if p == nil {
 		return nil
 	}
-	for i := 0; i < len(p.orders); i++ {
-		if p.orders[i].unit == who {
-			return p.orders[i]
+	for i := 0; i < len(p.Orders); i++ {
+		if p.Orders[i].unit == who {
+			return p.Orders[i]
 		}
 	}
 	return nil
 }
 
-func save_orders() {
+func save_orders() error {
 	if err := rmdir(filepath.Join(libdir, "orders")); err != nil {
-		panic(err)
+		return fmt.Errorf("save_orders: %w", err)
 	} else if err = os.Mkdir(filepath.Join(libdir, "orders"), 0755); err != nil {
-		panic(err)
+		return fmt.Errorf("save_orders: %w", err)
 	}
 	for _, i := range loop_player() {
-		err := save_player_orders(i)
-		if err != nil {
-			log.Printf("save_orders: %v\n", err)
+		if err := save_player_orders(i); err != nil {
+			return fmt.Errorf("save_orders: player %d: %w", i, err)
 		}
 	}
+	return nil
 }
 
 func save_player_orders(pl int) error {
@@ -396,19 +396,19 @@ func save_player_orders(pl int) error {
 
 	var fp *os.File
 	var err error
-	for i := 0; i < len(p.orders); i++ {
-		if !valid_box(p.orders[i].unit) || kind(p.orders[i].unit) == T_deadchar {
+	for i := 0; i < len(p.Orders); i++ {
+		if !valid_box(p.Orders[i].unit) || kind(p.Orders[i].unit) == T_deadchar {
 			continue
 		}
-		for j := 0; j < len(p.orders[i].l); j++ {
+		for j := 0; j < len(p.Orders[i].l); j++ {
 			if fp == nil {
-				fp, err = fopen(filepath.Join(libdir, "orders", fmt.Sprintf("%d", pl)), "w")
+				fname := filepath.Join(libdir, "orders", fmt.Sprintf("%d", pl))
+				fp, err = fopen(fname, "w")
 				if err != nil {
-					log.Printf("save_player_orders: can't write %q: %v\n", err)
-					return err
+					return fmt.Errorf("save_player_orders: %q: %w\n", fname, err)
 				}
 			}
-			fprintf(fp, "%d:%s\n", p.orders[i].unit, p.orders[i].l[j])
+			fprintf(fp, "%d:%s\n", p.Orders[i].unit, p.Orders[i].l[j])
 		}
 	}
 	fp = fclose(fp)

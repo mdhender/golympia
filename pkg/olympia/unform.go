@@ -24,30 +24,53 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 )
 
 type UnformList []*Unform
-type Unform struct {
-	Id   int    `json:"id"`             // identity of the thing
-	Name string `json:"name,omitempty"` // name of the thing
+
+func (l UnformList) Len() int {
+	return len(l)
 }
 
-func UnformDataLoad(name string) (UnformList, error) {
+func (l UnformList) Less(i, j int) bool {
+	return l[i].Id < l[j].Id
+}
+
+func (l UnformList) Swap(i, j int) {
+	l[i], l[j] = l[j], l[i]
+}
+
+type Unform struct {
+	Id      int    `json:"id"`             // identity of the thing
+	Name    string `json:"name,omitempty"` // name of the thing
+	Kind    string `json:"kind,omitempty"`
+	SubKind string `json:"sub-kind,omitempty"`
+}
+
+func UnformDataLoad(name string, scanOnly bool) (UnformList, error) {
 	log.Printf("UnformDataLoad: loading %s\n", name)
 	data, err := os.ReadFile(name)
 	if err != nil {
 		return nil, fmt.Errorf("UnformDataLoad: %w", err)
 	}
-	var js UnformList
-	if err := json.Unmarshal(data, &js); err != nil {
+	var list UnformList
+	if err := json.Unmarshal(data, &list); err != nil {
 		return nil, fmt.Errorf("UnformDataLoad: %w", err)
+	}
+	if scanOnly {
+		return nil, nil
+	}
+	for _, e := range list {
+		BoxAlloc(e.Id, strKind[e.Kind], strSubKind[e.SubKind])
 	}
 	return nil, nil
 }
 
 func UnformDataSave(name string) error {
-	var js struct{}
-	data, err := json.MarshalIndent(js, "", "  ")
+	list := UnformList{}
+	sort.Sort(list)
+	data, err := json.MarshalIndent(list, "", "  ")
 	if err != nil {
 		return fmt.Errorf("UnformDataSave: %w", err)
 	} else if err := os.WriteFile(name, data, 0666); err != nil {

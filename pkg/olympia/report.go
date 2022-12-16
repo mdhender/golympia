@@ -83,7 +83,7 @@ func determine_output_order() {
 	 */
 
 	var pl int
-	var p *entity_player
+	var p *EntityPlayer
 
 	for _, pl = range loop_player() {
 		p = rp_player(pl)
@@ -91,7 +91,7 @@ func determine_output_order() {
 			continue
 		}
 
-		p.units = sort_for_output(p.units)
+		p.Units = sort_for_output(p.Units)
 	}
 
 }
@@ -139,7 +139,7 @@ func show_carry_capacity(who, num int) {
 	tagout(who, "</tag type=capacity>")
 }
 
-func show_item_skills_sup(who, item int, p *item_magic) {
+func show_item_skills_sup(who, item int, p *ItemMagic) {
 	var i int
 	var req_s string
 	var sk int
@@ -151,8 +151,8 @@ func show_item_skills_sup(who, item int, p *item_magic) {
 	//#endif
 
 	first := true
-	for i = 0; i < len(p.may_study); i++ {
-		sk = p.may_study[i]
+	for i = 0; i < len(p.MayStudy); i++ {
+		sk = p.MayStudy[i]
 		assert(valid_box(sk))
 		parent = skill_school(sk)
 
@@ -182,15 +182,15 @@ func show_item_skills_sup(who, item int, p *item_magic) {
 			item,
 			or_int((sk != parent && has_skill(who, parent) < 1), 0, sk),
 			parent,
-			p.orb_use_count)
+			p.OrbUseCount)
 
 		if first {
 			out(who, "")
 			wout(who, "%s permits %d day%s study of the following skill%s:",
 				box_name(item),
-				p.orb_use_count,
-				or_string(p.orb_use_count == 1, " of ", "s"),
-				or_string(len(p.may_study) == 1, "", "s"))
+				p.OrbUseCount,
+				or_string(p.OrbUseCount == 1, " of ", "s"),
+				or_string(len(p.MayStudy) == 1, "", "s"))
 			indent += 3
 			first = false
 		}
@@ -209,8 +209,8 @@ func show_item_skills_sup(who, item int, p *item_magic) {
 	}
 
 	first = true
-	for i = 0; i < len(p.may_use); i++ {
-		sk = p.may_use[i]
+	for i = 0; i < len(p.MayUse); i++ {
+		sk = p.MayUse[i]
 		assert(valid_box(sk))
 		parent = skill_school(sk)
 
@@ -255,7 +255,7 @@ func show_item_skills_sup(who, item int, p *item_magic) {
 
 func show_item_skills(who, num int) {
 	var e *item_ent
-	var p *item_magic
+	var p *ItemMagic
 	first := true
 
 	for _, e = range loop_inventory(num) {
@@ -882,7 +882,7 @@ func show_unclaimed(who, num int) {
 			extra_item_info(0, e.item, e.qty))
 	}
 
-	if rp_player(who).first_tower == FALSE {
+	if rp_player(who).FirstTower == FALSE {
 		if first {
 			out(who, "")
 			out(who, "Unclaimed items:")
@@ -1101,7 +1101,7 @@ func unit_summary(pl int) {
 	sum_sail = 0
 	sum_fight = 0
 
-	count = len(p_player(pl).units)
+	count = len(p_player(pl).Units)
 
 	if count <= 0 {
 		return
@@ -1260,7 +1260,7 @@ func loc_stack_report(pl int) {
 }
 
 func player_report_sup(pl int) {
-	var p *entity_player
+	var p *EntityPlayer
 
 	if subkind(pl) == sub_pl_system {
 		return
@@ -1269,13 +1269,13 @@ func player_report_sup(pl int) {
 	p = p_player(pl)
 
 	tagout(pl, "<tag type=player_summary pl=%d np=%d sp=%d>",
-		pl, p.noble_points, p.jump_start)
+		pl, p.NoblePoints, p.JumpStart)
 	out(pl, "Noble points:  %d     (%d gained, %d spent)",
-		p.noble_points,
-		p.np_gained,
-		p.np_spent)
+		p.NoblePoints,
+		p.npGained,
+		p.npSpent)
 	out(pl, "Study points:  %d",
-		p.jump_start)
+		p.JumpStart)
 
 	print_hiring_status(pl)
 	print_unformed(pl)
@@ -1712,7 +1712,7 @@ func gen_include_section() {
 func turn_end_loc_reports() {
 	var pl int
 	var i int
-	var p *entity_player
+	var p *EntityPlayer
 
 	stage("turn_end_loc_reports()")
 
@@ -1900,7 +1900,7 @@ func report_account() {
 
 func charge_account() {
 	var pl int
-	var p *entity_player
+	var p *EntityPlayer
 	var cmd string
 	//var val_s string
 

@@ -18,3 +18,10 @@
  */
 
 package olympia
+
+type InventoryList []Inventory
+
+type Inventory struct {
+	Id  int `json:"id"`  // id of item
+	Qty int `json:"qty"` // quantity of item
+}

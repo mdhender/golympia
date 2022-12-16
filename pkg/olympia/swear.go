@@ -99,15 +99,15 @@ func set_lord(who int, new_lord int, k int, lev int) {
 		//            p_magic(who).pledge = 0;
 		//#endif
 
-		p_player(old_pl).units = rem_value(p_player(old_pl).units, who)
+		p_player(old_pl).Units = rem_value(p_player(old_pl).Units, who)
 	}
 
 	p_char(who).unit_lord = new_lord
 	p_misc(who).old_lord = old_pl
 
 	if new_lord != 0 && new_pl != old_pl {
-		p_player(new_pl).units = append(p_player(new_pl).units, who)
-		sort.Ints(p_player(new_pl).units)
+		p_player(new_pl).Units = append(p_player(new_pl).Units, who)
+		sort.Ints(p_player(new_pl).Units)
 		init_load_sup(who) /* load command from new owner */
 		touch_loc(who)
 	}
@@ -189,7 +189,7 @@ func is_unit(pl, v int) bool {
 	if !(kind(pl) == T_player) {
 		panic("assert(kind(pl) == T_player)")
 	}
-	return ilist_lookup(p_player(pl).units, v) >= 0
+	return ilist_lookup(p_player(pl).Units, v) >= 0
 }
 
 func unit_deserts(who int, to_who int, loy_check int, k int, lev int) bool {

@@ -19,6 +19,11 @@
 
 package olympia
 
+import (
+	"fmt"
+	"time"
+)
+
 // oly.h
 
 const (
@@ -27,650 +32,6 @@ const (
 	MAX_BOXES  = 102400
 	MONTH_DAYS = 30
 	NUM_MONTHS = 8
-
-	T_deleted  = 0 /* forget on save */
-	T_player   = 1
-	T_char     = 2
-	T_loc      = 3
-	T_item     = 4
-	T_skill    = 5
-	T_gate     = 6
-	T_road     = 7
-	T_deadchar = 8
-	T_ship     = 9
-	T_post     = 10
-	T_storm    = 11
-	T_unform   = 12 /* unformed noble */
-	T_lore     = 13
-	T_nation   = 14
-	T_MAX      = 15 /* one past highest T_xxx define */
-
-	sub_ocean                  = 1
-	sub_forest                 = 2
-	sub_plain                  = 3
-	sub_mountain               = 4
-	sub_desert                 = 5
-	sub_swamp                  = 6
-	sub_under                  = 7  /* underground */
-	sub_faery_hill             = 8  /* gateway to Faery */
-	sub_island                 = 9  /* island subloc */
-	sub_stone_cir              = 10 /* ring of stones */
-	sub_mallorn_grove          = 11
-	sub_bog                    = 12
-	sub_cave                   = 13
-	sub_city                   = 14
-	sub_lair                   = 15 /* dragon lair */
-	sub_graveyard              = 16
-	sub_ruins                  = 17
-	sub_battlefield            = 18
-	sub_ench_forest            = 19 /* enchanted forest */
-	sub_rocky_hill             = 20
-	sub_tree_circle            = 21
-	sub_pits                   = 22
-	sub_pasture                = 23
-	sub_oasis                  = 24
-	sub_yew_grove              = 25
-	sub_sand_pit               = 26
-	sub_sacred_grove           = 27
-	sub_poppy_field            = 28
-	sub_temple                 = 29
-	sub_galley                 = 30
-	sub_roundship              = 31
-	sub_castle                 = 32
-	sub_galley_notdone         = 33
-	sub_roundship_notdone      = 34
-	sub_ghost_ship             = 35
-	sub_temple_notdone         = 36
-	sub_inn                    = 37
-	sub_inn_notdone            = 38
-	sub_castle_notdone         = 39
-	sub_mine                   = 40
-	sub_mine_notdone           = 41
-	sub_scroll                 = 42 /* item is a scroll */
-	sub_magic                  = 43 /* this skill is magical */
-	sub_palantir               = 44
-	sub_auraculum              = 45
-	sub_tower                  = 46
-	sub_tower_notdone          = 47
-	sub_pl_system              = 48 /* system player */
-	sub_pl_regular             = 49 /* regular player */
-	sub_region                 = 50 /* region wrapper loc */
-	sub_pl_savage              = 51 /* Savage King */
-	sub_pl_npc                 = 52
-	sub_mine_collapsed         = 53
-	sub_ni                     = 54 /* ni=noble_item */
-	sub_demon_lord             = 55 /* undead lord */
-	sub_dead_body              = 56 /* dead noble's body */
-	sub_fog                    = 57
-	sub_wind                   = 58
-	sub_rain                   = 59
-	sub_hades_pit              = 60
-	sub_artifact               = 61
-	sub_pl_silent              = 62
-	sub_npc_token              = 63 /* npc group control art */
-	sub_garrison               = 64 /* npc group control art */
-	sub_cloud                  = 65 /* cloud terrain type */
-	sub_raft                   = 66 /* raft made out of flotsam */
-	sub_raft_notdone           = 67
-	sub_suffuse_ring           = 68
-	sub_religion               = 69
-	sub_holy_symbol            = 70 /* Holy symbol of some sort */
-	sub_mist                   = 71
-	sub_book                   = 72 /* Book */
-	sub_guild                  = 73 /* Requires skill to enter */
-	sub_trade_good             = 74
-	sub_city_notdone           = 75
-	sub_ship                   = 76
-	sub_ship_notdone           = 77
-	sub_mine_shaft             = 78
-	sub_mine_shaft_notdone     = 79
-	sub_orc_stronghold         = 80
-	sub_orc_stronghold_notdone = 81
-	sub_special_staff          = 82
-	sub_lost_soul              = 83
-	sub_undead                 = 84
-	sub_pen_crown              = 85
-	sub_animal_part            = 86
-	sub_magic_artifact         = 87
-
-	SUB_MAX = 88 /* one past highest sub_ */
-
-	item_gold = 1
-
-	item_peasant         = 10
-	item_worker          = 11
-	item_soldier         = 12
-	item_archer          = 13
-	item_knight          = 14
-	item_elite_guard     = 15
-	item_pikeman         = 16
-	item_blessed_soldier = 17
-	item_ghost_warrior   = 18
-	item_sailor          = 19
-	item_swordsman       = 20
-	item_crossbowman     = 21
-	item_elite_arch      = 22
-	item_angry_peasant   = 23
-	item_pirate          = 24
-	item_elf             = 25
-	item_spirit          = 26
-	item_postulant       = 27
-	item_fanatic         = 28
-	item_ninja           = 29
-	item_angel           = 30
-
-	item_corpse       = 31
-	item_savage       = 32
-	item_skeleton     = 33
-	item_barbarian    = 34
-	item_wagon        = 35
-	item_skirmisher   = 36
-	item_hvy_foot     = 37
-	item_hvy_xbowman  = 38
-	item_elvish_arrow = 39
-	item_hvy_xbow     = 40
-	item_horse_archer = 41
-	item_pctg_token   = 42
-	item_cavalier     = 43
-	item_new_wagon    = 44
-	item_hvy_wagon    = 45
-	item_war_wagon    = 46
-
-	item_wild_horse   = 51
-	item_riding_horse = 52
-	item_warmount     = 53
-	item_pegasus      = 54
-	item_nazgul       = 55
-
-	item_flotsam         = 59
-	item_battering_ram   = 60
-	item_catapult        = 61
-	item_siege_tower     = 62
-	item_ratspider_venom = 63
-	item_lana_bark       = 64
-	item_avinia_leaf     = 65
-	item_spiny_root      = 66
-	item_farrenstone     = 67
-	item_yew             = 68
-	item_elfstone        = 69
-	item_mallorn_wood    = 70
-	item_pretus_bones    = 71
-	item_longbow         = 72
-	item_plate           = 73
-	item_longsword       = 74
-	item_pike            = 75
-	item_ox              = 76
-	item_lumber          = 77
-	item_stone           = 78
-	item_iron            = 79
-	item_leather         = 80
-	item_ratspider       = 81
-	item_mithril         = 82
-	item_gate_crystal    = 83
-	item_blank_scroll    = 84
-	item_crossbow        = 85
-	item_rug             = 86
-	item_fish            = 87
-	item_pepper          = 88
-	item_pipeweed        = 89
-	item_ale             = 90
-	item_wool            = 91
-	item_jewel           = 92
-	item_opium           = 93
-	item_basket          = 94 /* woven basket */
-	item_pot             = 95 /* clay pot */
-	item_tax_cookie      = 96
-	item_fish_oil        = 97
-	item_drum            = 98
-	item_hide            = 99
-	item_mob_cookie      = 101
-	item_lead            = 102
-	item_fine_cloak      = 103
-	item_chocolate       = 104
-	item_ivory           = 105
-	item_cardamom        = 106
-	item_honey           = 107
-	item_ink             = 108
-	item_licorice        = 109
-	item_soap            = 110
-	item_old_book        = 111
-	item_jade_idol       = 112
-	item_purple_cloth    = 113
-	item_rose_perfume    = 114
-	item_silk            = 115
-	item_incense         = 116
-	item_ochre           = 117
-	item_jeweled_egg     = 118
-	item_obsidian        = 119
-	item_orange          = 251
-	item_cinnabar        = 252
-	item_myrhh           = 253
-	item_saffron         = 254
-	item_dried_fish      = 255
-	item_tallow          = 256
-	item_candles         = 257
-	item_wax             = 258
-	item_sugar           = 259
-	item_salt            = 260
-	item_glue            = 261
-	item_linen           = 262
-	item_beans           = 263
-	item_walnuts         = 264
-	item_flax            = 265
-	item_flutes          = 266
-	item_cassava         = 267
-	item_plum_wine       = 268
-	item_vinegar         = 269
-	item_tea             = 270
-	item_centaur         = 271
-	item_minotaur        = 272
-	item_undead_cookie   = 273
-	item_fog_cookie      = 274
-	item_wind_cookie     = 275
-	item_rain_cookie     = 276
-	item_mage_menial     = 277 /* mage menial labor cookie */
-	item_spider          = 278 /* giant spider */
-	item_rat             = 279 /* horde of rats */
-	item_lion            = 280
-	item_bird            = 281 /* giant bird */
-	item_lizard          = 282
-	item_bandit          = 283
-	item_chimera         = 284
-	item_harpie          = 285
-	item_dragon          = 286
-	item_orc             = 287
-	item_gorgon          = 288
-	item_wolf            = 289
-	item_orb             = 290
-	item_cyclops         = 291
-	item_giant           = 292
-	item_faery           = 293
-	item_petty_thief     = 294
-	item_seagrass        = 295
-	item_firewort        = 296
-	item_beastnip        = 297
-	item_elf_poppy       = 298
-	item_ironwood        = 299
-	item_kings_fern      = 300
-	item_moon_palms      = 301
-	item_otter           = 302
-	item_mole            = 303
-	item_bull            = 304
-	item_eagle           = 305
-	item_monkey          = 306
-	item_hare            = 307
-	item_wardog          = 308
-	item_sand_rat        = 309
-	item_balrog          = 310
-	item_dirt_golem      = 311
-	item_flesh_golem     = 312
-	item_iron_golem      = 313
-	item_lesser_demon    = 314
-	item_greater_demon   = 315
-	item_green_rose      = 316
-	item_elf_ear         = 317
-	item_savage_ear      = 318
-	item_nazgul_tail     = 319
-	item_centaur_hide    = 320
-	item_minotaur_hide   = 321
-	item_spider_eye      = 322
-	item_rat_tail        = 323
-	item_lion_mane       = 324
-	item_bird_feather    = 325
-	item_lizard_tail     = 326
-	item_bandit_ear      = 327
-	item_chimera_eye     = 328
-	item_harpie_feather  = 329
-	item_dragon_scale    = 330
-	item_orc_scalp       = 331
-	item_gorgon_liver    = 332
-	item_wolf_hide       = 333
-	item_cyclops_eye     = 334
-	item_giant_tongue    = 335
-	item_balrog_horn     = 336
-
-	sk_shipcraft      = 1000
-	sk_combat         = 1100
-	sk_stealth        = 1200
-	sk_beast          = 123
-	sk_persuasion     = 1300
-	sk_construction   = 1400
-	sk_alchemy        = 1500
-	sk_forestry       = 1600
-	sk_mining         = 1700
-	sk_trading        = 1800
-	sk_ranger         = 1900
-	sk_religion       = 150
-	sk_eres           = 2000
-	sk_anteus         = 2100
-	sk_dol            = 2200
-	sk_timeid         = 2300
-	sk_ham            = 2400
-	sk_kireus         = 2500
-	sk_halon          = 2600
-	sk_domingo        = 2700
-	sk_basic          = 2800
-	sk_weather        = 161
-	sk_scry           = 2900
-	sk_gate           = 3000
-	sk_artifact       = 3100
-	sk_necromancy     = 3200
-	sk_adv_sorcery    = 3300
-	sk_heroism        = 3400
-	sk_basic_religion = 3500
-
-	lore_skeleton_npc_token  = 9001
-	lore_orc_npc_token       = 9002
-	lore_undead_npc_token    = 9003
-	lore_savage_npc_token    = 9004
-	lore_barbarian_npc_token = 9005
-	lore_orb                 = 9006
-	lore_faery_stone         = 9007
-	lore_barbarian_kill      = 9008
-	lore_savage_kill         = 9009
-	lore_undead_kill         = 9010
-	lore_orc_kill            = 9011
-	lore_skeleton_kill       = 9012
-	lore_pen_crown           = 9013
-
-	sk_meditate          = 2801
-	sk_forge_aura        = 3130 /* forge auraculum */
-	sk_mage_menial       = 2802 /* menial labor for mages */
-	sk_appear_common     = 2803
-	sk_view_aura         = 2804
-	sk_quick_cast        = 2830 /* speed next cast */
-	sk_fortify_castle    = 1491
-	sk_detect_artifacts  = 3101
-	sk_reveal_artifacts  = 3102
-	sk_mutate_artifact   = 3131
-	sk_conceal_artifacts = 3132
-	sk_teleport          = 3030
-	sk_obscure_artifact  = 3133
-	sk_strengthen_castle = 1492
-	sk_detect_gates      = 3001
-	sk_jump_gate         = 3002
-	sk_seal_gate         = 3031
-	sk_unseal_gate       = 3032
-	sk_notify_unseal     = 3033
-	sk_rem_seal          = 3034 /* forcefully unseal gate */
-	sk_reveal_key        = 3035
-	sk_notify_jump       = 3036
-	sk_reveal_mage       = 2831 /* reveal abilities of mage */
-	sk_fierce_wind       = 2030
-	sk_transcend_death   = 3238
-	sk_tap_health        = 2832
-	sk_moat_castle       = 1493
-	sk_widen_entrance    = 1494
-	sk_deepen_mine       = 1703
-	sk_wooden_shoring    = 1790
-	sk_iron_shoring      = 1791
-	sk_forge_weapon      = 3134
-	sk_forge_armor       = 3135
-	sk_forge_bow         = 3136
-	sk_bind_storm        = 9134
-	sk_lightning_bolt    = 2840
-	sk_foresee_defense   = 2940
-	sk_drain_mana        = 3039
-	sk_raise_soldiers    = 3236
-	sk_fireball          = 3332
-	sk_conceal_nation    = 1291
-	sk_scry_region       = 2901
-	sk_shroud_region     = 2930
-	sk_dispel_region     = 2931 /* dispel region shroud */
-	sk_remove_obscurity  = 3137
-	sk_spot_hidden       = 1901
-	sk_protect_noble     = 1990
-	sk_write_basic       = 2833
-	sk_assassinate       = 1292
-	sk_find_food         = 1903
-	sk_write_scry        = 2932
-	sk_write_gate        = 3037
-	sk_write_art         = 3138
-	sk_write_necro       = 3230
-	sk_prot_blast_1      = 2042
-	sk_prot_blast_2      = 2139
-	sk_prot_blast_3      = 2237
-	sk_prot_blast_4      = 2338
-	sk_prot_blast_5      = 2437
-	sk_bar_loc           = 2933 /* create location barrier */
-	sk_unbar_loc         = 2934
-	sk_prot_blast_6      = 2536
-	sk_prot_blast_7      = 2637
-	sk_destroy_art       = 3103
-	sk_rev_jump          = 3038
-	sk_prot_blast_8      = 2735
-	sk_locate_char       = 2935
-	sk_deep_identify     = 3104
-	sk_shroud_abil       = 2834 /* ability shroud */
-	sk_detect_abil       = 2835 /* detect ability scry */
-	sk_detect_scry       = 2936 /* detect region scry */
-	sk_proj_cast         = 2937 /* project next cast */
-	sk_dispel_abil       = 2836 /* dispel ability shroud */
-	sk_adv_med           = 2837 /* advanced meditation */
-	sk_hinder_med        = 2838 /* hinder meditation */
-	sk_forge_palantir    = 3139
-	sk_save_proj         = 2938 /* save projected cast */
-	sk_save_quick        = 2839 /* save speeded cast */
-	sk_summon_ghost      = 3201 /* summon ghost warriors */
-	sk_raise_corpses     = 3202 /* summon undead corpses */
-	sk_undead_lord       = 3231 /* summon undead unit */
-	sk_renew_undead      = 3232
-	sk_banish_undead     = 3233
-	sk_eat_dead          = 3234
-	sk_aura_blast        = 3203
-	sk_absorb_blast      = 3235
-	sk_summon_rain       = 2036
-	sk_summon_wind       = 2037
-	sk_summon_fog        = 2038
-	sk_direct_storm      = 2039
-	sk_dissipate         = 2031
-	sk_renew_storm       = 2032
-	sk_lightning         = 2033
-	sk_seize_storm       = 2034
-	sk_death_fog         = 2035
-	sk_banish_corpses    = 2939
-	sk_trance            = 3330
-	sk_teleport_item     = 3331
-
-	/* 2000 Eres */
-	sk_resurrect              = 2001
-	sk_pray                   = 2002
-	sk_last_rites             = 2003
-	sk_gather_holy_plant      = 2004
-	sk_bless_follower         = 2005
-	sk_proselytise            = 2006
-	sk_create_holy_symbol     = 2007
-	sk_heal                   = 2008
-	sk_summon_water_elemental = 2040
-	sk_write_weather          = 2041
-	sk_dedicate_temple        = 2009
-
-	/* 2100 Anteus */
-	sk_find_mtn_trail    = 2130
-	sk_obscure_mtn_trail = 2131
-	sk_improve_mining    = 2132
-	sk_conceal_mine      = 2133
-	sk_protect_mine      = 2134
-	sk_bless_fort        = 2135
-	sk_weaken_fort       = 2136
-	sk_boulder_trap      = 2137
-	sk_write_anteus      = 2138
-
-	/* 2200 */
-	sk_detect_beasts = 2234
-	sk_snake_trap    = 2235
-	sk_write_dol     = 2236
-
-	/* 2300 */
-	sk_find_forest_trail    = 2330
-	sk_obscure_forest_trail = 2331
-	sk_improve_forestry     = 2332
-	sk_reveal_forest        = 2333
-	sk_improve_fort         = 2334
-	sk_create_deadfall      = 2335
-	sk_recruit_elves        = 2336
-	sk_write_timeid         = 2337
-
-	/* 2400 */
-	sk_reveal_vision   = 2434
-	sk_enchant_guard   = 2430
-	sk_urchin_spy      = 2431
-	sk_draw_crowds     = 2432
-	sk_arrange_mugging = 2433
-	sk_write_ham       = 2435
-	sk_pr_shroud_loc   = 2436
-
-	/* 2500 */
-	sk_improve_quarry   = 2530
-	sk_improve_smithing = 2531
-	sk_edge_of_kireus   = 2532
-	sk_create_mithril   = 2533
-	sk_quicksand_trap   = 2534
-	sk_write_kireus     = 2535
-
-	/* 2600 */
-	sk_calm_ap            = 2630
-	sk_improve_charisma   = 2631
-	sk_mesmerize_crowd    = 2632
-	sk_improve_taxes      = 2633
-	sk_guard_loyalty      = 2634
-	sk_instill_fanaticism = 2635
-	sk_write_halon        = 2636
-
-	/* 2700 */
-	sk_find_hidden      = 2730
-	sk_conceal_loc      = 2731
-	sk_mists_of_conceal = 2732
-	sk_create_ninja     = 2733
-	sk_write_domingo    = 2734
-
-	sk_survive_fatal       = 3483
-	sk_pilot_ship          = 1001
-	sk_shipbuilding        = 1002
-	sk_bird_spy            = 2231
-	sk_fight_to_death      = 1102
-	sk_capture_beasts      = 2232
-	sk_use_beasts          = 1195 /* use beasts in battle */
-	sk_breed_beasts        = 2233
-	sk_petty_thief         = 1201
-	sk_deep_sea            = 1094
-	sk_bribe_noble         = 1301
-	sk_catch_horse         = 1930
-	sk_spy_inv             = 1202 /* determine char inventory */
-	sk_spy_skills          = 1203 /* determine char skill */
-	sk_spy_lord            = 1204 /* determine char's lord */
-	sk_find_rich           = 1230
-	sk_torture             = 1231
-	sk_train_wild          = 1931
-	sk_train_warmount      = 1932
-	sk_persuade_oath       = 1330
-	sk_raise_mob           = 1302
-	sk_rally_mob           = 1303
-	sk_incite_mob          = 1331
-	sk_make_ram            = 1601 /* make battering ram */
-	sk_make_catapult       = 1194
-	sk_make_siege          = 1401
-	sk_extract_venom       = 1530 /* from ratspider */
-	sk_brew_slave          = 1531 /* potion of slavery */
-	sk_brew_heal           = 1501
-	sk_brew_death          = 1502
-	sk_brew_weightlessness = 1590 /* potion of weightlessness */
-	sk_add_ram             = 1095 /* add ram to galley */
-	sk_cloak_trade         = 1232
-	sk_mine_iron           = 1701
-	sk_mine_gold           = 1702
-	sk_mine_mithril        = 1730
-	sk_quarry_stone        = 1402
-	sk_mine_crystal        = 1731
-	sk_harvest_lumber      = 1602
-	sk_harvest_yew         = 1603
-	sk_defense             = 1104
-	sk_record_skill        = 1532
-	sk_sneak_build         = 1233
-	sk_archery             = 1902
-	sk_swordplay           = 1105
-	sk_weaponsmith         = 1106
-	sk_fishing             = 1004
-	sk_collect_foliage     = 1604
-	sk_collect_elem        = 1503
-	sk_summon_savage       = 1332
-	sk_keep_savage         = 1333
-	sk_harvest_mallorn     = 1630
-	sk_harvest_opium       = 1605
-	sk_improve_opium       = 1631
-	sk_lead_to_gold        = 1533
-	sk_hide_lord           = 1205
-	sk_train_angry         = 1304
-	sk_hide_self           = 1290
-	sk_control_battle      = 1107
-	sk_attack_tactics      = 1131
-	sk_defense_tactics     = 1132
-	sk_combat_discipline   = 1108
-	sk_train_armor         = 1192
-
-	sk_smuggle_goods   = 1830
-	sk_smuggle_men     = 1831
-	sk_avoid_taxes     = 1832
-	sk_build_wagons    = 1801
-	sk_increase_demand = 1802
-	sk_decrease_demand = 1803
-	sk_increase_supply = 1804
-	sk_decrease_supply = 1805
-	sk_hide_money      = 1890
-	sk_hide_item       = 1891
-	sk_grow_pop        = 1390
-	sk_build_city      = 1490
-
-	sk_train_knight  = 1190
-	sk_train_paladin = 1191
-
-	sk_add_sails = 1005
-	sk_add_forts = 1091
-	sk_add_ports = 1006
-	sk_add_keels = 1090
-
-	sk_remove_sails = 1096
-	sk_remove_forts = 1093
-	sk_remove_ports = 1097
-	sk_remove_keels = 1092
-	sk_remove_ram   = 1098
-	sk_brew_fiery   = 1591
-
-	sk_dirt_golem  = 2841
-	sk_flesh_golem = 3237
-	sk_iron_golem  = 3333
-
-	/* 3400 Heroism */
-	sk_swordplay2            = 3401
-	sk_defense2              = 3402
-	sk_survive_fatal2        = 3483
-	sk_avoid_wounds          = 3480
-	sk_avoid_illness         = 3481
-	sk_improved_recovery     = 3482
-	sk_personal_fttd         = 3403
-	sk_forced_march          = 3484
-	sk_extra_attacks         = 3485
-	sk_extra_missile_attacks = 3486
-	sk_acute_senses          = 3487
-	sk_improved_explore      = 3488
-	sk_uncanny_accuracy      = 3489
-	sk_blinding_speed        = 3490
-
-	/* 3500 Basic Religion */
-	sk_heal_b              = 3501
-	sk_last_rites_b        = 3502
-	sk_resurrect_b         = 3530
-	sk_create_holy_b       = 3503
-	sk_dedicate_temple_b   = 3504
-	sk_pray_b              = 3505
-	sk_bless_b             = 3506
-	sk_gather_holy_plant_b = 3507
-	sk_write_religion_b    = 3508
-	sk_proselytise_b       = 3509
-	sk_banish_undead_b     = 3510
-	sk_prot_blast_b        = 3531
-	sk_hinder_med_b        = 3532
-	sk_scry_b              = 3533
 
 	PROG_bandit         = 1 /* wilderness spice */
 	PROG_subloc_monster = 2
@@ -920,23 +281,19 @@ var (
 	trades_to_check []int
 )
 
+type accept_ent_l []*accept_ent
+
 type accept_ent struct {
 	item     int /* 0 = any item */
 	from_who int /* 0 = anyone, else char or player */
 	qty      int /* 0 = any qty */
 }
 
-type admit struct {
-	targ  int /* char or loc admit is declared for */
-	sense int /* 0=default no, 1=all but.. */
-	l     []int
-	flag  int /* first time set this turn -- not saved */
-}
-
-type att_ent struct {
-	neutral []int
-	hostile []int
-	defend  []int
+type Admit struct {
+	Flag  int    // first time set this turn -- not saved
+	List  ints_l //
+	Sense int    // 0=default no, 1=all but..
+	Targ  int    // char or loc Admit is declared for
 }
 
 type box struct {
@@ -944,7 +301,7 @@ type box struct {
 	skind      schar
 	name       string
 	x_loc_info loc_info
-	x_player   *entity_player
+	x_player   *EntityPlayer
 	x_char     *entity_char
 	x_loc      *entity_loc
 	x_subloc   *entity_subloc
@@ -958,7 +315,7 @@ type box struct {
 	cmd     *command
 	items   item_ent_l /* ilist of items held */
 	trades  trade_l    /* pending buys/sells */
-	effects []*effect  /* ilist of effects */
+	effects effect_l   /* ilist of effects */
 
 	temp         int /* scratch space */
 	output_order int /* for report ordering -- not saved */
@@ -987,16 +344,20 @@ type char_magic struct {
 	swear_on_release  int /* swear to one who frees us */
 	knows_weather     int /* knows weather magic */
 
-	mage_worked   int   /* worked this month -- not saved */
-	ferry_flag    bool  /* ferry has tooted its horn -- ns */
-	pledged_to_us []int /* temp -- not saved */
+	mage_worked   int    /* worked this month -- not saved */
+	ferry_flag    bool   /* ferry has tooted its horn -- ns */
+	pledged_to_us ints_l /* temp -- not saved */
 }
 
 // character religion - c aptures a nobles religious standing, such as it is.
 type char_religion struct {
-	priest    int   /* Who this noble is dedicated to, if anyone. */
-	piety     int   /* Our current piety. */
-	followers []int /* Who is dedicated to us, if anyone. */
+	priest    int    /* Who this noble is dedicated to, if anyone. */
+	piety     int    /* Our current piety. */
+	followers ints_l /* Who is dedicated to us, if anyone. */
+}
+
+func (cr char_religion) IsZero() bool {
+	return cr.priest == 0 && cr.piety == 0 && len(cr.followers) == 0
 }
 
 type cmd_tbl_ent struct {
@@ -1049,19 +410,17 @@ type command struct {
 	debug int // debugging check -- not saved
 }
 
-type entity_artifact struct {
-	type_  int
-	param1 int
-	param2 int
-	uses   int
+type EntityArtifact struct {
+	Id     int `json:"id,omitempty"`
+	Type   int `json:"type,omitempty"`
+	Param1 int `json:"p1,omitempty"`
+	Param2 int `json:"p2,omitempty"`
+	Uses   int `json:"uses,omitempty"`
 }
 
-// describes what kind of build is going on in a location.
-type entity_build struct {
-	type_           int /* What work is going on? */
-	build_materials int /* fifths of materials we've used */
-	effort_required int /* not finished if nonzero */
-	effort_given    int
+func (ea *EntityArtifact) IsZero() bool {
+	// https://freshman.tech/snippets/go/check-empty-struct/
+	return zero_check(ea)
 }
 
 type entity_char struct {
@@ -1105,11 +464,11 @@ type entity_char struct {
 	pay int /* How much will you pay to enter? */
 
 	// the following are not saved by io.c:
-	melt_me    int           /* in process of melting away */
-	fresh_hire int           /* don't erode loyalty */
-	new_lord   int           /* got a new lord this turn */
-	studied    int           /* num days we studied */
-	accept     []*accept_ent /* what we can be given */
+	melt_me    int          /* in process of melting away */
+	fresh_hire int          /* don't erode loyalty */
+	new_lord   int          /* got a new lord this turn */
+	studied    int          /* num days we studied */
+	accept     accept_ent_l /* what we can be given */
 }
 
 type entity_gate struct {
@@ -1121,32 +480,90 @@ type entity_gate struct {
 }
 
 type entity_item struct {
-	weight      int
-	land_cap    int
-	ride_cap    int
-	fly_cap     int
-	attack      int /* fighter attack rating */
-	defense     int /* fighter defense rating */
-	missile     int /* capable of missile attacks? */
-	maintenance int /* Maintenance cost */
-	npc_split   int /* Size to "split" at... */
-	animal_part int /* Produces this when killed. */
+	id int // unique identifier for this thing
 
-	is_man_item int /* unit is a character like thing */
 	animal      int /* unit is or contains a horse or an ox */
-	prominent   int /* big things that everyone sees */
-	capturable  int /* ni-char contents are capturable */
-	ungiveable  int /* Can't be transferred between nobles. */
-	wild        int /* Appears in the wild as a random encounter. */
-	/* Value is actually the NPC_prog. */
-
-	plural_name string
+	animal_part int /* Produces this when killed. */
+	attack      int /* fighter attack rating */
 	base_price  int /* base price of item for market seeding */
+	capturable  int /* ni-char contents are capturable */
+	defense     int /* fighter defense rating */
+	fly_cap     int
+	is_man_item int /* unit is a character like thing */
+	land_cap    int
+	maintenance int /* Maintenance cost */
+	missile     int /* capable of missile attacks? */
+	npc_split   int /* Size to "split" at... */
+	plural_name string
+	prominent   int /* big things that everyone sees */
+	ride_cap    int
 	trade_good  int /* Is this thing a trade good? & how much*/
+	ungiveable  int /* Can't be transferred between nobles. */
+	weight      int
 	who_has     int /* who has this unique item */
 
-	x_item_magic    *item_magic
-	x_item_artifact *entity_artifact /* Eventually replace item_magic */
+	// appears in the wild as a random encounter.
+	// value is actually the NPC_prog.
+	wild int
+
+	x_item_magic    *ItemMagic
+	x_item_artifact *EntityArtifact /* Eventually replace x_item_magic */
+}
+
+func (ei *entity_item) IsZero() bool {
+	// https://freshman.tech/snippets/go/check-empty-struct/
+	return zero_check(ei)
+}
+
+// todo: must move id into EntityArtifact
+func (ei *entity_item) ToEntityArtifact(id int) *EntityArtifact {
+	if ei == nil || ei.x_item_artifact == nil || ei.x_item_artifact.IsZero() {
+		return nil
+	}
+	if ei.x_item_artifact.Id != id {
+		panic(fmt.Sprintf("assert(%d == %d)", ei.x_item_artifact.Id, id))
+	}
+	return ei.x_item_artifact
+}
+
+// todo: must move id into entity_item
+func (ei *entity_item) ToEntityItem(id int) *EntityItem {
+	if ei == nil || ei.IsZero() {
+		return nil
+	}
+	return &EntityItem{
+		Id:          id,
+		Animal:      ei.animal == TRUE,
+		AnimalPart:  ei.animal_part,
+		Attack:      ei.attack,
+		BasePrice:   ei.base_price,
+		Capturable:  ei.capturable == TRUE,
+		Defense:     ei.defense,
+		FlyCap:      ei.fly_cap,
+		IsManItem:   ei.is_man_item,
+		LandCap:     ei.land_cap,
+		Maintenance: ei.maintenance,
+		Missile:     ei.missile,
+		NpcSplit:    ei.npc_split,
+		PluralName:  ei.plural_name,
+		Prominent:   ei.prominent == TRUE,
+		RideCap:     ei.ride_cap,
+		TradeGood:   ei.trade_good == TRUE,
+		Ungiveable:  ei.ungiveable == TRUE,
+		Weight:      ei.weight,
+		WhoHas:      ei.who_has,
+		Wild:        ei.wild == TRUE,
+	}
+}
+
+func (ei *entity_item) ToItemMagic(id int) *ItemMagic {
+	if ei == nil || ei.x_item_magic == nil || ei.x_item_magic.IsZero() {
+		return nil
+	}
+	if ei.x_item_magic.Id != id {
+		panic(fmt.Sprintf("assert(%d == %d)", ei.x_item_magic.Id, id))
+	}
+	return ei.x_item_magic
 }
 
 type entity_loc struct {
@@ -1217,50 +634,50 @@ type entity_nation struct {
 	neutral           bool   /* Can't capture/lose NPs. */
 }
 
-type entity_player struct {
-	full_name       string
-	email           string
-	vis_email       string /* address to put in player list */
-	password        string
-	first_turn      int           /* which turn was their first? */
-	last_order_turn int           /* last turn orders were submitted */
-	orders          []*order_list /* ilist of orders for units in this faction */
-	known           sparse        /* visited, lore seen, encountered */
+type EntityPlayer struct {
+	Admits        admit_l  `json:"admits,omitempty"`          // Admit permissions list
+	BrokenMailer  int      `json:"broken-mailer,omitempty"`   // quote begin lines
+	CompuServe    bool     `json:"compuserve,omitempty"`      // get Times from CIS
+	DBPath        string   `json:"db-path,omitempty"`         // external path for HTML
+	DontRemind    int      `json:"dont-remind,omitempty"`     // don't send a reminder
+	EMail         string   `json:"e-mail,omitempty"`          //
+	FirstTower    int      `json:"first-tower,omitempty"`     // has player built first tower yet?
+	FirstTurn     int      `json:"first-turn,omitempty"`      // which turn was their first?
+	Format        int      `json:"format,omitempty"`          // turn report formatting control
+	FullName      string   `json:"full-name,omitempty"`       //
+	JumpStart     int      `json:"jump-start,omitempty"`      // Jump start points
+	Known         sparse   `json:"known,omitempty"`           // visited, lore seen, encountered
+	LastOrderTurn int      `json:"last-order-turn,omitempty"` // last turn orders were submitted
+	Magic         int      `json:"magic,omitempty"`           // MUs or Priests?
+	Nation        int      `json:"nation,omitempty"`          // Player's Nation
+	NationList    int      `json:"nation-list,omitempty"`     // Receive the Nation mailing list?
+	NoblePoints   int      `json:"noble-points,omitempty"`    // how many NP's the player has
+	NoTab         bool     `json:"no-tab,omitempty"`          // player can't tolerate tabs
+	Orders        orders_l `json:"orders,omitempty"`          // list of Orders for units in this faction
+	Password      string   `json:"password,omitempty"`        //
+	RulesPath     string   `json:"rules-path,omitempty"`      // external path for HTML
+	SentOrders    int      `json:"sent-orders,omitempty"`     // sent in Orders this turn?
+	SplitBytes    int      `json:"split-bytes,omitempty"`     // split mail at this many bytes
+	SplitLines    int      `json:"split-lines,omitempty"`     // split mail at this many lines
+	Unformed      ints_l   `json:"unformed,omitempty"`        // nobles as yet Unformed
+	Units         ints_l   `json:"units,omitempty"`           // what Units are in our faction?
+	VisEMail      string   `json:"vis-e-mail,omitempty"`      // address to put in player list
 
-	units    []int   /* what units are in our faction? */
-	admits   admit_l /* admit permissions list */
-	unformed []int   /* nobles as yet unformed */
+	// not saved:
+	cmdCount      int    // count of cmds started this turn
+	deliverLore   ints_l // show these to player
+	locs          sparse // locs we touched
+	npGained      int    // np's added this turn
+	npSpent       int    // np's lost this turn
+	output        sparse // Units with output
+	swearThisTurn int    // have we used SWEAR this turn?
+	timesPaid     int    // Times paid this month?
+	weatherSeen   sparse // locs we've viewed the weather
+}
 
-	split_lines int /* split mail at this many lines */
-	split_bytes int /* split mail at this many bytes */
-
-	nation       int /* Player's nation */
-	magic        int /* MUs or Priests? */
-	noble_points int /* how many NP's the player has */
-	jump_start   int /* Jump start points */
-
-	format        int    /* turn report formatting control */
-	rules_path    string /* external path for HTML */
-	db_path       string /* external path for HTML */
-	notab         bool   /* player can't tolerate tabs */
-	first_tower   int    /* has player built first tower yet? */
-	sent_orders   int    /* sent in orders this turn? */
-	dont_remind   int    /* don't send a reminder */
-	compuserve    bool   /* get Times from CIS */
-	nationlist    int    /* Receive the nation mailing list? */
-	broken_mailer int    /* quote begin lines */
-
-	/* not saved: */
-	times_paid      int    /* Times paid this month? */
-	swear_this_turn int    /* have we used SWEAR this turn? */
-	cmd_count       int    /* count of cmds started this turn */
-	np_gained       int    /* np's added this turn -- not saved */
-	np_spent        int    /* np's lost this turn -- not saved */
-	deliver_lore    []int  /* show these to player -- not saved */
-	weather_seen    sparse /* locs we've viewed the weather */
-	output          sparse /* units with output -- not saved */
-	locs            sparse /* locs we touched -- not saved */
-
+func (p *EntityPlayer) IsZero() bool {
+	// https://freshman.tech/snippets/go/check-empty-struct/
+	return zero_check(p)
 }
 
 // religion sub-structure
@@ -1311,9 +728,9 @@ type entity_skill struct {
 }
 
 type entity_subloc struct {
-	teaches    []int /* skills location offers */
-	opium_econ int   /* addiction level of city */
-	defense    int   /* defense rating of structure */
+	teaches    ints_l /* skills location offers */
+	opium_econ int    /* addiction level of city */
+	defense    int    /* defense rating of structure */
 
 	loot   int /* loot & pillage level */
 	hp     int /* "hit points" */
@@ -1329,18 +746,18 @@ type entity_subloc struct {
 	//int capacity;			/* capacity of ship */
 	//schar galley_ram;		/* galley is fitted with a ram */
 
-	near_cities []int /* cities rumored to be nearby */
-	safe        bool  /* safe haven */
-	major       int   /* major city */
-	prominence  int   /* prominence of city */
+	near_cities ints_l /* cities rumored to be nearby */
+	safe        bool   /* safe haven */
+	major       int    /* major city */
+	prominence  int    /* prominence of city */
 
 	//schar link_when;		/* month link is open, -1 = never */
 	//schar link_open;		/* link is open now */
 
-	link_to   []int /* where we are linked to */
-	link_from []int /* where we are linked from */
+	link_to   ints_l /* where we are linked to */
+	link_from ints_l /* where we are linked from */
 
-	bound_storms []int /* storms bound to this ship */
+	bound_storms ints_l /* storms bound to this ship */
 
 	guild int /* what skill, if a sub_guild */
 
@@ -1373,29 +790,36 @@ type item_ent struct {
 	qty  int
 }
 
-type item_magic struct {
-	creator       int
-	lore          int /* deliver this lore for the item */
-	religion      int /* Might be a religious artifact */
-	curse_loyalty int /* curse noncreator loyalty */
-	cloak_region  int
-	cloak_creator int
-	use_key       int   /* special use action */
-	may_use       []int /* list of usable skills via this */
-	may_study     []int /* list of skills studying from this */
-	project_cast  int   /* stored projected cast */
-	token_ni      int   /* ni for controlled npc units */
-	quick_cast    int   /* stored quick cast */
-	attack_bonus  int
-	defense_bonus int
-	missile_bonus int
-	aura_bonus    int
-	aura          int /* auraculum aura */
-	token_num     int /* how many token controlled units */
-	orb_use_count int /* how many uses left in the orb */
+// todo: carry Id as part of struct
+type ItemMagic struct {
+	Id           int    `json:"id,omitempty"`            //
+	AttackBonus  int    `json:"attack-bonus,omitempty"`  //
+	Aura         int    `json:"aura,omitempty"`          // auraculum aura
+	AuraBonus    int    `json:"aura-bonus,omitempty"`    //
+	CloakCreator int    `json:"cloak-creator,omitempty"` //
+	CloakRegion  int    `json:"cloak-region,omitempty"`  //
+	Creator      int    `json:"creator,omitempty"`       //
+	CurseLoyalty int    `json:"curse-loyalty,omitempty"` // curse noncreator loyalty
+	DefenseBonus int    `json:"defense-bonus,omitempty"` //
+	Lore         int    `json:"lore,omitempty"`          // deliver this lore for the item
+	MayStudy     ints_l `json:"may-study,omitempty"`     // list of skills studying from this
+	MayUse       ints_l `json:"may-use,omitempty"`       // list of usable skills via this
+	MissileBonus int    `json:"missile-bonus,omitempty"` //
+	OrbUseCount  int    `json:"orb-use-count,omitempty"` // how many uses left in the orb
+	ProjectCast  int    `json:"project-cast,omitempty"`  // stored projected cast
+	QuickCast    int    `json:"quick-cast,omitempty"`    // stored quick cast
+	Religion     int    `json:"religion,omitempty"`      // Might be a religious artifact
+	TokenNI      int    `json:"token-ni,omitempty"`      // ni for controlled npc units
+	TokenNum     int    `json:"token-num,omitempty"`     // how many token controlled units
+	UseKey       int    `json:"use-key,omitempty"`       // special use action
 
 	// not saved:
 	one_turn_use schar /* flag for one use per turn */
+}
+
+func (im *ItemMagic) IsZero() bool {
+	// https://freshman.tech/snippets/go/check-empty-struct/
+	return zero_check(im)
 }
 
 // location control: whether or not we're open, fees.
@@ -1430,7 +854,7 @@ type make_ struct {
 }
 
 type mine_contents struct {
-	items []*item_ent /* ilist of items held */
+	items item_ent_l /* ilist of items held */
 	// iron, gold, mithril, gate_crystals int // not used?
 }
 
@@ -1440,36 +864,53 @@ type olytime struct {
 	days_since_epoch int /* days since game begin */
 }
 
+func (ot olytime) IsZero() bool {
+	return ot.day == 0 && ot.turn == 0 && ot.days_since_epoch == 0
+}
+
+func (ot olytime) ToOlyTime() *OlyTime {
+	if ot.IsZero() {
+		return nil
+	}
+	return &OlyTime{
+		Day:            ot.day,
+		Turn:           ot.turn,
+		DaysSinceEpoch: ot.days_since_epoch,
+	}
+}
+
 // this structure holds game "options" for various different flavors of TAG.
 type options_struct struct {
-	turn_limit              int    /* Limit players to a certain # of turns. */
-	auto_drop               bool   /* Drop non-responsive players. */
-	free                    bool   /* Don't charge for this game. */
-	turn_charge             string /* How much to charge per turn. */
-	mp_antipathy            bool   /* Do mages & priests hate each other? */
-	survive_np              bool   /* Does SFW return NPs when forgotten? */
-	death_nps               int    /* What NPs get returned at death? */
-	guild_teaching          bool   /* Do guilds teach guild skills? */
-	accounting_dir          string /* Directory to "join" from. */
-	accounting_prog         string /* Path of the accounting program. */
-	html_path               string /* Path to html directories */
-	html_passwords          string /* Path to html passwords */
-	times_pay               int    /* What the Times pays for an article. */
-	cpp                     string /* Path of cpp */
-	full_markets            bool   /* City markets buy wood, etc. */
-	output_tags             int    /* include <tag> in output */
-	open_ended              bool   /* No end to game. */
-	num_books               int    /* Number of teaching books in city */
-	market_age              int    /* Months untouched in market before removal. */
-	min_piety               int    /* Any priest can have this much piety. */
-	piety_limit             int    /* Normal priest limited to piety_limit * num_followers */
-	head_priest_piety_limit int    /* Head priest limited to head_priest_piety_limit * num_followers */
-	top_piety               int    /* Monthly +piety for head priest */
-	middle_piety            int    /* Monthly +piety for junior priests */
-	bottom_piety            int    /* Monthly +piety for everyone else */
-	claim_give              int    /* Allow putting gold in claim? */
-	check_balance           int    /* No orders w/o positive balance. */
-	free_np_limit           int    /* Play for free with this many NPs. */
+	created_at              time.Time // moment the system data file was first created
+	updated_at              time.Time // moment the system data file was last updated
+	accounting_dir          string    /* Directory to "join" from. */
+	accounting_prog         string    /* Path of the accounting program. */
+	auto_drop               bool      /* Drop non-responsive players. */
+	bottom_piety            int       /* Monthly +piety for everyone else */
+	check_balance           int       /* No orders w/o positive balance. */
+	claim_give              int       /* Allow putting gold in claim? */
+	cpp                     string    /* Path of cpp */
+	death_nps               int       /* What NPs get returned at death? */
+	free                    bool      /* Don't charge for this game. */
+	free_np_limit           int       /* Play for free with this many NPs. */
+	full_markets            bool      /* City markets buy wood, etc. */
+	guild_teaching          bool      /* Do guilds teach guild skills? */
+	head_priest_piety_limit int       /* Head priest limited to head_priest_piety_limit * num_followers */
+	html_passwords          string    /* Path to html passwords */
+	html_path               string    /* Path to html directories */
+	market_age              int       /* Months untouched in market before removal. */
+	middle_piety            int       /* Monthly +piety for junior priests */
+	min_piety               int       /* Any priest can have this much piety. */
+	mp_antipathy            bool      /* Do mages & priests hate each other? */
+	num_books               int       /* Number of teaching books in city */
+	open_ended              bool      /* No end to game. */
+	output_tags             int       /* include <tag> in output */
+	piety_limit             int       /* Normal priest limited to piety_limit * num_followers */
+	survive_np              bool      /* Does SFW return NPs when forgotten? */
+	times_pay               int       /* What the Times pays for an article. */
+	top_piety               int       /* Monthly +piety for head priest */
+	turn_charge             string    /* How much to charge per turn. */
+	turn_limit              int       /* Limit players to a certain # of turns. */
 }
 
 type order_list struct {
@@ -1484,7 +925,7 @@ type req_ent struct {
 	consume int /* REQ_xx */
 }
 
-type schar = byte
+type schar = int
 
 type skill_ent struct {
 	skill        int
@@ -1572,15 +1013,15 @@ func p_item(n int) *entity_item {
 	}
 	return bx[n].x_item
 }
-func p_item_artifact(n int) *entity_artifact {
+func p_item_artifact(n int) *EntityArtifact {
 	if p_item(n).x_item_artifact == nil {
-		p_item(n).x_item_artifact = &entity_artifact{}
+		p_item(n).x_item_artifact = &EntityArtifact{}
 	}
 	return p_item(n).x_item_artifact
 }
-func p_item_magic(n int) *item_magic {
+func p_item_magic(n int) *ItemMagic {
 	if p_item(n).x_item_magic == nil {
-		p_item(n).x_item_magic = &item_magic{}
+		p_item(n).x_item_magic = &ItemMagic{}
 	}
 	return p_item(n).x_item_magic
 }
@@ -1591,6 +1032,9 @@ func p_loc(n int) *entity_loc {
 	return bx[n].x_loc
 }
 func p_loc_info(n int) *loc_info {
+	if _, ok := bx[n]; !ok {
+		return nil
+	}
 	return &bx[n].x_loc_info
 }
 func p_magic(n int) *char_magic {
@@ -1611,9 +1055,9 @@ func p_nation(n int) *entity_nation {
 	}
 	return bx[n].x_nation
 }
-func p_player(n int) *entity_player {
+func p_player(n int) *EntityPlayer {
 	if bx[n].x_player == nil {
-		bx[n].x_player = &entity_player{}
+		bx[n].x_player = &EntityPlayer{}
 	}
 	return bx[n].x_player
 }
@@ -1637,37 +1081,84 @@ func p_subloc(n int) *entity_subloc {
 }
 
 // "raw" pointers to substructures, may be NULL
-func rp_char(n int) *entity_char { return bx[n].x_char }
-func rp_command(n int) *command  { return bx[n].cmd }
-func rp_disp(n int) *att_ent     { return bx[n].x_disp }
-func rp_gate(n int) *entity_gate { return bx[n].x_gate }
-func rp_item(n int) *entity_item { return bx[n].x_item }
-func rp_item_artifact(n int) *entity_artifact {
+func rp_char(n int) *entity_char {
+	if box, ok := bx[n]; ok {
+		return box.x_char
+	}
+	return nil
+}
+func rp_command(n int) *command {
+	if box, ok := bx[n]; ok {
+		return box.cmd
+	}
+	return nil
+}
+func rp_disp(n int) *att_ent {
+	if box, ok := bx[n]; ok {
+		return box.x_disp
+	}
+	return nil
+}
+func rp_gate(n int) *entity_gate {
+	if box, ok := bx[n]; ok {
+		return box.x_gate
+	}
+	return nil
+}
+func rp_item(n int) *entity_item {
+	if box, ok := bx[n]; ok {
+		return box.x_item
+	}
+	return nil
+}
+func rp_item_artifact(n int) *EntityArtifact {
 	if rp_item(n) != nil {
 		return rp_item(n).x_item_artifact
-	} else {
-		return nil
 	}
+	return nil
 }
-func rp_item_magic(n int) *item_magic {
+func rp_item_magic(n int) *ItemMagic {
 	if rp_item(n) != nil {
 		return rp_item(n).x_item_magic
-	} else {
-		return nil
 	}
+	return nil
 }
-func rp_loc(n int) *entity_loc    { return bx[n].x_loc }
-func rp_loc_info(n int) *loc_info { return &bx[n].x_loc_info }
+func rp_loc(n int) *entity_loc {
+	if box, ok := bx[n]; ok {
+		return box.x_loc
+	}
+	return nil
+}
+func rp_loc_info(n int) *loc_info {
+	if box, ok := bx[n]; ok {
+		return &box.x_loc_info
+	}
+	return nil
+}
 func rp_magic(n int) *char_magic {
 	if rp_char(n) != nil {
 		return rp_char(n).x_char_magic
-	} else {
-		return nil
 	}
+	return nil
 }
-func rp_misc(n int) *entity_misc     { return bx[n].x_misc }
-func rp_nation(n int) *entity_nation { return bx[n].x_nation }
-func rp_player(n int) *entity_player { return bx[n].x_player }
+func rp_misc(n int) *entity_misc {
+	if box, ok := bx[n]; ok {
+		return box.x_misc
+	}
+	return nil
+}
+func rp_nation(n int) *entity_nation {
+	if box, ok := bx[n]; ok {
+		return box.x_nation
+	}
+	return nil
+}
+func rp_player(n int) *EntityPlayer {
+	if box, ok := bx[n]; ok {
+		return box.x_player
+	}
+	return nil
+}
 func rp_relig_skill(n int) *entity_religion_skill {
 	if bx[n].x_skill != nil {
 		return bx[n].x_skill.religion_skill
@@ -1677,12 +1168,21 @@ func rp_relig_skill(n int) *entity_religion_skill {
 func rp_ship(n int) *entity_ship {
 	if rp_subloc(n) != nil {
 		return rp_subloc(n).x_ship
-	} else {
-		return nil
 	}
+	return nil
 }
-func rp_skill(n int) *entity_skill   { return bx[n].x_skill }
-func rp_subloc(n int) *entity_subloc { return bx[n].x_subloc }
+func rp_skill(n int) *entity_skill {
+	if box, ok := bx[n]; ok {
+		return box.x_skill
+	}
+	return nil
+}
+func rp_subloc(n int) *entity_subloc {
+	if box, ok := bx[n]; ok {
+		return box.x_subloc
+	}
+	return nil
+}
 
 // func	item_creat_loc(n int) int {if rp_item_magic(n) != nil {return rp_item_magic(n).region_created} else {return 0}}
 // func	loc_link_open(n int) int {if rp_subloc(n) != nil {return rp_subloc(n).link_open} else {return 0}}
@@ -1878,9 +1378,8 @@ func gate_dist(n int) int {
 func gate_seal(n int) int {
 	if rp_gate(n) != nil {
 		return rp_gate(n).seal_key
-	} else {
-		return 0
 	}
+	return 0
 }
 func in_faery(n int) bool  { return region(n) == faery_region }
 func in_hades(n int) bool  { return region(n) == hades_region }
@@ -1888,9 +1387,8 @@ func in_clouds(n int) bool { return region(n) == cloud_region }
 func is_fighter(n int) int {
 	if item_attack(n) != 0 || item_defense(n) != 0 || item_missile(n) != 0 || n == item_ghost_warrior {
 		return TRUE
-	} else {
-		return FALSE
 	}
+	return FALSE
 }
 func is_magician(n int) bool {
 	if rp_magic(n) != nil {
@@ -1918,19 +1416,19 @@ func item_attack(n int) int {
 }
 func item_attack_bonus(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).attack_bonus
+		return rp_item_magic(n).AttackBonus
 	}
 	return 0
 }
 func item_aura(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).aura
+		return rp_item_magic(n).Aura
 	}
 	return 0
 }
 func item_aura_bonus(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).aura_bonus
+		return rp_item_magic(n).AuraBonus
 	}
 	return 0
 }
@@ -1942,19 +1440,19 @@ func item_capturable(n int) int {
 }
 func item_creat_cloak(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).cloak_creator
+		return rp_item_magic(n).CloakCreator
 	}
 	return 0
 }
 func item_creator(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).creator
+		return rp_item_magic(n).Creator
 	}
 	return 0
 }
 func item_curse_non(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).curse_loyalty
+		return rp_item_magic(n).CurseLoyalty
 	}
 	return 0
 }
@@ -1966,103 +1464,89 @@ func item_defense(n int) int {
 }
 func item_defense_bonus(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).defense_bonus
+		return rp_item_magic(n).DefenseBonus
 	}
 	return 0
 }
 func item_lore(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).lore
-	} else {
-		return 0
+		return rp_item_magic(n).Lore
 	}
+	return 0
 }
 func item_missile(n int) int {
 	if rp_item(n) != nil {
 		return rp_item(n).missile
-	} else {
-		return 0
 	}
+	return 0
 }
 func item_missile_bonus(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).missile_bonus
-	} else {
-		return 0
+		return rp_item_magic(n).MissileBonus
 	}
+	return 0
 }
 func item_prog(n int) int {
 	if rp_item(n) != nil {
 		return rp_item(n).wild
-	} else {
-		return 0
 	}
+	return 0
 }
 func item_prominent(n int) int {
 	if rp_item(n) != nil {
 		return rp_item(n).prominent
-	} else {
-		return 0
 	}
+	return 0
 }
 func item_reg_cloak(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).cloak_region
-	} else {
-		return 0
+		return rp_item_magic(n).CloakRegion
 	}
+	return 0
 }
 func item_split(n int) int {
 	if rp_item(n) != nil {
 		if rp_item(n).npc_split != 0 {
 			return rp_item(n).npc_split
-		} else {
-			return 50
 		}
-	} else {
-		return 50
 	}
+	return 50
 }
 func item_token_ni(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).token_ni
-	} else {
-		return 0
+		return rp_item_magic(n).TokenNI
 	}
+	return 0
 }
 func item_token_num(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).token_num
-	} else {
-		return 0
+		return rp_item_magic(n).TokenNum
 	}
+	return 0
 }
 func item_unique(n int) int {
 	if rp_item(n) != nil {
 		return rp_item(n).who_has
-	} else {
-		return 0
 	}
+	return 0
 }
 func item_use_key(n int) int {
 	if rp_item_magic(n) != nil {
-		return rp_item_magic(n).use_key
+		return rp_item_magic(n).UseKey
 	}
 	return 0
 }
 func item_wild(n int) int {
 	if rp_item(n) != nil {
 		return rp_item(n).wild
-	} else {
-		return 0
 	}
+	return 0
 }
 func learn_time(n int) int {
 	if rp_skill(n) != nil {
 		return rp_skill(n).time_to_learn
-	} else {
-		return 0
 	}
+	return 0
 }
 func loc_barrier(n int) int { return get_effect(n, ef_magic_barrier, 0, 0) }
 func loc_damage(n int) int {
@@ -2074,9 +1558,8 @@ func loc_damage(n int) int {
 func loc_defense(n int) int {
 	if rp_subloc(n) != nil {
 		return rp_subloc(n).defense
-	} else {
-		return 0
 	}
+	return 0
 }
 func loc_hp(n int) int {
 	if rp_subloc(n) != nil {
@@ -2162,117 +1645,104 @@ func npc_last_dir(n int) int {
 func npc_program(n int) int {
 	if rp_char(n) != nil {
 		return rp_char(n).npc_prog
-	} else {
-		return 0
 	}
+	return 0
 }
 func npc_summoner(n int) int {
 	if rp_misc(n) != nil {
 		return rp_misc(n).summoned_by
-	} else {
-		return 0
 	}
+	return 0
 }
 func only_defeatable(n int) int {
 	if rp_misc(n) != nil {
 		return rp_misc(n).only_vulnerable
-	} else {
-		return 0
 	}
+	return 0
 }
 func our_token(n int) int {
 	if rp_magic(n) != nil {
 		return rp_magic(n).token
-	} else {
-		return 0
 	}
+	return 0
 }
 func personal_break(n int) int {
 	if rp_char(n) != nil {
 		return rp_char(n).personal_break_point
-	} else {
-		return 0
 	}
+	return 0
 }
 func player_broken_mailer(n int) int {
 	if rp_player(n) != nil {
-		return rp_player(n).broken_mailer
+		return rp_player(n).BrokenMailer
 	}
 	return 0
 }
 func player_compuserve(n int) bool {
 	if rp_player(n) != nil {
-		return rp_player(n).compuserve
+		return rp_player(n).CompuServe
 	}
 	return false
 }
 func player_email(n int) string {
 	if rp_player(n) != nil {
-		return rp_player(n).email
-	} else {
-		return ""
+		return rp_player(n).EMail
 	}
+	return ""
 }
 func player_format(n int) int {
 	if rp_player(n) != nil {
-		return rp_player(n).format
+		return rp_player(n).Format
 	}
 	return 0
 }
 func player_js(n int) int {
 	if rp_player(n) != nil {
-		return rp_player(n).jump_start
-	} else {
-		return 0
+		return rp_player(n).JumpStart
 	}
+	return 0
 }
 func player_notab(n int) bool {
 	if rp_player(n) != nil {
-		return rp_player(n).notab
+		return rp_player(n).NoTab
 	}
 	return false
 }
 func player_np(n int) int {
 	if rp_player(n) != nil {
-		return rp_player(n).noble_points
-	} else {
-		return 0
+		return rp_player(n).NoblePoints
 	}
+	return 0
 }
 func player_split_bytes(n int) int {
 	if rp_player(n) != nil {
-		return rp_player(n).split_bytes
-	} else {
-		return 0
+		return rp_player(n).SplitBytes
 	}
+	return 0
 }
 func player_split_lines(n int) int {
 	if rp_player(n) != nil {
-		return rp_player(n).split_lines
-	} else {
-		return 0
+		return rp_player(n).SplitLines
 	}
+	return 0
 }
 func practice_cost(n int) int {
 	if rp_skill(n) != nil {
 		return rp_skill(n).practice_cost
-	} else {
-		return 0
 	}
+	return 0
 }
 func practice_progressive(n int) int {
 	if rp_skill(n) != nil {
 		return rp_skill(n).practice_prog
-	} else {
-		return 0
 	}
+	return 0
 }
 func practice_time(n int) int {
 	if rp_skill(n) != nil {
 		return rp_skill(n).practice_time
-	} else {
-		return 0
 	}
+	return 0
 }
 func recent_pillage(n int) int {
 	if rp_subloc(n) != nil {
@@ -2283,44 +1753,38 @@ func recent_pillage(n int) int {
 func reflect_blast(n int) int {
 	if rp_magic(n) != nil {
 		return rp_magic(n).aura_reflect
-	} else {
-		return 0
 	}
+	return 0
 }
 func release_swear(n int) int {
 	if rp_magic(n) != nil {
 		return rp_magic(n).swear_on_release
-	} else {
-		return 0
 	}
+	return 0
 }
 func req_skill(n int) int {
 	if rp_skill(n) != nil {
 		return rp_skill(n).required_skill
-	} else {
-		return 0
 	}
+	return 0
 }
-func restricted_control(n int) schar {
+func restricted_control(n int) byte {
 	if rp_misc(n) != nil {
 		return rp_misc(n).cmd_allow
-	} else {
-		return 0
 	}
+	return 0
 }
 func road_dest(n int) int {
 	if rp_gate(n) != nil {
 		return rp_gate(n).to_loc
-	} else {
-		return 0
 	}
+	return 0
 }
 func road_hidden(n int) int {
 	if rp_gate(n) != nil {
 		return rp_gate(n).road_hidden
-	} else {
-		return 0
 	}
+	return 0
 }
 func safe_haven(n int) bool {
 	if rp_subloc(n) != nil {
@@ -2402,7 +1866,7 @@ func swamp_dist(n int) int {
 
 func times_paid(n int) bool {
 	if rp_player(n) != nil {
-		return rp_player(n).times_paid != FALSE
+		return rp_player(n).timesPaid != FALSE
 	}
 	return false
 }
@@ -2423,11 +1887,10 @@ func is_ship_notdone(n int) bool {
 }
 func is_ship_either(n int) bool { return (is_ship(n) || is_ship_notdone(n)) }
 func kind(n int) schar {
-	if n > 0 && n < MAX_BOXES && bx[n] != nil {
-		return bx[n].kind
-	} else {
-		return T_deleted
+	if box, ok := bx[n]; ok {
+		return box.kind
 	}
+	return T_deleted
 }
 func kind_first(n int) int { return (box_head[(n)]) }
 func kind_next(n int) int  { return (bx[(n)].x_next_kind) }
@@ -2436,14 +1899,24 @@ func kind_next(n int) int  { return (bx[(n)].x_next_kind) }
 // May point to another character, a structure, or a region.
 func loc(n int) int       { return rp_loc_info(n).where }
 func sub_first(n int) int { return (sub_head[(n)]) }
-func sub_next(n int) int  { return (bx[(n)].x_next_sub) }
+func sub_next(n int) int {
+	if bx[n] != nil {
+		return bx[n].x_next_sub
+	}
+	return 0
+}
 func subkind(n int) schar {
 	if bx[n] != nil {
 		return bx[n].skind
 	}
 	return 0
 }
-func valid_box(n int) bool { return kind(n) != T_deleted }
+func valid_box(n int) bool {
+	if box, ok := bx[n]; ok {
+		return box.kind != T_deleted
+	}
+	return false
+}
 
 // guild stuff
 func is_guild(n int) int {
@@ -2464,24 +1937,21 @@ func god_name(n int) string { return rp_relig_skill(n).name }
 func holy_plant(n int) int {
 	if is_priest(n) != 0 {
 		return rp_relig_skill(is_priest(n)).plant
-	} else {
-		return 0
 	}
+	return 0
 }
 func is_follower(n int) int {
 	if rp_char(n) != nil {
 		return rp_char(n).religion.priest
-	} else {
-		return 0
 	}
+	return 0
 }
 func is_priest(n int) int { return skill_school(has_subskill((n), sub_religion)) }
 func is_temple(n int) int {
 	if subkind(n) == sub_temple && rp_subloc(n).guild != 0 {
 		return rp_subloc(n).guild
-	} else {
-		return 0
 	}
+	return 0
 }
 func is_wizard(n int) int { return has_subskill((n), sub_magic) }
 func skill_aura(n int) int {
@@ -2511,8 +1981,7 @@ func char_moving(n int) int {
 func char_gone(n int) int {
 	if char_moving(n) == 0 {
 		return 0
-	}
-	if evening {
+	} else if evening {
 		return sysclock.days_since_epoch - char_moving(n) + 1
 	}
 	return sysclock.days_since_epoch - char_moving(n)
@@ -2526,8 +1995,7 @@ func ship_moving(n int) int {
 func ship_gone(n int) int {
 	if ship_moving(n) == 0 {
 		return 0
-	}
-	if evening {
+	} else if evening {
 		return sysclock.days_since_epoch - ship_moving(n) + 1
 	}
 	return sysclock.days_since_epoch - ship_moving(n)
@@ -2575,14 +2043,12 @@ func religion_skill(n int) bool { return subkind(skill_school(n)) == sub_religio
 func wait(n int) int {
 	if rp_command(n) != nil {
 		return rp_command(n).wait
-	} else {
-		return 0
 	}
+	return 0
 }
 func will_pay(n int) int {
 	if rp_char(n) != nil {
 		return rp_char(n).pay
-	} else {
-		return 0
 	}
+	return 0
 }

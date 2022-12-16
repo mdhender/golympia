@@ -202,7 +202,7 @@ func times_goal_info() {
 				fprintf(fp, "\n    Winning Players:\n")
 				for _, j := range loop_pl_regular() {
 					if nation(j) == i {
-						fprintf(fp, "      %s\n", rp_player(j).full_name)
+						fprintf(fp, "      %s\n", rp_player(j).FullName)
 					}
 				}
 				fprintf(fp, "  ***********************************************\n")
@@ -289,7 +289,7 @@ func times_credit(c *command) bool {
 		return false
 	}
 
-	p_player(pl).times_paid = TRUE
+	p_player(pl).timesPaid = TRUE
 	wout(pl, "The Times adds %s to your CLAIM.", gold_s(options.times_pay))
 	gen_item(pl, item_gold, options.times_pay)
 	gold_times += options.times_pay

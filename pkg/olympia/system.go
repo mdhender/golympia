@@ -24,6 +24,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"time"
 )
 
 type OlyTime struct {
@@ -34,60 +35,62 @@ type OlyTime struct {
 
 // SysData is the json version of the system data.
 type SysData struct {
-	SysClock             OlyTime `json:"sys-clock"`
-	GameNumber           int     `json:"game-number,omitempty"`
-	OpenEnded            bool    `json:"open-ended,omitempty"`
-	TurnLimit            int     `json:"turn-limit,omitempty"`
-	TurnCharge           string  `json:"turn-charge,omitempty"`
-	AutoDrop             bool    `json:"auto-drop,omitempty"`
-	FromHost             string  `json:"from-host,omitempty"`
-	ReplyHost            string  `json:"reply-host,omitempty"`
-	XSize                int     `json:"x-size,omitempty"`
-	YSize                int     `json:"y-size,omitempty"`
-	GMPlayer             int     `json:"gm-player,omitempty"`
-	CombatPlayer         int     `json:"combat-player,omitempty"`
-	DesertedPlayer       int     `json:"deserted-player,omitempty"`
-	IndepPlayer          int     `json:"indep-player,omitempty"`
-	SkillPlayer          int     `json:"skill-player,omitempty"`
-	Seed                 [3]int  `json:"seed,omitempty"`
-	AccountingDir        string  `json:"accounting-dir,omitempty"`
-	AccountingProg       string  `json:"accounting-prog,omitempty"`
-	CPP                  string  `json:"cpp,omitempty"`
-	HTMLPath             string  `json:"html-path,omitempty"`
-	HTMLPasswords        string  `json:"html-passwords,omitempty"`
-	Free                 bool    `json:"free,omitempty"`
-	FullMarkets          bool    `json:"full-markets,omitempty"`
-	GuildTeaching        bool    `json:"guild-teaching,omitempty"`
-	MonsterSublocInit    bool    `json:"monster-subloc-init,omitempty"`
-	MPAntipathy          bool    `json:"mp-antipathy,omitempty"`
-	PopulationInit       bool    `json:"population-init,omitempty"`
-	PostHasBeenRun       bool    `json:"post-has-been-run,omitempty"`
-	SeedHasBeenRun       bool    `json:"seed-has-been-run,omitempty"`
-	SurviveNP            bool    `json:"survive-np,omitempty"`
-	CheckBalance         int     `json:"check-balance,omitempty"`
-	ClaimGive            int     `json:"claim-give,omitempty"`
-	CloudRegion          int     `json:"cloud-region,omitempty"`
-	CookieInit           int     `json:"cookie-init,omitempty"`
-	DeathNPs             int     `json:"death-n-ps,omitempty"`
-	DistSeaCompute       int     `json:"dist-sea-compute,omitempty"`
-	FaeryPlayer          int     `json:"faery-player,omitempty"`
-	FaeryRegion          int     `json:"faery-region,omitempty"`
-	FreeNPLimit          int     `json:"free-np-limit,omitempty"`
-	HadesPit             int     `json:"hades-pit,omitempty"`
-	HadesPlayer          int     `json:"hades-player,omitempty"`
-	HadesRegion          int     `json:"hades-region,omitempty"`
-	MarketAge            int     `json:"market-age,omitempty"`
-	NearCityInit         int     `json:"near-city-init,omitempty"`
-	NPCPlayer            int     `json:"npc-player,omitempty"`
-	NumBooks             int     `json:"num-books,omitempty"`
-	OutputTags           int     `json:"output-tags,omitempty"`
-	TimesPay             int     `json:"times-pay,omitempty"`
-	PietyLimit           int     `json:"piety-limit,omitempty"`
-	MinPiety             int     `json:"min-piety,omitempty"`
-	TopPiety             int     `json:"top-piety,omitempty"`
-	MiddlePiety          int     `json:"middle-piety,omitempty"`
-	BottomPiety          int     `json:"bottom-piety,omitempty"`
-	HeadPriestPietyLimit int     `json:"head-priest-piety-limit,omitempty"`
+	CreatedAt            time.Time `json:"created-at,omitempty"`
+	UpdatedAt            time.Time `json:"updated-at,omitempty"`
+	SysClock             OlyTime   `json:"sys-clock"`
+	GameNumber           int       `json:"game-number,omitempty"`
+	OpenEnded            bool      `json:"open-ended,omitempty"`
+	TurnLimit            int       `json:"turn-limit,omitempty"`
+	TurnCharge           string    `json:"turn-charge,omitempty"`
+	AutoDrop             bool      `json:"auto-drop,omitempty"`
+	FromHost             string    `json:"from-host,omitempty"`
+	ReplyHost            string    `json:"reply-host,omitempty"`
+	XSize                int       `json:"x-size,omitempty"`
+	YSize                int       `json:"y-size,omitempty"`
+	GMPlayer             int       `json:"gm-player,omitempty"`
+	CombatPlayer         int       `json:"combat-player,omitempty"`
+	DesertedPlayer       int       `json:"deserted-player,omitempty"`
+	IndepPlayer          int       `json:"indep-player,omitempty"`
+	SkillPlayer          int       `json:"skill-player,omitempty"`
+	Seed                 [3]int    `json:"seed,omitempty"`
+	AccountingDir        string    `json:"accounting-dir,omitempty"`
+	AccountingProg       string    `json:"accounting-prog,omitempty"`
+	CPP                  string    `json:"cpp,omitempty"`
+	HTMLPath             string    `json:"html-path,omitempty"`
+	HTMLPasswords        string    `json:"html-passwords,omitempty"`
+	Free                 bool      `json:"free,omitempty"`
+	FullMarkets          bool      `json:"full-markets,omitempty"`
+	GuildTeaching        bool      `json:"guild-teaching,omitempty"`
+	MonsterSublocInit    bool      `json:"monster-subloc-init,omitempty"`
+	MPAntipathy          bool      `json:"mp-antipathy,omitempty"`
+	PopulationInit       bool      `json:"population-init,omitempty"`
+	PostHasBeenRun       bool      `json:"post-has-been-run,omitempty"`
+	SeedHasBeenRun       bool      `json:"seed-has-been-run,omitempty"`
+	SurviveNP            bool      `json:"survive-np,omitempty"`
+	CheckBalance         int       `json:"check-balance,omitempty"`
+	ClaimGive            int       `json:"claim-give,omitempty"`
+	CloudRegion          int       `json:"cloud-region,omitempty"`
+	CookieInit           int       `json:"cookie-init,omitempty"`
+	DeathNPs             int       `json:"death-n-ps,omitempty"`
+	DistSeaCompute       int       `json:"dist-sea-compute,omitempty"`
+	FaeryPlayer          int       `json:"faery-player,omitempty"`
+	FaeryRegion          int       `json:"faery-region,omitempty"`
+	FreeNPLimit          int       `json:"free-np-limit,omitempty"`
+	HadesPit             int       `json:"hades-pit,omitempty"`
+	HadesPlayer          int       `json:"hades-player,omitempty"`
+	HadesRegion          int       `json:"hades-region,omitempty"`
+	MarketAge            int       `json:"market-age,omitempty"`
+	NearCityInit         int       `json:"near-city-init,omitempty"`
+	NPCPlayer            int       `json:"npc-player,omitempty"`
+	NumBooks             int       `json:"num-books,omitempty"`
+	OutputTags           int       `json:"output-tags,omitempty"`
+	TimesPay             int       `json:"times-pay,omitempty"`
+	PietyLimit           int       `json:"piety-limit,omitempty"`
+	MinPiety             int       `json:"min-piety,omitempty"`
+	TopPiety             int       `json:"top-piety,omitempty"`
+	MiddlePiety          int       `json:"middle-piety,omitempty"`
+	BottomPiety          int       `json:"bottom-piety,omitempty"`
+	HeadPriestPietyLimit int       `json:"head-priest-piety-limit,omitempty"`
 
 	NL int `json:"nl,omitempty"`
 	NR int `json:"nr,omitempty"`
@@ -144,6 +147,8 @@ func SysDataLoad(name string) (*SysData, error) {
 	sysclock.day = js.SysClock.Day
 	sysclock.turn = js.SysClock.Turn
 	sysclock.days_since_epoch = js.SysClock.DaysSinceEpoch
+	options.created_at = js.CreatedAt
+	options.updated_at = js.UpdatedAt
 	options.accounting_dir = js.AccountingDir
 	options.accounting_prog = js.AccountingProg
 	options.auto_drop = js.AutoDrop
@@ -197,6 +202,11 @@ func SysDataLoad(name string) (*SysData, error) {
 func SysDataSave(name string) error {
 	var js SysData
 
+	js.CreatedAt = options.created_at
+	if js.CreatedAt.IsZero() {
+		js.CreatedAt = time.Now().UTC()
+	}
+	js.UpdatedAt = time.Now().UTC()
 	js.CloudRegion = cloud_region
 	js.CombatPlayer = combat_pl
 	js.CookieInit = cookie_init

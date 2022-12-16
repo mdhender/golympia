@@ -18,3 +18,26 @@
  */
 
 package olympia
+
+type att_ent struct {
+	neutral ints_l
+	hostile ints_l
+	defend  ints_l
+}
+
+type Attitudes struct {
+	Neutral []int `json:"neutral,omitempty"`
+	Defend  []int `json:"defend,omitempty"`
+	Hostile []int `json:"hostile,omitempty"`
+}
+
+func (a *att_ent) ToAttitudes() *Attitudes {
+	if a == nil || (len(a.neutral) == 0 && len(a.defend) == 0 || len(a.hostile) == 0) {
+		return nil
+	}
+	return &Attitudes{
+		Neutral: a.neutral.ToBoxList(),
+		Defend:  a.defend.ToBoxList(),
+		Hostile: a.hostile.ToBoxList(),
+	}
+}

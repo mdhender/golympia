@@ -25,7 +25,7 @@ func d_brew_death(c *command) int {
 		wout(c.who, "Attempt to brew potion failed.")
 		return FALSE
 	}
-	p_item_magic(potion).use_key = use_death_potion
+	p_item_magic(potion).UseKey = use_death_potion
 	return TRUE
 }
 
@@ -35,7 +35,7 @@ func d_brew_fiery(c *command) int {
 		wout(c.who, "Attempt to brew potion failed.")
 		return FALSE
 	}
-	p_item_magic(potion).use_key = use_fiery_potion
+	p_item_magic(potion).UseKey = use_fiery_potion
 	return TRUE
 }
 
@@ -45,7 +45,7 @@ func d_brew_heal(c *command) int {
 		wout(c.who, "Attempt to brew potion failed.")
 		return FALSE
 	}
-	p_item_magic(potion).use_key = use_heal_potion
+	p_item_magic(potion).UseKey = use_heal_potion
 	return TRUE
 }
 
@@ -55,7 +55,7 @@ func d_brew_slave(c *command) int {
 		wout(c.who, "Attempt to brew potion failed.")
 		return FALSE
 	}
-	p_item_magic(potion).use_key = use_slave_potion
+	p_item_magic(potion).UseKey = use_slave_potion
 	return TRUE
 }
 
@@ -65,7 +65,7 @@ func d_brew_weightlessness(c *command) int {
 		wout(c.who, "Attempt to brew potion failed.")
 		return FALSE
 	}
-	p_item_magic(potion).use_key = use_weightlessness_potion
+	p_item_magic(potion).UseKey = use_weightlessness_potion
 	return TRUE
 }
 
@@ -114,7 +114,7 @@ func new_potion(who int) int {
 	}
 
 	p := p_item_magic(potion)
-	p.creator = who
+	p.Creator = who
 	p_item(potion).weight = 1
 
 	wout(who, "Produced one %q", box_name(potion))

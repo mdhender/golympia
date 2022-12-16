@@ -21,6 +21,8 @@ package olympia
 
 // as always, thanks https://ueokande.github.io/go-slice-tricks/
 
+type effect_l []*effect
+
 // effect structure.
 // only characters, locations, and sublocations have effects on them.
 //

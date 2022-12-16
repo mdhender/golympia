@@ -77,8 +77,8 @@ const (
 // #define    next_kind    } assert(ll_check == 5); }
 func loop_kind(kind int) []int {
 	var ll_l []int
-	for ll_next := kind_first(kind); ll_next > 0; ll_next = kind_next(ll_next) {
-		ll_l = append(ll_l, ll_next)
+	for i := kind_first(kind); i > 0; i = kind_next(i) {
+		ll_l = append(ll_l, i)
 	}
 	return ll_l
 }
@@ -181,7 +181,7 @@ func loop_stack(who int) []int {
 #define known_sparse_next \
       } assert(ll_check == 3); }
 */
-// todo: fix bug with sparse vs entity_player *
+// todo: fix bug with sparse vs EntityPlayer *
 func known_sparse_loop(kn []int) []int {
 	// copy the list
 	var ll_l []int
@@ -424,7 +424,14 @@ func loop_artifact() []int {
 	    } assert(ll_check == 17); }
 */
 func loop_loc_or_ship() []int {
-	panic("!implemented")
+	var ll_l []int
+	for i := kind_first(T_ship); i > 0; i = kind_next(i) {
+		ll_l = append(ll_l, i)
+	}
+	for i := kind_first(T_loc); i > 0; i = kind_next(i) {
+		ll_l = append(ll_l, i)
+	}
+	return ll_l
 }
 
 /*
@@ -440,7 +447,7 @@ func loop_loc_or_ship() []int {
 */
 func loop_province() []int {
 	var ll_l []int
-	for _, i := range loop_kind(T_loc) {
+	for i := kind_first(T_loc); i > 0; i = kind_next(i) {
 		if loc_depth(i) == LOC_province {
 			ll_l = append(ll_l, i)
 		}
@@ -491,7 +498,7 @@ func loop_loc_teach(where int) []int {
 func loop_units(pl int) []int {
 	var ll_l []int
 	if rp_player(hades_player) != nil {
-		ll_l = append(ll_l, rp_player(hades_player).units...)
+		ll_l = append(ll_l, rp_player(hades_player).Units...)
 	}
 	return ll_l
 }

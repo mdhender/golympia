@@ -42,9 +42,9 @@ func get_process_id() int                           { panic("!implemented") }
 func get_rid_of_building(fort int)                  { panic("!implemented") }
 func i_petty_thief(c *command) int                  { panic("!implemented") }
 func immediate_commands()                           { panic("!implemented") }
-func int_comp(q1, q2 interface{}) int               { panic("!implemented") }
-func is_artifact(item int) *entity_artifact         { panic("!implemented") }
-func is_port_city_where(where int) int              { panic("!implemented") }
+func int_comp(q1, q2 interface{}) int      { panic("!implemented") }
+func is_artifact(item int) *EntityArtifact { panic("!implemented") }
+func is_port_city_where(where int) int     { panic("!implemented") }
 func my_free(ptr interface{})                       { panic("!implemented") }
 func my_malloc(size int)                            { panic("!implemented") }
 func my_realloc(ptr interface{}, size int)          { panic("!implemented") }
@@ -71,9 +71,11 @@ func atoi(s string) int {
 	i, _ := strconv.Atoi(s)
 	return i
 }
+
 func atoi_b(b []byte) int {
 	return atoi(string(b))
 }
+
 func mkdir(path string) error {
 	fi, err := os.Stat(path)
 	if err != nil {
@@ -85,31 +87,37 @@ func mkdir(path string) error {
 	}
 	return nil
 }
+
 func or_float(t bool, a, b float64) float64 {
 	if t {
 		return a
 	}
 	return b
 }
+
 func or_int(t bool, a, b int) int {
 	if t {
 		return a
 	}
 	return b
 }
+
 func or_string(t bool, a, b string) string {
 	if t {
 		return a
 	}
 	return b
 }
+
 func rmdir(path string) error {
 	fi, err := os.Stat(path)
 	if err != nil {
 		// todo: this should handle errors
 		return nil
 	} else if !fi.IsDir() {
-		return fmt.Errorf("not a directory")
+		return fmt.Errorf("rmdir: %q: not a directory", path)
+	} else if err := os.RemoveAll(path); err != nil {
+		return fmt.Errorf("rmdir: %w", err)
 	}
-	return os.Remove(path)
+	return nil
 }

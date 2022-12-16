@@ -822,7 +822,7 @@ func v_save_proj(c *command) int {
 
 func d_save_proj(c *command) int {
 	var p *char_magic
-	var im *item_magic
+	var im *ItemMagic
 
 	if !charge_aura(c.who, 3) {
 		return FALSE
@@ -833,8 +833,8 @@ func d_save_proj(c *command) int {
 	p = p_magic(c.who)
 	im = p_item_magic(newPotion)
 
-	im.use_key = use_proj_cast
-	im.project_cast = p.project_cast
+	im.UseKey = use_proj_cast
+	im.ProjectCast = p.project_cast
 
 	p.project_cast = 0
 
@@ -843,7 +843,7 @@ func d_save_proj(c *command) int {
 
 func v_use_proj_cast(c *command) int {
 	item := c.a
-	var im *item_magic
+	var im *ItemMagic
 
 	assert(kind(item) == T_item)
 
@@ -852,17 +852,17 @@ func v_use_proj_cast(c *command) int {
 	im = rp_item_magic(item)
 
 	if im == nil ||
-		is_loc_or_ship(im.project_cast) ||
+		is_loc_or_ship(im.ProjectCast) ||
 		!is_magician(c.who) {
 		destroy_unique_item(c.who, item)
 		wout(c.who, "Nothing happens.")
 		return FALSE
 	}
 
-	p_magic(c.who).project_cast = im.project_cast
+	p_magic(c.who).project_cast = im.ProjectCast
 
 	wout(c.who, "Project next cast to %s.",
-		char_rep_location(im.project_cast))
+		char_rep_location(im.ProjectCast))
 	destroy_unique_item(c.who, item)
 
 	return TRUE

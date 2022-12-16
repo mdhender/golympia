@@ -23,7 +23,9 @@ var (
 	from_host  = "moderator@olytag.com (Olympia Moderator)" /* UPDATE */
 	reply_host = "tagtest@olytag.com (Olympia Orders)"      /* UPDATE */
 
-	bx       []*box       /* all possible entities */
+	//bx       []*box       /* all possible entities */
+	bx = make(map[int]*box) /* all possible entities */
+
 	box_head [T_MAX]int   /* heads of x_next_kind chain */
 	sub_head [SUB_MAX]int /* heads of x_next_sub chain */
 
@@ -242,7 +244,10 @@ func glob_init() {
 		box_head[i] = 0
 	}
 
-	bx = make([]*box, MAX_BOXES)
+	if bx == nil {
+		//bx = make([]*box, MAX_BOXES)
+		bx = make(map[int]*box)
+	}
 }
 
 func init_cmd_tbl() {
@@ -253,7 +258,7 @@ func init_cmd_tbl() {
 	cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"", "", nil, nil, nil, 0, 0, 3, 0, 0, [5]int{}, nil, nil})
 	//cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"m",  "acquire",   v_acquire,    nil,       nil,       1,  0,  3,         0, 0, [5]int{}, nil})
 	cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"cpr", "accept", v_accept, nil, nil, 0, 0, 0, 1, 3, [5]int{0, 0, CMD_qty, 0, 0}, accept_comment, nil})
-	cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"cpr", "admit", v_admit, nil, nil, 0, 0, 0, 1, 0, [5]int{}, admit_comment, admit_check})
+	cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"cpr", "Admit", v_admit, nil, nil, 0, 0, 0, 1, 0, [5]int{}, admit_comment, admit_check})
 	cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"cr", "attack", v_move_attack, d_move_attack, nil, -1, 0, 3, 1, 0, [5]int{}, attack_comment, nil})
 	cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"cr", "banner", v_banner, nil, nil, 0, 0, 1, 1, 2, [5]int{}, nil, nil})
 	cmd_tbl = append(cmd_tbl, cmd_tbl_ent{"cr", "behind", v_behind, nil, nil, 0, 0, 1, 1, 1, [5]int{}, nil, nil})

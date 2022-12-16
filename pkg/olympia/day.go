@@ -500,11 +500,11 @@ func heal_char_sup(who int) {
 
 	if kind(who) != 0 && char_health(who) < 100 {
 		if a := best_artifact(who, ART_HEALING, 0, 0); a != 0 {
-			p_char(who).health += rp_item_artifact(a).param1
+			p_char(who).health += rp_item_artifact(a).Param1
 			if p_char(who).health > 100 {
 				p_char(who).health = 100
 			}
-			wout(who, "Your artifact provides %s points of healing power.", nice_num(rp_item_artifact(a).param1))
+			wout(who, "Your artifact provides %s points of healing power.", nice_num(rp_item_artifact(a).Param1))
 		}
 	}
 }
@@ -550,12 +550,12 @@ func add_unformed_sup(pl int) {
 	}
 
 	new_ent_prime = true /* allocate short numbers */
-	for len(p.unformed) < 5 {
+	for len(p.Unformed) < 5 {
 		newt := new_ent(T_unform, 0)
 		if newt <= 0 {
 			break
 		}
-		p.unformed = append(p.unformed, newt)
+		p.Unformed = append(p.Unformed, newt)
 	}
 	new_ent_prime = false
 }
@@ -714,7 +714,7 @@ func reseed_monster_provinces() {
 		provinces++
 	}
 
-	monsters := len(rp_player(indep_player).units)
+	monsters := len(rp_player(indep_player).Units)
 	if !(monsters < provinces/2) {
 		log_output(LOG_MISC, "No need to reseed monsters in provinces.")
 		return
@@ -1069,7 +1069,7 @@ func do_pen_crown() {
 	 */
 	pen_crown := 0
 	for _, i := range loop_subkind(sub_magic_artifact) {
-		if p_item_artifact(i).type_ == ART_PEN {
+		if p_item_artifact(i).Type == ART_PEN {
 			pen_crown = i
 			break
 		}
@@ -1080,7 +1080,7 @@ func do_pen_crown() {
 		pen_crown = create_unique_item(pen_noble, sub_magic_artifact)
 		set_name(pen_crown, "Pen Crown")
 		rp_item(pen_crown).weight = 5
-		p_item_artifact(pen_crown).type_ = ART_PEN
+		p_item_artifact(pen_crown).Type = ART_PEN
 		wout(pen_noble, "The Gods of the Pen select you as the new king.")
 	} else {
 		if item_unique(pen_crown) != pen_noble {
@@ -1089,9 +1089,9 @@ func do_pen_crown() {
 		}
 		move_item(item_unique(pen_crown), pen_noble, pen_crown, 1)
 	}
-	p_item_artifact(pen_crown).param1 = 100
-	rp_item_artifact(pen_crown).param2 = 100
-	rp_item_artifact(pen_crown).uses = rnd(10, 20)
+	p_item_artifact(pen_crown).Param1 = 100
+	rp_item_artifact(pen_crown).Param2 = 100
+	rp_item_artifact(pen_crown).Uses = rnd(10, 20)
 }
 
 func increment_stone_ring_aura() {
@@ -1178,9 +1178,9 @@ func noncreator_curse_erode() {
 			im := rp_item_magic(e.item)
 			if im == nil {
 				continue
-			} else if im.curse_loyalty == 0 {
+			} else if im.CurseLoyalty == 0 {
 				continue
-			} else if im.creator == who {
+			} else if im.Creator == who {
 				continue
 			}
 
@@ -1362,11 +1362,11 @@ func daily_auto_drop() {
 	for _, pl := range loop_pl_regular() {
 		p := p_player(pl)
 
-		if sysclock.turn-p.last_order_turn >= 4 {
+		if sysclock.turn-p.LastOrderTurn >= 4 {
 			var s, email string
 			if rp_player(pl) != nil {
-				email = rp_player(pl).email
-				s = rp_player(pl).full_name
+				email = rp_player(pl).EMail
+				s = rp_player(pl).FullName
 			}
 
 			queue(pl, "quit")
@@ -1381,11 +1381,11 @@ func turn_limit_drop(turns int) {
 	for _, pl := range loop_pl_regular() {
 		p := p_player(pl)
 
-		if sysclock.turn-p.first_turn > turns {
+		if sysclock.turn-p.FirstTurn > turns {
 			var s, email string
 			if rp_player(pl) != nil {
-				email = rp_player(pl).email
-				s = rp_player(pl).full_name
+				email = rp_player(pl).EMail
+				s = rp_player(pl).FullName
 			}
 
 			wout(pl, "You are being dropped because you have reached the turn limit for this game.")
@@ -1558,7 +1558,7 @@ func unit_maint_cost(who, towho int) int {
 	 *
 	 */
 	if a := best_artifact(who, ART_MAINTENANCE, 0, 0); a != 0 {
-		food = (cost * rp_item_artifact(a).param1) / 100
+		food = (cost * rp_item_artifact(a).Param1) / 100
 		if food > cost {
 			food = cost
 		}
@@ -1693,7 +1693,7 @@ func inn_income() {
 		 *
 		 */
 		if a := best_artifact(owner, ART_INCOME, sub_inn, 0); a != 0 {
-			base += (base * rp_item_artifact(a).param1) / 100
+			base += (base * rp_item_artifact(a).Param1) / 100
 		}
 
 		gen_item(owner, item_gold, base)
@@ -1762,7 +1762,7 @@ func temple_income() {
 		 *
 		 */
 		if a := best_artifact(owner, ART_INCOME, sub_temple, 0); a != 0 {
-			income += (income * rp_item_artifact(a).param1) / 100
+			income += (income * rp_item_artifact(a).Param1) / 100
 		}
 
 		gen_item(owner, item_gold, income)
@@ -2621,7 +2621,7 @@ func clear_orders_sent() {
 	for _, pl := range loop_player() {
 		p := rp_player(pl)
 		if p != nil {
-			p.sent_orders = 0
+			p.SentOrders = 0
 		}
 	}
 

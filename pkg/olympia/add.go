@@ -268,8 +268,8 @@ func add_new_player(pl int, faction, character, full_name, email string, nation,
 	pp := p_player(pl)
 	cp := p_char(who)
 
-	pp.full_name = full_name
-	pp.email = email
+	pp.FullName = full_name
+	pp.EMail = email
 	/*
 	 *  Tue Apr  8 12:40:56 1997 -- Scott Turner
 	 *
@@ -277,10 +277,10 @@ func add_new_player(pl int, faction, character, full_name, email string, nation,
 	 *  are doing.
 	 *
 	 */
-	pp.noble_points = starting_noble_points(nation)
-	pp.first_turn = sysclock.turn + 1
-	pp.last_order_turn = sysclock.turn
-	pp.nation = nation
+	pp.NoblePoints = starting_noble_points(nation)
+	pp.FirstTurn = sysclock.turn + 1
+	pp.LastOrderTurn = sysclock.turn
+	pp.Nation = nation
 	/*
 	 *  Thu Apr  9 08:41:42 1998 -- Scott Turner
 	 *
@@ -288,13 +288,13 @@ func add_new_player(pl int, faction, character, full_name, email string, nation,
 	 *  per turn?
 	 *
 	 */
-	pp.jump_start = rp_nation(nation).jump_start + (sysclock.turn / 5)
-	if pp.jump_start > 56 {
-		pp.jump_start = 56
+	pp.JumpStart = rp_nation(nation).jump_start + (sysclock.turn / 5)
+	if pp.JumpStart > 56 {
+		pp.JumpStart = 56
 	}
 
 	if strings.HasSuffix(email, "@compuserve.com") {
-		pp.compuserve = true
+		pp.CompuServe = true
 	}
 
 	cp.health = 100
@@ -480,21 +480,19 @@ func make_new_players() {
 	}
 }
 
-func rename_act_join_files() {
-	var i int
-	var pl int
-
-	for i = 0; i < len(new_players); i++ {
-		pl = new_players[i]
+func rename_act_join_files() error {
+	for i := 0; i < len(new_players); i++ {
+		pl := new_players[i]
 		acct := fmt.Sprintf("%s", box_code_less(pl))
 
 		old_name := filepath.Join(options.accounting_dir, acct, fmt.Sprintf("Join-tag-%d", game_number))
 		new_name := filepath.Join(options.accounting_dir, acct, fmt.Sprintf("Join-tag-%d-", game_number))
 
 		if err := rename(old_name, new_name); err != nil {
-			log.Printf("rename(%s, %s) failed: %v\n", old_name, new_name)
+			return fmt.Errorf("rename(%s, %s): %w", old_name, new_name)
 		}
 	}
+	return nil
 }
 
 func new_player_banners() {
@@ -626,19 +624,19 @@ func new_order_templates() {
 }
 
 func new_player_list_sup(who int, pl int) {
-	var p *entity_player
+	var p *EntityPlayer
 	var s string
 
 	p = p_player(pl)
 
-	if p.email != "" {
-		if p.full_name != "" {
-			s = sout("%s <%s>", p.full_name, p.email)
+	if p.EMail != "" {
+		if p.FullName != "" {
+			s = sout("%s <%s>", p.FullName, p.EMail)
 		} else {
-			s = sout("<%s>", p.email)
+			s = sout("<%s>", p.EMail)
 		}
-	} else if p.full_name != "" {
-		s = p.full_name
+	} else if p.FullName != "" {
+		s = p.FullName
 	} else {
 		s = ""
 	}

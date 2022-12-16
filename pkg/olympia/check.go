@@ -89,9 +89,9 @@ func check_swear() {
 		over := player(i)
 		if over > 0 && !is_unit(over, i) {
 			log.Printf("\tcheck_swear: adding [%d] to player [%d]\n", i, over)
-			p_player(over).units = append(p_player(over).units, i)
+			p_player(over).Units = append(p_player(over).Units, i)
 
-			sort.Ints(p_player(over).units)
+			sort.Ints(p_player(over).Units)
 		}
 	}
 
@@ -101,7 +101,7 @@ func check_swear() {
 			if over != i {
 				log.Printf("\tcheck_swear: removing [%d] from player list of [%d]\n", j, i)
 
-				p_player(i).units = rem_value(p_player(i).units, j)
+				p_player(i).Units = rem_value(p_player(i).Units, j)
 			}
 		}
 	}
@@ -493,7 +493,7 @@ func check_peasants() {
 /*
  *  Tue Jul  6 12:57:13 1999 -- Scott Turner
  *
- *  Magical artifacts should have x_item.entity_artifact
+ *  Magical artifacts should have x_item.EntityArtifact
  *
  */
 func check_magical_artifacts() {
@@ -519,7 +519,7 @@ func check_magical_artifacts() {
  *  Always notes a database correction with a message to strerr.
  */
 
-func check_db() {
+func check_db() error {
 	stage("check_db()")
 
 	/*
@@ -547,18 +547,13 @@ func check_db() {
 	check_peasants()
 	check_magical_artifacts()
 
-	/*
-	 *  Don't leave unique items lying about in cities; destroy
-	 *  them.
-	 *
-	 */
+	// don't leave unique items lying about in cities; destroy them.
 	for _, i := range loop_city() {
 		for _, e := range loop_inventory(i) {
 			if item_unique(e.item) != FALSE &&
 				find_trade(i, SELL, e.item) == nil &&
 				find_trade(i, BUY, e.item) == nil {
-				log.Printf("Deleting %s from %s.\n",
-					box_name(e.item), box_name(i))
+				log.Printf("Deleting %s from %s.\n", box_name(e.item), box_name(i))
 				destroy_unique_item(i, e.item)
 			}
 		}
@@ -577,9 +572,10 @@ func check_db() {
 	//#endif
 
 	if bx[garrison_magic] != nil {
-		log.Printf("\twarning: %s should not be allocated,\n",
-			box_name(garrison_magic))
+		log.Printf("\twarning: %s should not be allocated,\n", box_name(garrison_magic))
 		log.Printf("\t\treserved for garrison_magic\n")
 	}
 	tags_on()
+
+	return nil
 }

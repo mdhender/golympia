@@ -46,7 +46,7 @@ func getopt(argc int, argv []string, flags string) int {
 	panic("!implemented")
 }
 
-func RunOly(args ...string) int {
+func RunOly(args ...string) error {
 	add_flag := false
 	art_flag := false
 	combat_test_flag := false
@@ -61,7 +61,9 @@ func RunOly(args ...string) int {
 	unspool_first_flag := false
 	var c int
 
-	call_init_routines()
+	if err := call_init_routines(); err != nil {
+		return fmt.Errorf("RunOly: %w", err)
+	}
 
 	argc := len(args)
 	argv := args
@@ -102,7 +104,7 @@ func RunOly(args ...string) int {
 
 		case 'l': /* set libdir */
 			//libdir = string(optarg)
-			panic("!implemented")
+			return fmt.Errorf("RunOly: --l not implemented")
 
 		case 'L':
 			lore_flag = true
@@ -122,15 +124,13 @@ func RunOly(args ...string) int {
 			run_flag = true
 
 		case 'R': /* test random number generator */
-			log.Printf("error: '%s -R' has been replaced with 'random/random_test'\n", argv[0])
-			os.Exit(2)
+			return fmt.Errorf("error: '%s -R' has been replaced with 'random/random_test'\n", argv[0])
 
 		case 'S': /* save database when done */
 			save_flag = true
 
 		case 't':
-			log.Printf("error: '%s -t' has been replaced with 'vectors/ilist_test'\n", argv[0])
-			os.Exit(2)
+			return fmt.Errorf("error: '%s -t' has been replaced with 'vectors/ilist_test'\n", argv[0])
 
 		case 'T':
 			time_self = true
@@ -172,7 +172,9 @@ func RunOly(args ...string) int {
 	 */
 	lock_tag()
 
-	load_db()
+	if err := load_db(); err != nil {
+		return fmt.Errorf("RunOly: %w", err)
+	}
 
 	/*
 	 *  Create a couple of stacks and have them battle
@@ -420,14 +422,21 @@ func RunOly(args ...string) int {
 		close_logfile()
 	}
 
-	check_db() /* check database integrity */
+	/* check database integrity */
+	if err := check_db(); err != nil {
+		return fmt.Errorf("RunOly: %w", err)
+	}
 
 	if save_flag {
-		save_db()
+		if err := save_db(); err != nil {
+			return fmt.Errorf("RunOly: %w", err)
+		}
 	}
 
 	if save_flag && run_flag {
-		save_logdir()
+		if err := save_logdir(); err != nil {
+			return fmt.Errorf("RunOly: %w", err)
+		}
 	}
 
 	do_times()
@@ -438,7 +447,7 @@ func RunOly(args ...string) int {
 
 	stage("")
 
-	return 0
+	return nil
 }
 
 func call_init_routines() error {
@@ -466,8 +475,8 @@ func write_totimes() {
 	}
 
 	for _, pl = range loop_player() {
-		if rp_player(pl) != nil && rp_player(pl).email != "" && !player_compuserve(pl) {
-			fprintf(fp, "%s\n", rp_player(pl).email)
+		if rp_player(pl) != nil && rp_player(pl).EMail != "" && !player_compuserve(pl) {
+			fprintf(fp, "%s\n", rp_player(pl).EMail)
 		}
 	}
 
@@ -487,8 +496,8 @@ func write_email() {
 	}
 
 	for _, pl = range loop_player() {
-		if rp_player(pl) != nil && rp_player(pl).email != "" {
-			fprintf(fp, "%s\n", rp_player(pl).email)
+		if rp_player(pl) != nil && rp_player(pl).EMail != "" {
+			fprintf(fp, "%s\n", rp_player(pl).EMail)
 		}
 	}
 
@@ -500,27 +509,27 @@ func fix_email(email string) string {
 }
 
 func list_a_player(fp *os.File, pl int, flag *int) {
-	var p *entity_player
+	var p *EntityPlayer
 	var s string
 	//var n int
 	var c byte
 	var email string
 
 	p = p_player(pl)
-	if p.email != "" || p.vis_email != "" {
-		if p.vis_email != "" {
-			email = p.vis_email
+	if p.EMail != "" || p.VisEMail != "" {
+		if p.VisEMail != "" {
+			email = p.VisEMail
 		} else {
-			email = p.email
+			email = p.EMail
 		}
 
-		if p.full_name != "" {
-			s = sout("%s &lt;%s&gt;", p.full_name, fix_email(email))
+		if p.FullName != "" {
+			s = sout("%s &lt;%s&gt;", p.FullName, fix_email(email))
 		} else {
 			s = sout("&lt;%s&gt", fix_email(email))
 		}
-	} else if p.full_name != "" {
-		s = p.full_name
+	} else if p.FullName != "" {
+		s = p.FullName
 	} else {
 		s = ""
 	}
@@ -549,15 +558,15 @@ func list_a_player(fp *os.File, pl int, flag *int) {
  *
  */
 func v_nationlist(c *command) int {
-	var p *entity_player
+	var p *EntityPlayer
 
 	p = p_player(player(c.who))
 
-	if p.nationlist != FALSE {
-		p.nationlist = FALSE
+	if p.NationList != FALSE {
+		p.NationList = FALSE
 		wout(c.who, "Will receive the nation mailing list.")
 	} else {
-		p.nationlist = TRUE
+		p.NationList = TRUE
 		wout(c.who, "Will not receive the nation mailing list.")
 	}
 
@@ -593,8 +602,8 @@ func write_nations_lists() {
 		 *
 		 */
 		for _, pl := range loop_player() {
-			if rp_player(pl) != nil && subkind(pl) == sub_pl_regular && nation(pl) == i && rp_player(pl).email != "" && rp_player(pl).nationlist == FALSE {
-				fprintf(fp, "%s\n", rp_player(pl).email)
+			if rp_player(pl) != nil && subkind(pl) == sub_pl_regular && nation(pl) == i && rp_player(pl).EMail != "" && rp_player(pl).NationList == FALSE {
+				fprintf(fp, "%s\n", rp_player(pl).EMail)
 			}
 		}
 
@@ -602,8 +611,8 @@ func write_nations_lists() {
 		 *  Add the DM...
 		 *
 		 */
-		if rp_player(gm_player) != nil && rp_player(gm_player).nationlist == FALSE {
-			fprintf(fp, "%s\n", rp_player(gm_player).email)
+		if rp_player(gm_player) != nil && rp_player(gm_player).NationList == FALSE {
+			fprintf(fp, "%s\n", rp_player(gm_player).EMail)
 		}
 		/*
 		 *  Close the file.
@@ -637,7 +646,7 @@ func write_player_list() {
 	fprintf(fp, "<TR><TD><B><FONT SIZE=+1>Num</FONT></B></TD><TD><B><FONT SIZE=+1>Faction</FONT></B></TD><TD><B><FONT SIZE=+1>Nation</FONT></B></TD><TD><B><FONT SIZE=+1>Email Address</FONT></B></TD></TR>\n")
 
 	for _, pl = range loop_player() {
-		if rp_player(pl) != nil && rp_player(pl).email != "" && subkind(pl) == sub_pl_regular {
+		if rp_player(pl) != nil && rp_player(pl).EMail != "" && subkind(pl) == sub_pl_regular {
 			var yint int
 			list_a_player(fp, pl, &yint)
 			flag = yint != FALSE
@@ -778,19 +787,19 @@ func format_string(i int) string {
  *
  */
 func send_rep(pl, turn int) int {
-	var p *entity_player
+	var p *EntityPlayer
 	var ret int
 	var zfnam string
 	var fnam string
 	split_lines := player_split_lines(pl)
 	split_bytes := player_split_bytes(pl)
-	formats := p_player(pl).format
+	formats := p_player(pl).Format
 	var i int
 	var email string
 
 	p = rp_player(pl)
 
-	if p == nil || p.email == "" {
+	if p == nil || p.EMail == "" {
 		return FALSE
 	}
 
@@ -847,7 +856,7 @@ func send_rep(pl, turn int) int {
 			if reply_host != "" {
 				fprintf(fp, "Reply-To: %s\n", reply_host)
 			}
-			fprintf(fp, "To: %s (%s)\n", p.email, or_string(p.full_name != "", p.full_name, "???"))
+			fprintf(fp, "To: %s (%s)\n", p.EMail, or_string(p.FullName != "", p.FullName, "???"))
 			fprintf(fp, "Subject: Olympia:TAG game %d turn %d report [%s]\n", game_number, turn, format_string(i))
 			fprintf(fp, "\n")
 			_ = fp.Close()
@@ -874,7 +883,7 @@ func send_rep(pl, turn int) int {
 			log.Printf("   %s\n", cmd)
 			ret = system(cmd)
 			if ret != 0 {
-				log.Printf("send_rep: mail to %s failed: %s\n", p.email, cmd)
+				log.Printf("send_rep: mail to %s failed: %s\n", p.EMail, cmd)
 			}
 			unlink(report)
 		}
@@ -893,13 +902,13 @@ func send_rep(pl, turn int) int {
 	/* VLN cmd = sout("sendmail -odq %s < %s/Times", p.email, libdir); */
 
 	/* VLN remove "," from email adddress string */
-	email = strings.ReplaceAll(p.email, ",", " ")
+	email = strings.ReplaceAll(p.EMail, ",", " ")
 
 	/*VLN cmd = sout("msmtp %s < %s/Times", p.email, libdir); */
 	cmd := sout("msmtp %s < %s/Times", email, libdir)
 	ret = system(cmd)
 	if ret != 0 {
-		log.Printf("send_rep: mail to %s failed: %q\n", p.email, cmd)
+		log.Printf("send_rep: mail to %s failed: %q\n", p.EMail, cmd)
 	}
 
 	return TRUE
@@ -1030,14 +1039,14 @@ func setup_html_dir(pl int) {
 
 func set_html_pass(pl int) {
 	var buf string
-	var p *entity_player
+	var p *EntityPlayer
 
 	p = rp_player(pl)
 	if p == nil {
 		return
 	}
 
-	pw := p.password
+	pw := p.Password
 	if len(pw) == 0 {
 		pw = DEFAULT_PASSWORD
 	}
@@ -1121,7 +1130,7 @@ func output_html_map(pl int) {
 	 *
 	 *  Have to figure out min/max values for x and y.
 	 */
-	for _, i = range known_sparse_loop(p_player(pl).known) {
+	for _, i = range known_sparse_loop(p_player(pl).Known) {
 		if kind(i) == T_loc &&
 			loc_depth(i) == LOC_province &&
 			region(i) != hades_region &&

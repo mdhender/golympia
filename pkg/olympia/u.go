@@ -916,7 +916,7 @@ func item_ride_cap(who int) int {
 	capacity = or_int(rp_item(base) != nil, rp_item(base).ride_cap, 0)
 
 	if a = best_artifact(who, ART_RIDING, 0, 0); a != 0 {
-		capacity += rp_item_artifact(a).param1
+		capacity += rp_item_artifact(a).Param1
 	}
 	return capacity
 }
@@ -935,7 +935,7 @@ func item_fly_cap(who int) int {
 	capacity = or_int(rp_item(base) != nil, rp_item(base).fly_cap, 0)
 
 	if a = best_artifact(who, ART_FLYING, 0, 0); a != 0 {
-		capacity += rp_item_artifact(a).param1
+		capacity += rp_item_artifact(a).Param1
 	}
 	return capacity
 }
@@ -954,7 +954,7 @@ func item_land_cap(who int) int {
 	capacity = or_int(rp_item(base) != nil, rp_item(base).land_cap, 0)
 
 	if a = best_artifact(who, ART_CARRY, 0, 0); a != 0 {
-		capacity += rp_item_artifact(a).param1
+		capacity += rp_item_artifact(a).Param1
 	}
 	return capacity
 }
@@ -985,8 +985,8 @@ func item_weight(who int) int {
 	 *  And an artifact of weightlessness.
 	 *
 	 */
-	if is_artifact(who) != nil && rp_item_artifact(who).type_ == ART_WEIGHTLESS {
-		capacity -= rp_item_artifact(who).param1
+	if is_artifact(who) != nil && rp_item_artifact(who).Type == ART_WEIGHTLESS {
+		capacity -= rp_item_artifact(who).Param1
 	}
 
 	return capacity
@@ -1246,11 +1246,11 @@ func deduct_np(pl, num int) bool {
 	assert(kind(pl) == T_player)
 
 	p := p_player(pl)
-	if p == nil || p.noble_points < num {
+	if p == nil || p.NoblePoints < num {
 		return false
 	}
-	p.noble_points -= num
-	p.np_spent += num
+	p.NoblePoints -= num
+	p.npSpent += num
 
 	return true
 }
@@ -1260,8 +1260,8 @@ func add_np(pl, num int) {
 
 	p := p_player(pl)
 	if p != nil {
-		p.noble_points += num
-		p.np_gained += num
+		p.NoblePoints += num
+		p.npGained += num
 	}
 }
 
@@ -1314,9 +1314,13 @@ func has_item(who, item int) int {
 }
 
 func add_item(who, item, qty int) {
-	assert(valid_box(who))
-	assert(valid_box(item))
-	assert(qty >= 0)
+	if !valid_box(who) {
+		panic(fmt.Sprintf("assert(valid_box(%d))", who))
+	} else if !valid_box(item) {
+		panic(fmt.Sprintf("assert(valid_box(%d))", item))
+	} else if !(qty >= 0) {
+		panic(fmt.Sprintf("assert(%d >= 0)", qty))
+	}
 
 	lore := item_lore(item)
 	if lore != 0 && kind(who) == T_char && !test_known(who, item) {
@@ -1540,7 +1544,7 @@ func stack_has_item(who, item int) (sum int) {
 
 func has_use_key(who, key int) int {
 	for _, e := range loop_inventory(who) {
-		if p := rp_item_magic(e.item); p != nil && p.use_key == key && e.item != 0 {
+		if p := rp_item_magic(e.item); p != nil && p.UseKey == key && e.item != 0 {
 			return e.item
 		}
 	}
@@ -1639,7 +1643,7 @@ func test_known(who, i int) bool {
 	assert(valid_box(i))
 
 	ep := rp_player(player(who))
-	if ep != nil && test_bit(ep.known, i) {
+	if ep != nil && test_bit(ep.Known, i) {
 		return true
 	}
 
@@ -1653,7 +1657,7 @@ func set_known(who, i int) {
 	pl := player(who)
 	assert(valid_box(pl))
 
-	p_player(pl).known = set_bit(p_player(pl).known, i)
+	p_player(pl).Known = set_bit(p_player(pl).Known, i)
 }
 
 func print_dot(ch byte) {
@@ -1690,7 +1694,7 @@ func loc_hidden(n int) bool {
 	//    if (loc_depth(n) > LOC_province && weather_here(n, sub_fog))
 	//        return TRUE;
 	//#endif
-	return rp_loc(n).hidden != FALSE
+	return rp_loc(n) != nil && rp_loc(n).hidden != FALSE
 }
 
 func loc_contains_hidden(n int) int {
