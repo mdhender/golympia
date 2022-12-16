@@ -437,7 +437,7 @@ func do_unit(c *command) bool {
 	}
 
 	if kind(c.a) == T_unform {
-		if ilist_lookup(p_player(pl).Unformed, c.a) < 0 {
+		if p_player(pl).Unformed.lookup(c.a) < 0 {
 			err(EAT_WARN, "Not an unformed unit of yours.")
 		}
 	} else if !valid_char_or_player(c.a) {

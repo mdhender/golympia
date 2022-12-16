@@ -189,7 +189,7 @@ func is_unit(pl, v int) bool {
 	if !(kind(pl) == T_player) {
 		panic("assert(kind(pl) == T_player)")
 	}
-	return ilist_lookup(p_player(pl).Units, v) >= 0
+	return p_player(pl).Units.lookup(v) >= 0
 }
 
 func unit_deserts(who int, to_who int, loy_check int, k int, lev int) bool {

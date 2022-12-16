@@ -170,7 +170,7 @@ func orders_other(who, pl int) {
 	for i := 0; i < len(p.Orders); i++ {
 		if pl == p.Orders[i].unit || !valid_box(p.Orders[i].unit) || kind(p.Orders[i].unit) == T_deadchar {
 			continue
-		} else if ilist_lookup(p.Units, p.Orders[i].unit) >= 0 {
+		} else if p.Units.lookup(p.Orders[i].unit) >= 0 {
 			continue
 		}
 
@@ -311,7 +311,7 @@ func orders_template_sup(who, num, pl int) {
 	out(who, "")
 }
 
-func p_order_head(pl, who int) *order_list {
+func p_order_head(pl, who int) *orders_list {
 	p := p_player(pl)
 	for i := 0; i < len(p.Orders); i++ {
 		if p.Orders[i].unit == who {
@@ -319,7 +319,7 @@ func p_order_head(pl, who int) *order_list {
 		}
 	}
 
-	ol := &order_list{unit: who}
+	ol := &orders_list{unit: who}
 	p.Orders = append(p.Orders, ol)
 
 	return ol
@@ -357,7 +357,7 @@ func queue_stop(pl, who int) {
 	prepend_order(pl, who, "stop")
 }
 
-func rp_order_head(pl, who int) *order_list {
+func rp_order_head(pl, who int) *orders_list {
 	p := rp_player(pl)
 	if p == nil {
 		return nil

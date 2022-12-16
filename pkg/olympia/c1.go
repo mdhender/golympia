@@ -1042,7 +1042,7 @@ func d_form(c *command) int {
 			return FALSE
 		}
 		if kind(new_noble) != T_unform ||
-			ilist_lookup(p.Unformed, new_noble) < 0 {
+			p.Unformed.lookup(new_noble) < 0 {
 			wout(c.who, "%s is not a valid unformed noble entity.", box_code(new_noble))
 			wout(c.who, "I will use one of your unformed noble codes at random.")
 			new_noble = 0

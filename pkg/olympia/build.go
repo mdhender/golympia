@@ -927,7 +927,7 @@ func start_build(c *command, bi *build_ent, id int) bool {
 
 	if id != FALSE {
 		if kind(id) != T_unform ||
-			ilist_lookup(p_player(player(c.who)).Unformed, id) < 0 {
+			p_player(player(c.who)).Unformed.lookup(id) < 0 {
 			wout(c.who, "%s is not a valid unformed entity.", box_code(id))
 			wout(c.who, "I will use a random identifier.")
 			id = 0

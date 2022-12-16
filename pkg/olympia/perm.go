@@ -99,9 +99,9 @@ func will_admit(pl, who, targ int) int {
 		return FALSE
 	}
 
-	found := ilist_lookup(p.List, who) >= 0
-	found_pl := ilist_lookup(p.List, player(who)) >= 0
-	found_nation := ilist_lookup(p.List, nation(who)) >= 0
+	found := p.List.lookup(who) >= 0
+	found_pl := p.List.lookup(player(who)) >= 0
+	found_nation := p.List.lookup(nation(who)) >= 0
 
 	/*
 	 * Wed Jan 20 12:59:51 1999 -- Scott Turner
@@ -368,13 +368,13 @@ func is_hostile(who int, targ int) int {
 	}
 
 	if subkind(who) == sub_garrison {
-		if p := rp_misc(who); p != nil && ilist_lookup(p.garr_host, targ) >= 0 {
+		if p := rp_misc(who); p != nil && p.garr_host.lookup(targ) >= 0 {
 			return TRUE
 		}
 	}
 
 	if p := rp_disp(who); p != nil {
-		if ilist_lookup(p.hostile, targ) >= 0 {
+		if p.hostile.lookup(targ) >= 0 {
 			return TRUE
 		}
 		/*
@@ -383,7 +383,7 @@ func is_hostile(who int, targ int) int {
 		 *  Might be a nation...
 		 *
 		 */
-		if nation(targ) != 0 && ilist_lookup(p.hostile, nation(targ)) >= 0 {
+		if nation(targ) != 0 && p.hostile.lookup(nation(targ)) >= 0 {
 			return TRUE
 		}
 		/*
@@ -396,13 +396,13 @@ func is_hostile(who int, targ int) int {
 			is_real_npc(targ) &&
 			kind(targ) == T_char &&
 			subkind(targ) == sub_ni &&
-			ilist_lookup(p.hostile, MONSTER_ATT) >= 0 {
+			p.hostile.lookup(MONSTER_ATT) >= 0 {
 			return TRUE
 		}
 	}
 
 	if p := rp_disp(player(who)); p != nil {
-		if ilist_lookup(p.hostile, targ) >= 0 {
+		if p.hostile.lookup(targ) >= 0 {
 			return TRUE
 		}
 		/*
@@ -411,7 +411,7 @@ func is_hostile(who int, targ int) int {
 		 *  Might be a nation...
 		 *
 		 */
-		if nation(targ) != 0 && ilist_lookup(p.hostile, nation(targ)) >= 0 {
+		if nation(targ) != 0 && p.hostile.lookup(nation(targ)) >= 0 {
 			return TRUE
 		}
 		/*
@@ -424,7 +424,7 @@ func is_hostile(who int, targ int) int {
 			is_real_npc(targ) &&
 			kind(targ) == T_char &&
 			subkind(targ) == sub_ni &&
-			ilist_lookup(p.hostile, MONSTER_ATT) >= 0 {
+			p.hostile.lookup(MONSTER_ATT) >= 0 {
 			return TRUE
 		}
 	}
@@ -464,17 +464,17 @@ func is_defend(who int, targ int) int {
 	}
 
 	if p := rp_disp(who); p != nil {
-		if ilist_lookup(p.defend, targ) >= 0 {
+		if p.defend.lookup(targ) >= 0 {
 			return TRUE
 		}
-		if ilist_lookup(p.neutral, targ) >= 0 {
+		if p.neutral.lookup(targ) >= 0 {
 			return FALSE
 		}
 
-		if ilist_lookup(p.defend, player(targ)) >= 0 {
+		if p.defend.lookup(player(targ)) >= 0 {
 			return TRUE
 		}
-		if ilist_lookup(p.neutral, player(targ)) >= 0 {
+		if p.neutral.lookup(player(targ)) >= 0 {
 			return FALSE
 		}
 		/*
@@ -483,27 +483,27 @@ func is_defend(who int, targ int) int {
 		 *  Might be a nation...
 		 *
 		 */
-		if nation(targ) != 0 && ilist_lookup(p.defend, nation(targ)) >= 0 {
+		if nation(targ) != 0 && p.defend.lookup(nation(targ)) >= 0 {
 			return TRUE
 		}
-		if nation(targ) != 0 && ilist_lookup(p.neutral, nation(targ)) >= 0 {
+		if nation(targ) != 0 && p.neutral.lookup(nation(targ)) >= 0 {
 			return FALSE
 		}
 	}
 
 	pl := player(who)
 	if p := rp_disp(pl); p != nil {
-		if ilist_lookup(p.defend, targ) >= 0 {
+		if p.defend.lookup(targ) >= 0 {
 			return TRUE
 		}
-		if ilist_lookup(p.neutral, targ) >= 0 {
+		if p.neutral.lookup(targ) >= 0 {
 			return FALSE
 		}
 
-		if ilist_lookup(p.defend, player(targ)) >= 0 {
+		if p.defend.lookup(player(targ)) >= 0 {
 			return TRUE
 		}
-		if ilist_lookup(p.neutral, player(targ)) >= 0 {
+		if p.neutral.lookup(player(targ)) >= 0 {
 			return FALSE
 		}
 
@@ -513,10 +513,10 @@ func is_defend(who int, targ int) int {
 		 *  Might be a nation...
 		 *
 		 */
-		if nation(targ) != 0 && ilist_lookup(p.defend, nation(targ)) >= 0 {
+		if nation(targ) != 0 && p.defend.lookup(nation(targ)) >= 0 {
 			return TRUE
 		}
-		if nation(targ) != 0 && ilist_lookup(p.neutral, nation(targ)) >= 0 {
+		if nation(targ) != 0 && p.neutral.lookup(nation(targ)) >= 0 {
 			return FALSE
 		}
 	}

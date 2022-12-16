@@ -142,7 +142,7 @@ func may_use_skill(who, sk int) int {
 	ret, scroll := 0, 0
 	for _, e := range loop_inventory(who) {
 		p := rp_item_magic(e.item)
-		if p != nil && ilist_lookup(p.MayUse, sk) >= 0 {
+		if p != nil && p.MayUse.lookup(sk) >= 0 {
 			if subkind(e.item) == sub_scroll || subkind(e.item) == sub_book {
 				scroll = e.item
 			} else {
@@ -1267,8 +1267,8 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 	*item = 0
 
 	// possibly being taught in this location.
-	taught_specific := (p != nil && ilist_lookup(p.teaches, sk) >= 0)
-	taught_generic := (p != nil && ilist_lookup(p.teaches, school) >= 0)
+	taught_specific := (p != nil && p.teaches.lookup(sk) >= 0)
+	taught_generic := (p != nil && p.teaches.lookup(school) >= 0)
 
 	/*
 	 *  Are you in a teaching tower?
@@ -1353,10 +1353,10 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 
 	for _, e := range loop_inventory(who) {
 		p := rp_item_magic(e.item)
-		if p != nil && ilist_lookup(p.MayStudy, sk) >= 0 && p.OrbUseCount > 0 && subkind(e.item) == sub_book {
+		if p != nil && p.MayStudy.lookup(sk) >= 0 && p.OrbUseCount > 0 && subkind(e.item) == sub_book {
 			ret_specific = e.item
 			break
-		} else if p != nil && ilist_lookup(p.MayStudy, school) >= 0 && p.OrbUseCount > 0 && subkind(e.item) == sub_book {
+		} else if p != nil && p.MayStudy.lookup(school) >= 0 && p.OrbUseCount > 0 && subkind(e.item) == sub_book {
 			ret_generic = e.item
 		}
 	}
@@ -1420,7 +1420,7 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 //
 //        p = rp_subloc(where);
 //
-//        if (p && ilist_lookup(p.teaches, sk) >= 0)
+//        if (p && p.teaches.lookup(sk) >= 0)
 //            return where;
 //    }
 //
@@ -1437,7 +1437,7 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 //        {
 //            q = rp_skill(e.skill);
 //
-//            if (q && ilist_lookup(q.offered, sk) >= 0)
+//            if (q && q.offered.lookup(sk) >= 0)
 //            {
 //                ret = e.skill;
 //                break;
@@ -1465,7 +1465,7 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 //        for _, e = range loop_inventory(who, e)
 //        {
 //            p = rp_item_magic(e.item);
-//            if (p && ilist_lookup(p.may_study, sk) >= 0)
+//            if (p && p.may_study.lookup(sk) >= 0)
 //            {
 //                if (subkind(e.item) == sub_scroll)
 //                    scroll = e.item;

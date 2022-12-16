@@ -645,7 +645,7 @@ func v_write_spell(c *command) int {
 	isAdding := book != 0 && valid_box(book) && has_item(c.who, book) != FALSE
 	if isAdding {
 		if p := rp_item_magic(book); p != nil {
-			isAdding = ilist_lookup(p.MayStudy, spell) != -1
+			isAdding = p.MayStudy.lookup(spell) != -1
 		}
 	}
 	if isAdding {
@@ -717,7 +717,7 @@ func d_write_spell(c *command) int {
 	var p *ItemMagic
 	if book == 0 || valid_box(book) || has_item(c.who, book) == FALSE {
 		p = rp_item_magic(book)
-		if p == nil || ilist_lookup(p.MayStudy, spell) == -1 {
+		if p == nil || p.MayStudy.lookup(spell) == -1 {
 			wout(c.who, "You seem to have lost your book.")
 			return FALSE
 		}

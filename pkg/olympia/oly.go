@@ -612,8 +612,8 @@ type entity_misc struct {
 	opium_double schar    // improved opium production
 	post_txt     []string // text of posted sign
 	storm_move   int      // next loc storm will move to
-	garr_watch   []int    // units garrison watches for
-	garr_host    []int    // units garrison will attack
+	garr_watch   ints_l    // units garrison watches for
+	garr_host    ints_l    // units garrison will attack
 	garr_tax     int      // garrison taxes collected
 	garr_forward int      // garrison taxes forwarded
 }
@@ -635,33 +635,33 @@ type entity_nation struct {
 }
 
 type EntityPlayer struct {
-	Admits        admit_l  `json:"admits,omitempty"`          // Admit permissions list
-	BrokenMailer  int      `json:"broken-mailer,omitempty"`   // quote begin lines
-	CompuServe    bool     `json:"compuserve,omitempty"`      // get Times from CIS
-	DBPath        string   `json:"db-path,omitempty"`         // external path for HTML
-	DontRemind    int      `json:"dont-remind,omitempty"`     // don't send a reminder
-	EMail         string   `json:"e-mail,omitempty"`          //
-	FirstTower    int      `json:"first-tower,omitempty"`     // has player built first tower yet?
-	FirstTurn     int      `json:"first-turn,omitempty"`      // which turn was their first?
-	Format        int      `json:"format,omitempty"`          // turn report formatting control
-	FullName      string   `json:"full-name,omitempty"`       //
-	JumpStart     int      `json:"jump-start,omitempty"`      // Jump start points
-	Known         sparse   `json:"known,omitempty"`           // visited, lore seen, encountered
-	LastOrderTurn int      `json:"last-order-turn,omitempty"` // last turn orders were submitted
-	Magic         int      `json:"magic,omitempty"`           // MUs or Priests?
-	Nation        int      `json:"nation,omitempty"`          // Player's Nation
-	NationList    int      `json:"nation-list,omitempty"`     // Receive the Nation mailing list?
-	NoblePoints   int      `json:"noble-points,omitempty"`    // how many NP's the player has
-	NoTab         bool     `json:"no-tab,omitempty"`          // player can't tolerate tabs
-	Orders        orders_l `json:"orders,omitempty"`          // list of Orders for units in this faction
-	Password      string   `json:"password,omitempty"`        //
-	RulesPath     string   `json:"rules-path,omitempty"`      // external path for HTML
-	SentOrders    int      `json:"sent-orders,omitempty"`     // sent in Orders this turn?
-	SplitBytes    int      `json:"split-bytes,omitempty"`     // split mail at this many bytes
-	SplitLines    int      `json:"split-lines,omitempty"`     // split mail at this many lines
-	Unformed      ints_l   `json:"unformed,omitempty"`        // nobles as yet Unformed
-	Units         ints_l   `json:"units,omitempty"`           // what Units are in our faction?
-	VisEMail      string   `json:"vis-e-mail,omitempty"`      // address to put in player list
+	Admits        admit_l        `json:"admits,omitempty"`          // Admit permissions list
+	BrokenMailer  int            `json:"broken-mailer,omitempty"`   // quote begin lines
+	CompuServe    bool           `json:"compuserve,omitempty"`      // get Times from CIS
+	DBPath        string         `json:"db-path,omitempty"`         // external path for HTML
+	DontRemind    int            `json:"dont-remind,omitempty"`     // don't send a reminder
+	EMail         string         `json:"e-mail,omitempty"`          //
+	FirstTower    int            `json:"first-tower,omitempty"`     // has player built first tower yet?
+	FirstTurn     int            `json:"first-turn,omitempty"`      // which turn was their first?
+	Format        int            `json:"format,omitempty"`          // turn report formatting control
+	FullName      string         `json:"full-name,omitempty"`       //
+	JumpStart     int            `json:"jump-start,omitempty"`      // Jump start points
+	Known         sparse         `json:"known,omitempty"`           // visited, lore seen, encountered
+	LastOrderTurn int            `json:"last-order-turn,omitempty"` // last turn orders were submitted
+	Magic         int            `json:"magic,omitempty"`           // MUs or Priests?
+	Nation        int            `json:"nation,omitempty"`          // Player's Nation
+	NationList    int            `json:"nation-list,omitempty"`     // Receive the Nation mailing list?
+	NoblePoints   int            `json:"noble-points,omitempty"`    // how many NP's the player has
+	NoTab         bool           `json:"no-tab,omitempty"`          // player can't tolerate tabs
+	Orders        []*orders_list `json:"orders,omitempty"`          // list of Orders for units in this faction
+	Password      string         `json:"password,omitempty"`        //
+	RulesPath     string         `json:"rules-path,omitempty"`      // external path for HTML
+	SentOrders    int            `json:"sent-orders,omitempty"`     // sent in Orders this turn?
+	SplitBytes    int            `json:"split-bytes,omitempty"`     // split mail at this many bytes
+	SplitLines    int            `json:"split-lines,omitempty"`     // split mail at this many lines
+	Unformed      ints_l         `json:"unformed,omitempty"`        // nobles as yet Unformed
+	Units         ints_l         `json:"units,omitempty"`           // what Units are in our faction?
+	VisEMail      string         `json:"vis-e-mail,omitempty"`      // address to put in player list
 
 	// not saved:
 	cmdCount      int    // count of cmds started this turn
@@ -913,7 +913,7 @@ type options_struct struct {
 	turn_limit              int       /* Limit players to a certain # of turns. */
 }
 
-type order_list struct {
+type orders_list struct {
 	unit int      // unit orders are for
 	l    orders_l // ilist of orders for unit
 }

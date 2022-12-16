@@ -49,6 +49,15 @@ func ilist_delete(l []int, index int) []int {
 	return cp
 }
 
+func (l ints_l) lookup(n int) int {
+	for i, v := range l {
+		if n == v {
+			return i
+		}
+	}
+	return -1
+}
+
 func ilist_lookup(l ilist, n int) int {
 	for i, v := range l {
 		if n == v {

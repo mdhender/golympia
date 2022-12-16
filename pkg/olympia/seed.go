@@ -519,7 +519,7 @@ func seed_city_skill(where int) {
 			}
 		}
 
-		if ilist_lookup(p.teaches, skill) == -1 {
+		if p.teaches.lookup(skill) == -1 {
 			p.teaches = append(p.teaches, skill)
 		}
 	}
@@ -614,7 +614,7 @@ func seed_city_trade(where int) {
 			rnd(11, 15), 0)
 	}
 
-	if p != nil && ilist_lookup(p.teaches, sk_alchemy) >= 0 {
+	if p != nil && p.teaches.lookup(sk_alchemy) >= 0 {
 		add_city_trade(where, PRODUCE, item_lead, 50, 10, 0)
 	}
 
