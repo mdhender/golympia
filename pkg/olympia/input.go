@@ -303,7 +303,7 @@ func get_command(who int) []byte {
 	}
 
 	// update the player's last turn field so we know if he's been playing or not.
-	p_player(fact).last_order_turn = sysclock.turn
+	p_player(fact).LastOrderTurn = sysclock.turn
 
 	pop_order(fact, who)
 
@@ -529,7 +529,7 @@ func do_command(c *command) {
 		/*
 		 *  Increment count of commands started this turn
 		 */
-		p_player(player(c.who)).cmd_count++
+		p_player(player(c.who)).cmdCount++
 
 		set_state(c, RUN, 0)
 

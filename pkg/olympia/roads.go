@@ -19,7 +19,13 @@
 
 package olympia
 
-import "sort"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"os"
+	"sort"
+)
 
 type RoadList []*Road
 
@@ -36,11 +42,13 @@ func (r RoadList) Swap(i, j int) {
 }
 
 type Road struct {
-	Id     int    `json:"id"`             // identity of the road
-	Name   string `json:"name,omitempty"` // name of the road
-	Where  int    `json:"where"`          // where this road is located (region or location)
-	To     int    `json:"to"`             // identity of connected destination
-	Hidden bool   `json:"hidden,omitempty"`
+	Id      int    `json:"id"`             // identity of the road
+	Name    string `json:"name,omitempty"` // name of the road
+	Kind    string `json:"kind,omitempty"`
+	SubKind string `json:"sub-kind,omitempty"`
+	Where   int    `json:"where"` // where this road is located (region or location)
+	To      int    `json:"to"`    // identity of connected destination
+	Hidden  bool   `json:"hidden,omitempty"`
 }
 
 type RoadLink struct {
@@ -84,4 +92,35 @@ func RoadsFromMapGen() (roads RoadList) {
 	sort.Sort(roads)
 
 	return roads
+}
+
+func RoadDataLoad(name string, scanOnly bool) (RoadList, error) {
+	log.Printf("RoadDataLoad: loading %s\n", name)
+	data, err := os.ReadFile(name)
+	if err != nil {
+		return nil, fmt.Errorf("RoadDataLoad: %w", err)
+	}
+	var list RoadList
+	if err := json.Unmarshal(data, &list); err != nil {
+		return nil, fmt.Errorf("RoadDataLoad: %w", err)
+	}
+	if scanOnly {
+		return nil, nil
+	}
+	for _, e := range list {
+		BoxAlloc(e.Id, strKind[e.Kind], strSubKind[e.SubKind])
+	}
+	return nil, nil
+}
+
+func RoadDataSave(name string) error {
+	list := RoadsFromMapGen()
+	sort.Sort(list)
+	if buf, err := json.MarshalIndent(list, "", "  "); err != nil {
+		return fmt.Errorf("RoadDataSave: %w", err)
+	} else if err = os.WriteFile(name, buf, 0666); err != nil {
+		return fmt.Errorf("RoadDataSave: %w", err)
+	}
+	log.Printf("RoadDataSave: created %s\n", name)
+	return nil
 }

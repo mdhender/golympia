@@ -385,7 +385,7 @@ func do_begin(c *command) bool {
 		}
 	}
 
-	pl_pass = str_save([]byte(p_player(c.a).password))
+	pl_pass = str_save([]byte(p_player(c.a).Password))
 
 	if numargs(c) > 1 {
 		if len(pl_pass) == 0 {
@@ -402,7 +402,7 @@ func do_begin(c *command) bool {
 
 	pl = c.a
 
-	p_player(pl).sent_orders = 1 /* okay, they sent something in */
+	p_player(pl).SentOrders = 1 /* okay, they sent something in */
 
 	//#if 0
 	//    /*
@@ -437,7 +437,7 @@ func do_unit(c *command) bool {
 	}
 
 	if kind(c.a) == T_unform {
-		if ilist_lookup(p_player(pl).unformed, c.a) < 0 {
+		if p_player(pl).Unformed.lookup(c.a) < 0 {
 			err(EAT_WARN, "Not an unformed unit of yours.")
 		}
 	} else if !valid_char_or_player(c.a) {
@@ -472,8 +472,8 @@ func do_email(c *command) bool {
 		return true
 	}
 
-	cc_addr = rp_player(pl).email
-	p_player(pl).email = string(c.parse[1])
+	cc_addr = rp_player(pl).EMail
+	p_player(pl).EMail = string(c.parse[1])
 
 	return true
 }
@@ -486,11 +486,11 @@ func do_vis_email(c *command) bool {
 	}
 
 	if numargs(c) < 1 || len(c.parse[1]) == 0 {
-		p_player(pl).vis_email = ""
+		p_player(pl).VisEMail = ""
 		return true
 	}
 
-	p_player(pl).vis_email = string(c.parse[1])
+	p_player(pl).VisEMail = string(c.parse[1])
 
 	return true
 }
@@ -593,8 +593,8 @@ func do_split(c *command) bool {
 		out(eat_pl, "Minimum bytes to split at is 10,000")
 	}
 
-	p_player(pl).split_lines = lines
-	p_player(pl).split_bytes = chars
+	p_player(pl).SplitLines = lines
+	p_player(pl).SplitBytes = chars
 
 	if lines == 0 && chars == 0 {
 		out(eat_pl, "Reports will not be split when mailed.")
@@ -616,7 +616,7 @@ func do_notab(c *command) bool {
 		return true
 	}
 
-	p_player(pl).notab = c.a != FALSE
+	p_player(pl).NoTab = c.a != FALSE
 
 	out_alt_who = EAT_OKAY
 	if c.a != FALSE {
@@ -635,14 +635,14 @@ func do_password(c *command) bool {
 	}
 
 	if numargs(c) < 1 || len(c.parse[1]) != 0 {
-		p_player(pl).password = ""
+		p_player(pl).Password = ""
 
 		out_alt_who = EAT_OKAY
 		wout(eat_pl, "Password cleared.")
 		return true
 	}
 
-	p_player(pl).password = string(c.parse[1])
+	p_player(pl).Password = string(c.parse[1])
 
 	out_alt_who = EAT_OKAY
 	wout(eat_pl, "Password set to \"%s\".", c.parse[1])
@@ -918,7 +918,7 @@ func admit_comment(c *command) string {
 	} else if numargs(c) == 1 {
 		return sout("clear admits for %s", safe_name(c.who, c.a, c.parse[1]))
 	} else {
-		arg := sout("admit to %s: %s", safe_name(c.who, c.a, c.parse[1]), safe_name(c.who, c.b, c.parse[2]))
+		arg := sout("Admit to %s: %s", safe_name(c.who, c.a, c.parse[1]), safe_name(c.who, c.b, c.parse[2]))
 		var args [6]int
 		args[3] = c.c
 		args[4] = c.d
@@ -957,10 +957,10 @@ func admit_check(c *command) {
 			err(EAT_WARN, sout("Note: %s is currently an unformed unit.", safe_name(c.who, c.a, c.parse[1])))
 		} else {
 			if first_admit_check {
-				err(EAT_WARN, "The first argument to admit should be a noble.  If you're trying to admit someone to a location (such as a province or castle) then you should admit them to the noble that controls that location, not the location itself.")
+				err(EAT_WARN, "The first argument to Admit should be a noble.  If you're trying to Admit someone to a location (such as a province or castle) then you should Admit them to the noble that controls that location, not the location itself.")
 				first_admit_check = false
 			} else {
-				err(EAT_WARN, "The first argument to admit should be a noble.")
+				err(EAT_WARN, "The first argument to Admit should be a noble.")
 			}
 		}
 	}
@@ -1456,16 +1456,16 @@ func eat_banner() {
 	out(eat_pl, "Reply-To: %s", no_spaces(reply_host))
 
 	var to string
-	if pl != 0 && len(rp_player(pl).email) != 0 {
-		to = rp_player(pl).email
+	if pl != 0 && len(rp_player(pl).EMail) != 0 {
+		to = rp_player(pl).EMail
 	} else {
 		to = reply_addr
 	}
 
 	var full_name string
 	if valid_box(pl) {
-		if p := rp_player(pl); p != nil && len(p.full_name) != 0 {
-			full_name = sout(" (%s)", p.full_name)
+		if p := rp_player(pl); p != nil && len(p.FullName) != 0 {
+			full_name = sout(" (%s)", p.FullName)
 		}
 	}
 
@@ -1717,13 +1717,13 @@ func write_remind_list() {
 			continue
 		}
 		p := rp_player(pl)
-		if p == nil || p.sent_orders != FALSE || p.dont_remind != FALSE {
+		if p == nil || p.SentOrders != FALSE || p.DontRemind != FALSE {
 			continue
-		} else if p.email == "" {
+		} else if p.EMail == "" {
 			log.Printf("player %s has no email address\n", box_code(pl))
 			continue
 		}
-		fprintf(fp, "%s\n", p.email)
+		fprintf(fp, "%s\n", p.EMail)
 	}
 	fclose(fp)
 }
@@ -1819,22 +1819,22 @@ func v_format(c *command) int {
 	for i := 1; i < len(c.parse) && len(c.parse[i]) != 0; i++ {
 		out_alt_who = EAT_OKAY
 		if strcasecmp_sb("HTML", c.parse[i]) == 0 {
-			p_player(plyr).format |= HTML
+			p_player(plyr).Format |= HTML
 			wout(or_int(c.who != FALSE, c.who, eat_pl), "HTML format added.")
 		} else if strcasecmp_sb("CLEAR", c.parse[i]) == 0 {
-			p_player(plyr).format = 0
+			p_player(plyr).Format = 0
 			wout(or_int(c.who != FALSE, c.who, eat_pl), "All formats cleared (text only).")
 		} else if strcasecmp_sb("TEXT", c.parse[i]) == 0 {
-			p_player(plyr).format |= TEXT
+			p_player(plyr).Format |= TEXT
 			wout(or_int(c.who != FALSE, c.who, eat_pl), "TEXT format added.")
 		} else if strcasecmp_sb("TAGS", c.parse[i]) == 0 {
-			p_player(plyr).format |= TAGS
+			p_player(plyr).Format |= TAGS
 			wout(or_int(c.who != FALSE, c.who, eat_pl), "TAGS format added.")
 		} else if strcasecmp_sb("ALT", c.parse[i]) == 0 {
-			p_player(plyr).format |= ALT
+			p_player(plyr).Format |= ALT
 			wout(or_int(c.who != FALSE, c.who, eat_pl), "ALT format added.")
 		} else if strcasecmp_sb("RAW", c.parse[i]) == 0 {
-			p_player(plyr).format |= RAW
+			p_player(plyr).Format |= RAW
 			wout(or_int(c.who != FALSE, c.who, eat_pl), "RAW format added.")
 		}
 	}
@@ -1864,18 +1864,18 @@ func do_rules_url(c *command) bool {
 			out_alt_who = EAT_OKAY
 			wout(or_int(c.who != FALSE, c.who, eat_pl), "Rules HTML path too long.  Maximum length 255 chars.")
 		} else {
-			if p_player(plyr).rules_path != "" {
-				my_free(p_player(plyr).rules_path)
+			if p_player(plyr).RulesPath != "" {
+				my_free(p_player(plyr).RulesPath)
 			}
-			p_player(plyr).rules_path = string(c.parse[2])
+			p_player(plyr).RulesPath = string(c.parse[2])
 			out_alt_who = EAT_OKAY
-			wout(or_int(c.who != FALSE, c.who, eat_pl), "Rules HTML path \"%s\" set.", p_player(plyr).rules_path)
+			wout(or_int(c.who != FALSE, c.who, eat_pl), "Rules HTML path \"%s\" set.", p_player(plyr).RulesPath)
 		}
 	} else {
-		if p_player(plyr).rules_path != "" {
-			my_free(p_player(plyr).rules_path)
+		if p_player(plyr).RulesPath != "" {
+			my_free(p_player(plyr).RulesPath)
 		}
-		p_player(plyr).rules_path = ""
+		p_player(plyr).RulesPath = ""
 		out_alt_who = EAT_OKAY
 		wout(or_int(c.who != FALSE, c.who, eat_pl), "Rules HTML path cleared.")
 	}
@@ -1906,18 +1906,18 @@ func do_db_url(c *command) bool {
 			wout(or_int(c.who != FALSE, c.who, eat_pl),
 				"DB HTML path too long.  Maximum length 255 chars.")
 		} else {
-			if p_player(plyr).db_path != "" {
-				my_free(p_player(plyr).db_path)
+			if p_player(plyr).DBPath != "" {
+				my_free(p_player(plyr).DBPath)
 			}
-			p_player(plyr).db_path = string(c.parse[2])
+			p_player(plyr).DBPath = string(c.parse[2])
 			out_alt_who = EAT_OKAY
-			wout(or_int(c.who != FALSE, c.who, eat_pl), "DB HTML path \"%s\" set.", p_player(plyr).db_path)
+			wout(or_int(c.who != FALSE, c.who, eat_pl), "DB HTML path \"%s\" set.", p_player(plyr).DBPath)
 		}
 	} else {
-		if p_player(plyr).db_path != "" {
-			my_free(p_player(plyr).db_path)
+		if p_player(plyr).DBPath != "" {
+			my_free(p_player(plyr).DBPath)
 		}
-		p_player(plyr).db_path = ""
+		p_player(plyr).DBPath = ""
 		out_alt_who = EAT_OKAY
 		wout(or_int(c.who != FALSE, c.who, eat_pl), "DB HTML path cleared.")
 	}
@@ -1940,7 +1940,7 @@ func v_notab(c *command) int {
 		return TRUE
 	}
 
-	p_player(plyr).notab = c.a != FALSE
+	p_player(plyr).NoTab = c.a != FALSE
 
 	out_alt_who = EAT_OKAY
 	if c.a != 0 {

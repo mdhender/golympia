@@ -486,7 +486,7 @@ func gm_show_gate_stats(pl int) {
 	clear_temps(T_gate)
 
 	for _, i := range loop_player() {
-		for _, j := range known_sparse_loop(p_player(i).known) {
+		for _, j := range known_sparse_loop(p_player(i).Known) {
 			if kind(j) != T_gate {
 				continue
 			}
@@ -540,7 +540,7 @@ func gm_show_locs_visited(pl int) {
 	clear_temps(T_loc)
 
 	for _, i := range loop_player() {
-		for _, j := range known_sparse_loop(p_player(i).known) {
+		for _, j := range known_sparse_loop(p_player(i).Known) {
 			if kind(j) != T_loc {
 				continue
 			}
@@ -820,7 +820,7 @@ func gm_player_details(pl int) {
 		}
 
 		if rp_player(i) != nil {
-			age = sout("%d", sysclock.turn-rp_player(i).first_turn)
+			age = sout("%d", sysclock.turn-rp_player(i).FirstTurn)
 		} else {
 			age = "???"
 		}

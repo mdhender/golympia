@@ -217,7 +217,7 @@ func location_direction(where, dir int) int {
 	dir--
 
 	p = rp_loc(where)
-	if p == nil || dir >= ilist_len(p.prov_dest) {
+	if p == nil || dir >= len(p.prov_dest) {
 		return 0
 	}
 
@@ -612,7 +612,7 @@ func province_sub_exits(who int, where int, l []*exit_view) []*exit_view {
 	p = rp_subloc(where)
 
 	if p != nil {
-		for i = 0; i < ilist_len(p.link_from); i++ {
+		for i = 0; i < len(p.link_from); i++ {
 			if p.link_from[i] != 0 {
 				add_province_exit(who, where, p.link_from[i], DIR_IN, l)
 			}
@@ -668,7 +668,7 @@ func subloc_exits(who int, where int, l []*exit_view) []*exit_view {
 	p = rp_subloc(where)
 
 	if p != nil { /*  && loc_link_open(where)) */
-		for i = 0; i < ilist_len(p.link_to); i++ {
+		for i = 0; i < len(p.link_to); i++ {
 			add_province_exit(who, where, p.link_to[i], 0, l)
 		}
 	}

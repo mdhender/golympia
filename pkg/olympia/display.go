@@ -208,7 +208,7 @@ func with_inventory_string(who int) string {
 
 func display_with(who int) string {
 
-	if rp_loc_info(who) != nil && ilist_len(rp_loc_info(who).here_list) > 0 {
+	if rp_loc_info(who) != nil && len(rp_loc_info(who).here_list) > 0 {
 		return ", accompanied~by:"
 	}
 
@@ -915,7 +915,7 @@ func show_sublocs_here(who, where int) {
 	p = rp_subloc(where)
 
 	if p != nil {
-		for i = 0; i < ilist_len(p.link_from); i++ {
+		for i = 0; i < len(p.link_from); i++ {
 			if loc_hidden(p.link_from[i]) &&
 				!test_known(who, p.link_from[i]) &&
 				see_all(who) == FALSE {
@@ -1003,7 +1003,7 @@ func show_nearby_cities(who, where int) {
 
 	p = rp_subloc(where)
 
-	if p == nil || ilist_len(p.near_cities) < 1 {
+	if p == nil || len(p.near_cities) < 1 {
 		return
 	}
 
@@ -1011,7 +1011,7 @@ func show_nearby_cities(who, where int) {
 	out(who, "")
 	out(who, "Cities rumored to be nearby:")
 	indent += 3
-	for i = 0; i < ilist_len(p.near_cities); i++ {
+	for i = 0; i < len(p.near_cities); i++ {
 		if safe_haven(p.near_cities[i]) {
 			s = ", safe haven"
 		} else {

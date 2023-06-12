@@ -66,7 +66,7 @@ func max_eff_aura(who int) int {
 
 	a = char_max_aura(who)
 	if ac = has_auraculum(who); ac != 0 {
-		a += p_item_artifact(ac).param2
+		a += p_item_artifact(ac).Param2
 	}
 
 	{
@@ -100,7 +100,7 @@ func v_forge_palantir(c *command) int {
 
 func d_forge_palantir(c *command) int {
 	var p *entity_item
-	//var pm *item_magic
+	//var pm *ItemMagic
 
 	newItem := create_unique_item(c.who, sub_magic_artifact)
 
@@ -117,10 +117,10 @@ func d_forge_palantir(c *command) int {
 	set_name(newItem, "Palantir")
 	p = p_item(newItem)
 	p.weight = 2
-	p_item_artifact(newItem).type_ = ART_ORB
-	p_item_artifact(newItem).param1 = 0
-	p_item_artifact(newItem).param2 = 0
-	p_item_artifact(newItem).uses = rnd(3, 9)
+	p_item_artifact(newItem).Type = ART_ORB
+	p_item_artifact(newItem).Param1 = 0
+	p_item_artifact(newItem).Param2 = 0
+	p_item_artifact(newItem).Uses = rnd(3, 9)
 
 	wout(c.who, "Created %s.", box_name(newItem))
 	log_output(LOG_SPECIAL, "%s created %s.", box_name(c.who), box_name(newItem))
@@ -134,7 +134,7 @@ func d_forge_palantir(c *command) int {
 func v_use_palantir(c *command) int {
 	item := c.a
 	target := c.b
-	var p *item_magic
+	var p *ItemMagic
 
 	if !is_loc_or_ship(target) {
 		wout(c.who, "%s is not a location.", box_code(target))
@@ -233,23 +233,23 @@ func d_destroy_art(c *command) int {
 	wout(c.who, "Used %s aura casting this spell.", nice_num(skill_aura(c.use_skill)))
 
 	aura = rnd(1, 20)
-	if (rp_item_artifact(item).param2&CA_N_MELEE) != 0 ||
-		(rp_item_artifact(item).param2&CA_N_MISSILE) != 0 ||
-		(rp_item_artifact(item).param2&CA_N_SPECIAL) != 0 ||
-		(rp_item_artifact(item).param2&CA_M_MELEE) != 0 ||
-		(rp_item_artifact(item).param2&CA_M_SPECIAL) != 0 ||
-		(rp_item_artifact(item).param2&CA_N_MELEE_D) != 0 ||
-		(rp_item_artifact(item).param2&CA_N_MISSILE_D) != 0 ||
-		(rp_item_artifact(item).param2&CA_N_SPECIAL_D) != 0 ||
-		(rp_item_artifact(item).param2&CA_M_MELEE_D) != 0 ||
-		(rp_item_artifact(item).param2&CA_M_MISSILE_D) != 0 ||
-		(rp_item_artifact(item).param2&CA_M_SPECIAL_D) != 0 {
-		aura = rp_item_artifact(item).param1 / 5
+	if (rp_item_artifact(item).Param2&CA_N_MELEE) != 0 ||
+		(rp_item_artifact(item).Param2&CA_N_MISSILE) != 0 ||
+		(rp_item_artifact(item).Param2&CA_N_SPECIAL) != 0 ||
+		(rp_item_artifact(item).Param2&CA_M_MELEE) != 0 ||
+		(rp_item_artifact(item).Param2&CA_M_SPECIAL) != 0 ||
+		(rp_item_artifact(item).Param2&CA_N_MELEE_D) != 0 ||
+		(rp_item_artifact(item).Param2&CA_N_MISSILE_D) != 0 ||
+		(rp_item_artifact(item).Param2&CA_N_SPECIAL_D) != 0 ||
+		(rp_item_artifact(item).Param2&CA_M_MELEE_D) != 0 ||
+		(rp_item_artifact(item).Param2&CA_M_MISSILE_D) != 0 ||
+		(rp_item_artifact(item).Param2&CA_M_SPECIAL_D) != 0 {
+		aura = rp_item_artifact(item).Param1 / 5
 	}
-	if rp_item_artifact(item).type_ == ART_AURACULUM {
-		aura = rp_item_artifact(item).param2 / 2
+	if rp_item_artifact(item).Type == ART_AURACULUM {
+		aura = rp_item_artifact(item).Param2 / 2
 	}
-	if rp_item_artifact(item).type_ == ART_ORB {
+	if rp_item_artifact(item).Type == ART_ORB {
 		aura = rnd(1, 8)
 	}
 
@@ -285,9 +285,9 @@ func v_mutate_art(c *command) int {
 		return FALSE
 	}
 
-	if (rp_item_artifact(item).type_ == ART_COMBAT) ||
-		(rp_item_artifact(item).type_ == ART_AURACULUM) ||
-		(rp_item_artifact(item).type_ == ART_ORB) {
+	if (rp_item_artifact(item).Type == ART_COMBAT) ||
+		(rp_item_artifact(item).Type == ART_AURACULUM) ||
+		(rp_item_artifact(item).Type == ART_ORB) {
 		wout(c.who, "%s is not a mutable artifact.",
 			box_name(item))
 		return FALSE
@@ -317,9 +317,9 @@ func d_mutate_art(c *command) int {
 		return FALSE
 	}
 
-	if rp_item_artifact(item).type_ == ART_COMBAT ||
-		rp_item_artifact(item).type_ == ART_AURACULUM ||
-		rp_item_artifact(item).type_ == ART_ORB {
+	if rp_item_artifact(item).Type == ART_COMBAT ||
+		rp_item_artifact(item).Type == ART_AURACULUM ||
+		rp_item_artifact(item).Type == ART_ORB {
 		wout(c.who, "%s is not a mutable artifact.",
 			box_name(item))
 		return FALSE
@@ -735,9 +735,9 @@ func d_forge_aura(c *command) int {
 	p = p_item(newItem)
 	p.weight = rnd(1, 3)
 
-	p_item_artifact(newItem).type_ = ART_AURACULUM
-	p_item_artifact(newItem).param1 = c.who    /* creator */
-	p_item_artifact(newItem).param2 = aura * 2 /* aura */
+	p_item_artifact(newItem).Type = ART_AURACULUM
+	p_item_artifact(newItem).Param1 = c.who    /* creator */
+	p_item_artifact(newItem).Param2 = aura * 2 /* aura */
 
 	cm = p_magic(c.who)
 	cm.auraculum = newItem
@@ -800,7 +800,7 @@ func d_forge_art_x(c *command) int {
 	aura := c.a
 	rare_item := c.d
 	var new_name string
-	//var pm *item_magic
+	//var pm *ItemMagic
 
 	if !check_aura(c.who, aura) {
 		return FALSE
@@ -822,24 +822,24 @@ func d_forge_art_x(c *command) int {
 
 	newItem := create_unique_item(c.who, sub_magic_artifact)
 	p_item(newItem).weight = 10
-	p_item_artifact(newItem).type_ = ART_COMBAT
+	p_item_artifact(newItem).Type = ART_COMBAT
 
 	switch c.use_skill {
 	case sk_forge_weapon:
-		rp_item_artifact(newItem).param2 = CA_N_MELEE
-		rp_item_artifact(newItem).param1 = aura * 5
+		rp_item_artifact(newItem).Param2 = CA_N_MELEE
+		rp_item_artifact(newItem).Param1 = aura * 5
 		new_name = "enchanted sword"
 		break
 
 	case sk_forge_armor:
-		rp_item_artifact(newItem).param2 = CA_N_MELEE_D | CA_N_MISSILE_D | CA_N_SPECIAL_D
-		rp_item_artifact(newItem).param1 = aura * 5
+		rp_item_artifact(newItem).Param2 = CA_N_MELEE_D | CA_N_MISSILE_D | CA_N_SPECIAL_D
+		rp_item_artifact(newItem).Param1 = aura * 5
 		new_name = "enchanted armor"
 		break
 
 	case sk_forge_bow:
-		rp_item_artifact(newItem).param2 = CA_N_MISSILE
-		rp_item_artifact(newItem).param1 = aura * 5
+		rp_item_artifact(newItem).Param2 = CA_N_MISSILE
+		rp_item_artifact(newItem).Param1 = aura * 5
 		new_name = "enchanted bow"
 		break
 
@@ -864,9 +864,9 @@ func new_suffuse_ring(who int) int {
 	newItem := create_unique_item(who, sub_magic_artifact)
 	set_name(newItem, "Golden ring")
 	p_item(newItem).weight = 1
-	p_item_artifact(newItem).type_ = ART_DESTROY
-	rp_item_artifact(newItem).uses = 1
-	rp_item_artifact(newItem).param1 = random_beast(0)
+	p_item_artifact(newItem).Type = ART_DESTROY
+	rp_item_artifact(newItem).Uses = 1
+	rp_item_artifact(newItem).Param1 = random_beast(0)
 	return newItem
 }
 
@@ -879,7 +879,7 @@ func v_use_orb(c *command) int {
 	target := c.b
 	where := 0
 	var owner int
-	var p *item_magic
+	var p *ItemMagic
 
 	if ilist_lookup(orb_used_this_month, item) >= 0 {
 		wout(c.who, "The orb may only be used once per month.")
@@ -923,8 +923,8 @@ func v_use_orb(c *command) int {
 
 	p = p_item_magic(item)
 
-	p.orb_use_count--
-	if p.orb_use_count <= 0 {
+	p.OrbUseCount--
+	if p.OrbUseCount <= 0 {
 		wout(c.who, "After the vision fades, the orb grows dark, and shatters.  The orb is gone")
 		destroy_unique_item(c.who, item)
 	}

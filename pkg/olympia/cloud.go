@@ -197,7 +197,7 @@ func float_cloudlands() {
 	// now let's break all connections between the Cloudlands and any non-cloudlands regions.
 	for row := 0; row <= CLOUD_SZ; row++ {
 		for col := 0; col <= CLOUD_SZ; col++ {
-			for i := 0; i < ilist_len(rp_loc(cmap[row][col]).prov_dest); i++ {
+			for i := 0; i < len(rp_loc(cmap[row][col]).prov_dest); i++ {
 				tmp := rp_loc(cmap[row][col]).prov_dest[i]
 				if tmp != 0 && region(tmp) != cloud_region {
 					// disconnect...

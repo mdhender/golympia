@@ -540,7 +540,7 @@ func garrison_notices(garr, target int) int {
 
 	p := rp_misc(garr)
 
-	if p != nil && ilist_lookup(p.garr_watch, target) >= 0 {
+	if p != nil && p.garr_watch.lookup(target) >= 0 {
 		return TRUE
 	}
 
@@ -558,7 +558,7 @@ func garrison_spot_check(garr, target int) int {
 	}
 
 	for _, i := range loop_stack(target) {
-		if ilist_lookup(p.garr_watch, i) >= 0 {
+		if p.garr_watch.lookup(i) >= 0 {
 			found = TRUE
 			break
 		}

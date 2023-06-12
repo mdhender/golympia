@@ -532,9 +532,9 @@ func create_combat_artifact(piece int) {
 	 *  but a chance for more.
 	 *
 	 */
-	rp_item_artifact(piece).param2 = 0
+	rp_item_artifact(piece).Param2 = 0
 	for {
-		rp_item_artifact(piece).param2 |= 1 << rnd(0, 11)
+		rp_item_artifact(piece).Param2 |= 1 << rnd(0, 11)
 		if rnd(1, 100) < 30 {
 			continue
 		}
@@ -557,10 +557,10 @@ func create_random_artifact(monster int) int {
 
 	set_name(piece, "Unknown artifact")
 	p_item(piece).weight = 5
-	p_item_artifact(piece).type_ = ART_NONE
-	rp_item_artifact(piece).param1 = 0
-	rp_item_artifact(piece).param2 = 0
-	rp_item_artifact(piece).uses = 0
+	p_item_artifact(piece).Type = ART_NONE
+	rp_item_artifact(piece).Param1 = 0
+	rp_item_artifact(piece).Param2 = 0
+	rp_item_artifact(piece).Uses = 0
 
 	/*
 	 *  Possibly nothing.
@@ -574,23 +574,23 @@ func create_random_artifact(monster int) int {
 	 *
 	 */
 	select_ = get_random_artifact()
-	p_item_artifact(piece).type_ = artifact_tbl[select_].what
+	p_item_artifact(piece).Type = artifact_tbl[select_].what
 	/*
 	 *  Set parameter one, which might be special.
 	 *
 	 */
 	if artifact_tbl[select_].min_param1 == artifact_tbl[select_].max_param1 {
-		rp_item_artifact(piece).param1 = artifact_tbl[select_].min_param1
+		rp_item_artifact(piece).Param1 = artifact_tbl[select_].min_param1
 	} else if artifact_tbl[select_].min_param1 == RANDOM_SOLDIER {
-		rp_item_artifact(piece).param1 = random_soldier()
+		rp_item_artifact(piece).Param1 = random_soldier()
 	} else if artifact_tbl[select_].min_param1 == RANDOM_SKILL {
-		rp_item_artifact(piece).param1 = random_skill()
+		rp_item_artifact(piece).Param1 = random_skill()
 	} else if artifact_tbl[select_].min_param1 == RANDOM_BEAST {
-		rp_item_artifact(piece).param1 = random_beast(0)
+		rp_item_artifact(piece).Param1 = random_beast(0)
 	} else if artifact_tbl[select_].min_param1 == RANDOM_USE {
-		rp_item_artifact(piece).param1 = random_use()
+		rp_item_artifact(piece).Param1 = random_use()
 	} else {
-		rp_item_artifact(piece).param1 =
+		rp_item_artifact(piece).Param1 =
 			rnd(artifact_tbl[select_].min_param1, artifact_tbl[select_].max_param1)
 	}
 	/*
@@ -598,17 +598,17 @@ func create_random_artifact(monster int) int {
 	 *
 	 */
 	if artifact_tbl[select_].min_param2 == artifact_tbl[select_].max_param2 {
-		rp_item_artifact(piece).param2 = artifact_tbl[select_].min_param2
+		rp_item_artifact(piece).Param2 = artifact_tbl[select_].min_param2
 	} else if artifact_tbl[select_].min_param2 == RANDOM_SOLDIER {
-		rp_item_artifact(piece).param2 = random_soldier()
+		rp_item_artifact(piece).Param2 = random_soldier()
 	} else if artifact_tbl[select_].min_param2 == RANDOM_SKILL {
-		rp_item_artifact(piece).param2 = random_skill()
+		rp_item_artifact(piece).Param2 = random_skill()
 	} else if artifact_tbl[select_].min_param2 == RANDOM_BEAST {
-		rp_item_artifact(piece).param2 = random_beast(0)
+		rp_item_artifact(piece).Param2 = random_beast(0)
 	} else if artifact_tbl[select_].min_param2 == RANDOM_USE {
-		rp_item_artifact(piece).param2 = random_use()
+		rp_item_artifact(piece).Param2 = random_use()
 	} else {
-		rp_item_artifact(piece).param2 =
+		rp_item_artifact(piece).Param2 =
 			rnd(artifact_tbl[select_].min_param2, artifact_tbl[select_].max_param2)
 	}
 	/*
@@ -616,17 +616,17 @@ func create_random_artifact(monster int) int {
 	 *
 	 */
 	if artifact_tbl[select_].min_uses == artifact_tbl[select_].max_uses {
-		rp_item_artifact(piece).uses = artifact_tbl[select_].min_uses
+		rp_item_artifact(piece).Uses = artifact_tbl[select_].min_uses
 	} else {
-		rp_item_artifact(piece).uses =
+		rp_item_artifact(piece).Uses =
 			rnd(artifact_tbl[select_].min_uses, artifact_tbl[select_].max_uses)
 	}
 	/*
 	 *  And special case for combat.
 	 *
 	 */
-	if rp_item_artifact(piece).type_ == ART_COMBAT &&
-		rp_item_artifact(piece).param2 == FALSE {
+	if rp_item_artifact(piece).Type == ART_COMBAT &&
+		rp_item_artifact(piece).Param2 == FALSE {
 		create_combat_artifact(piece)
 	}
 	/*
@@ -655,11 +655,11 @@ func best_artifact(who int, type_ int, param2 int, uses int) int {
 
 	for _, e = range loop_inventory(who) {
 		if is_artifact(e.item) != nil {
-			if rp_item_artifact(e.item).type_ == type_ &&
-				rp_item_artifact(e.item).param1 > best_val &&
-				(param2 == FALSE || rp_item_artifact(e.item).param2 == param2) &&
-				(uses == FALSE || rp_item_artifact(e.item).uses > 0) {
-				best_val = rp_item_artifact(e.item).param1
+			if rp_item_artifact(e.item).Type == type_ &&
+				rp_item_artifact(e.item).Param1 > best_val &&
+				(param2 == FALSE || rp_item_artifact(e.item).Param2 == param2) &&
+				(uses == FALSE || rp_item_artifact(e.item).Uses > 0) {
+				best_val = rp_item_artifact(e.item).Param1
 				best = e.item
 			}
 		}
@@ -680,10 +680,10 @@ func has_artifact(who, type_, p1, p2, charges int) int {
 	for _, e = range loop_inventory(who) {
 		a := is_artifact(e.item)
 		if a != nil {
-			if a.type_ == type_ &&
-				(p1 == FALSE || a.param1 == p1) &&
-				(p2 == FALSE || a.param2 == p2) &&
-				(charges == FALSE || a.uses > 0) {
+			if a.Type == type_ &&
+				(p1 == FALSE || a.Param1 == p1) &&
+				(p2 == FALSE || a.Param2 == p2) &&
+				(charges == FALSE || a.Uses > 0) {
 				return e.item
 			}
 		}
@@ -705,9 +705,9 @@ func combat_artifact_bonus(who int, part int, unused *int) int {
 	for _, e = range loop_inventory(who) {
 		a := is_artifact(e.item)
 		if a != nil {
-			if a.type_ == ART_COMBAT && (a.param2&part) != FALSE &&
-				a.param1 > best {
-				best = a.param1
+			if a.Type == ART_COMBAT && (a.Param2&part) != FALSE &&
+				a.Param1 > best {
+				best = a.Param1
 			}
 		}
 	}
@@ -727,7 +727,7 @@ func effective_workers(who int) int {
 	a := best_artifact(who, ART_WORKERS, 0, 0)
 
 	if a != FALSE {
-		w = (w * (100 + rp_item_artifact(a).param1)) / 100
+		w = (w * (100 + rp_item_artifact(a).Param1)) / 100
 	}
 
 	return w
@@ -748,9 +748,9 @@ func v_art_destroy(c *command) int {
 	var kind int
 
 	assert(rp_item_artifact(item) != nil)
-	kind = rp_item_artifact(item).param1
+	kind = rp_item_artifact(item).Param1
 
-	if rp_item_artifact(item).uses < 1 {
+	if rp_item_artifact(item).Uses < 1 {
 		wout(c.who, "Nothing happens.")
 		wout(c.who, "%s vanishes!", box_name(item))
 		destroy_unique_item(c.who, item)
@@ -778,8 +778,8 @@ func v_art_destroy(c *command) int {
 		}
 	}
 
-	rp_item_artifact(item).uses--
-	if rp_item_artifact(item).uses == FALSE {
+	rp_item_artifact(item).Uses--
+	if rp_item_artifact(item).Uses == FALSE {
 		wout(c.who, "%s vanishes.", box_name(item))
 		destroy_unique_item(c.who, item)
 	}
@@ -799,7 +799,7 @@ func v_power_jewel(c *command) int {
 	assert(rp_item_artifact(item) != nil)
 	//kind := rp_item_artifact(item).param1;
 
-	if rp_item_artifact(item).uses < 1 {
+	if rp_item_artifact(item).Uses < 1 {
 		wout(c.who, "Nothing happens.")
 		wout(c.who, "%s vanishes!", box_name(item))
 		destroy_unique_item(c.who, item)
@@ -813,12 +813,12 @@ func v_power_jewel(c *command) int {
 
 	if is_priest(c.who) != FALSE {
 		wout(c.who, "You feel the hand of %s.", god_name(is_priest(c.who)))
-		rp_char(c.who).religion.piety += rp_item_artifact(item).param1
+		rp_char(c.who).religion.piety += rp_item_artifact(item).Param1
 	} else if is_magician(c.who) {
 		wout(c.who, "You feel charged with power!")
-		add_aura(c.who, rp_item_artifact(item).param1)
+		add_aura(c.who, rp_item_artifact(item).Param1)
 	} else if p_char(c.who).health < 100 {
-		p_char(c.who).health += rp_item_artifact(item).param1
+		p_char(c.who).health += rp_item_artifact(item).Param1
 		if p_char(c.who).health > 100 {
 			p_char(c.who).health = 100
 		}
@@ -827,8 +827,8 @@ func v_power_jewel(c *command) int {
 		wout(c.who, "You feel a vague sense of loss.")
 	}
 
-	rp_item_artifact(item).uses--
-	if rp_item_artifact(item).uses == FALSE {
+	rp_item_artifact(item).Uses--
+	if rp_item_artifact(item).Uses == FALSE {
 		wout(c.who, "%s vanishes.", box_name(item))
 		destroy_unique_item(c.who, item)
 	}
@@ -847,11 +847,11 @@ func v_summon_aid(c *command) int {
 	var kind, num int
 
 	assert(rp_item_artifact(item) != nil)
-	kind = rp_item_artifact(item).param1
-	num = rp_item_artifact(item).param2
+	kind = rp_item_artifact(item).Param1
+	num = rp_item_artifact(item).Param2
 	assert(kind > 0 && num > 0)
 
-	if rp_item_artifact(item).uses < 1 {
+	if rp_item_artifact(item).Uses < 1 {
 		wout(c.who, "Nothing happens.")
 		wout(c.who, "%s vanishes!", box_name(item))
 		destroy_unique_item(c.who, item)
@@ -867,8 +867,8 @@ func v_summon_aid(c *command) int {
 		box_name_qty(kind, num))
 	gen_item(c.who, kind, num)
 
-	rp_item_artifact(item).uses--
-	if rp_item_artifact(item).uses == FALSE {
+	rp_item_artifact(item).Uses--
+	if rp_item_artifact(item).Uses == FALSE {
 		wout(c.who, "%s vanishes.", box_name(item))
 		destroy_unique_item(c.who, item)
 	}
@@ -894,7 +894,7 @@ func v_art_teleport(c *command) int {
 		return FALSE
 	}
 
-	if rp_item_artifact(item).uses < 1 {
+	if rp_item_artifact(item).Uses < 1 {
 		wout(c.who, "Nothing happens.")
 		wout(c.who, "%s vanishes!", box_name(item))
 		destroy_unique_item(c.who, item)
@@ -903,7 +903,7 @@ func v_art_teleport(c *command) int {
 
 	determine_stack_weights(c.who, &w, false)
 
-	if w.total_weight > rp_item_artifact(item).param1 {
+	if w.total_weight > rp_item_artifact(item).Param1 {
 		wout(c.who, "%s hums briefly but nothing happens.")
 		return FALSE
 	}
@@ -915,8 +915,8 @@ func v_art_teleport(c *command) int {
 	log_output(LOG_SPECIAL, "Teleport artifact %s used by %s",
 		box_code_less(item), box_code_less(player(c.who)))
 
-	rp_item_artifact(item).uses--
-	if rp_item_artifact(item).uses == FALSE {
+	rp_item_artifact(item).Uses--
+	if rp_item_artifact(item).Uses == FALSE {
 		wout(c.who, "%s vanishes.", box_name(item))
 		destroy_unique_item(c.who, item)
 	}
@@ -937,7 +937,7 @@ func v_art_orb(c *command) int {
 
 	assert(rp_item_artifact(item) != nil)
 
-	if rp_item_artifact(item).uses < 1 {
+	if rp_item_artifact(item).Uses < 1 {
 		wout(c.who, "Nothing happens.")
 		wout(c.who, "%s vanishes!", box_name(item))
 		destroy_unique_item(c.who, item)
@@ -973,8 +973,8 @@ func v_art_orb(c *command) int {
 	log_output(LOG_SPECIAL, "Scry artifact %s used by %s",
 		box_code_less(item), box_code_less(player(c.who)))
 
-	rp_item_artifact(item).uses--
-	if rp_item_artifact(item).uses == FALSE {
+	rp_item_artifact(item).Uses--
+	if rp_item_artifact(item).Uses == FALSE {
 		wout(c.who, "%s vanishes.", box_name(item))
 		destroy_unique_item(c.who, item)
 	}
@@ -994,7 +994,7 @@ func v_art_crown(c *command) int {
 
 	assert(rp_item_artifact(item) != nil)
 
-	if rp_item_artifact(item).uses < 1 {
+	if rp_item_artifact(item).Uses < 1 {
 		wout(c.who, "Nothing happens.")
 		wout(c.who, "%s vanishes!", box_name(item))
 		destroy_unique_item(c.who, item)
@@ -1013,8 +1013,8 @@ func v_art_crown(c *command) int {
 		return FALSE
 	}
 
-	if noble_item(target) == rp_item_artifact(item).param1 {
-		var p *entity_player
+	if noble_item(target) == rp_item_artifact(item).Param1 {
+		var p *EntityPlayer
 		/*
 		 *  Make player the lord of this unit, restrict its commands,
 		 *  and add it to the list of the player's units.
@@ -1025,14 +1025,14 @@ func v_art_crown(c *command) int {
 		p_misc(target).cmd_allow = 'r'
 		p_char(target).break_point = 0
 		p = p_player(c.who)
-		p.units = append(p.units, target)
+		p.Units = append(p.Units, target)
 	}
 
 	log_output(LOG_SPECIAL, "Crown artifact %s used by %s",
 		box_code_less(item), box_code_less(player(c.who)))
 
-	rp_item_artifact(item).uses--
-	if rp_item_artifact(item).uses == FALSE {
+	rp_item_artifact(item).Uses--
+	if rp_item_artifact(item).Uses == FALSE {
 		wout(c.who, "%s vanishes.", box_name(item))
 		destroy_unique_item(c.who, item)
 	}
@@ -1059,45 +1059,45 @@ func describe_combat_artifact(who, target int, header string) {
 	for i = 0; i < 12; i++ {
 		val = (1 << i)
 		buf = ""
-		if (rp_item_artifact(target).param2&CA_N_MELEE) != FALSE && val == CA_N_MELEE {
+		if (rp_item_artifact(target).Param2&CA_N_MELEE) != FALSE && val == CA_N_MELEE {
 			buf = sout("personal melee attack")
 		}
-		if (rp_item_artifact(target).param2&CA_N_MISSILE) != FALSE && val == CA_N_MISSILE {
+		if (rp_item_artifact(target).Param2&CA_N_MISSILE) != FALSE && val == CA_N_MISSILE {
 			buf = sout("personal missile attack")
 		}
-		if (rp_item_artifact(target).param2&CA_N_SPECIAL) != FALSE && val == CA_N_SPECIAL {
+		if (rp_item_artifact(target).Param2&CA_N_SPECIAL) != FALSE && val == CA_N_SPECIAL {
 			buf = sout("personal special attack")
 		}
-		if (rp_item_artifact(target).param2&CA_N_MELEE_D) != FALSE &&
+		if (rp_item_artifact(target).Param2&CA_N_MELEE_D) != FALSE &&
 			val == CA_N_MELEE_D {
 			buf = sout("personal melee defense")
 		}
-		if (rp_item_artifact(target).param2&CA_N_MISSILE_D) != FALSE &&
+		if (rp_item_artifact(target).Param2&CA_N_MISSILE_D) != FALSE &&
 			val == CA_N_MISSILE_D {
 			buf = sout("personal missile defense")
 		}
-		if (rp_item_artifact(target).param2&CA_N_SPECIAL_D) != FALSE &&
+		if (rp_item_artifact(target).Param2&CA_N_SPECIAL_D) != FALSE &&
 			val == CA_N_SPECIAL_D {
 			buf = sout("personal special defense")
 		}
-		if (rp_item_artifact(target).param2&CA_M_MELEE) != FALSE && val == CA_M_MELEE {
+		if (rp_item_artifact(target).Param2&CA_M_MELEE) != FALSE && val == CA_M_MELEE {
 			buf = sout("commanded men melee attack")
 		}
-		if (rp_item_artifact(target).param2&CA_M_MISSILE) != FALSE && val == CA_M_MISSILE {
+		if (rp_item_artifact(target).Param2&CA_M_MISSILE) != FALSE && val == CA_M_MISSILE {
 			buf = sout("commanded men missile attack")
 		}
-		if (rp_item_artifact(target).param2&CA_M_SPECIAL) != FALSE && val == CA_M_SPECIAL {
+		if (rp_item_artifact(target).Param2&CA_M_SPECIAL) != FALSE && val == CA_M_SPECIAL {
 			buf = sout("commanded men special attack")
 		}
-		if (rp_item_artifact(target).param2&CA_M_MELEE_D) != FALSE &&
+		if (rp_item_artifact(target).Param2&CA_M_MELEE_D) != FALSE &&
 			val == CA_M_MELEE_D {
 			buf = sout("commanded men melee defense")
 		}
-		if (rp_item_artifact(target).param2&CA_M_MISSILE_D) != FALSE &&
+		if (rp_item_artifact(target).Param2&CA_M_MISSILE_D) != FALSE &&
 			val == CA_M_MISSILE_D {
 			buf = sout("commanded men missile defense")
 		}
-		if (rp_item_artifact(target).param2&CA_M_SPECIAL_D) != FALSE &&
+		if (rp_item_artifact(target).Param2&CA_M_SPECIAL_D) != FALSE &&
 			val == CA_M_SPECIAL_D {
 			buf = sout("commanded men special defense")
 		}
@@ -1114,9 +1114,9 @@ func describe_combat_artifact(who, target int, header string) {
 
 	buf = sout("%s %s",
 		header,
-		artifact_names[rp_item_artifact(target).type_])
+		artifact_names[rp_item_artifact(target).Type])
 	wout(who, buf,
-		rp_item_artifact(target).param1,
+		rp_item_artifact(target).Param1,
 		total)
 }
 
@@ -1138,9 +1138,9 @@ func artifact_identify(header string, c *command) int {
 
 	f = sout("%s %s",
 		header,
-		artifact_names[rp_item_artifact(target).type_])
+		artifact_names[rp_item_artifact(target).Type])
 
-	switch rp_item_artifact(target).type_ {
+	switch rp_item_artifact(target).Type {
 	case ART_COMBAT:
 		describe_combat_artifact(c.who, target, header)
 		break
@@ -1150,7 +1150,7 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_SAFETY, ART_TRAINING, ART_SKILL, ART_PROT_SKILL:
 		wout(c.who, f,
-			box_name(rp_item_artifact(target).param1))
+			box_name(rp_item_artifact(target).Param1))
 		break
 		/*
 		 *  Skills that have a box_name for param2 and a numeric param1
@@ -1158,8 +1158,8 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_IMPRV_DEF, ART_IMPRV_ATT, ART_SPEED_USE:
 		wout(c.who, f,
-			box_name(rp_item_artifact(target).param2),
-			rp_item_artifact(target).param1)
+			box_name(rp_item_artifact(target).Param2),
+			rp_item_artifact(target).Param1)
 		break
 		/*
 		 *  A subkind as param2, a numeric as param1
@@ -1167,8 +1167,8 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_TERRAIN, ART_FAST_TERR, ART_INCOME:
 		wout(c.who, f,
-			subkind_s[rp_item_artifact(target).param2],
-			rp_item_artifact(target).param1)
+			subkind_s[rp_item_artifact(target).Param2],
+			rp_item_artifact(target).Param1)
 		break
 		/*
 		 *  Skills that have a box_name for param1 and charges.
@@ -1176,8 +1176,8 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_DESTROY, ART_CROWN:
 		wout(c.who, f,
-			box_name(rp_item_artifact(target).param1),
-			rp_item_artifact(target).uses)
+			box_name(rp_item_artifact(target).Param1),
+			rp_item_artifact(target).Uses)
 		break
 		/*
 		 *  Skills that have a numeric for param1 and charges.
@@ -1185,8 +1185,8 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_TELEPORT:
 		wout(c.who, f,
-			rp_item_artifact(target).param1,
-			rp_item_artifact(target).uses)
+			rp_item_artifact(target).Param1,
+			rp_item_artifact(target).Uses)
 		break
 		/*
 		 *  Box name, numeric, charges
@@ -1194,9 +1194,9 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_SUMMON_AID:
 		wout(c.who, f,
-			box_name_qty(rp_item_artifact(target).param1,
-				rp_item_artifact(target).param2),
-			rp_item_artifact(target).uses)
+			box_name_qty(rp_item_artifact(target).Param1,
+				rp_item_artifact(target).Param2),
+			rp_item_artifact(target).Uses)
 		break
 		/*
 		 *  Just charges
@@ -1204,7 +1204,7 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_RESTORE, ART_ORB:
 		wout(c.who, f,
-			rp_item_artifact(target).uses)
+			rp_item_artifact(target).Uses)
 		break
 		/*
 		 *  Auraculum is a special case.
@@ -1212,8 +1212,8 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_AURACULUM:
 		wout(c.who, f,
-			box_name(rp_item_artifact(target).param1),
-			nice_num(rp_item_artifact(target).param2))
+			box_name(rp_item_artifact(target).Param1),
+			nice_num(rp_item_artifact(target).Param2))
 		break
 
 		/*
@@ -1222,15 +1222,15 @@ func artifact_identify(header string, c *command) int {
 		 */
 	case ART_PEN:
 		wout(c.who, f,
-			rp_item_artifact(target).param1,
-			rp_item_artifact(target).param2, rp_item_artifact(target).uses)
+			rp_item_artifact(target).Param1,
+			rp_item_artifact(target).Param2, rp_item_artifact(target).Uses)
 		break
 
 	default:
 		wout(c.who, f,
-			rp_item_artifact(target).param1,
-			rp_item_artifact(target).param2,
-			rp_item_artifact(target).uses)
+			rp_item_artifact(target).Param1,
+			rp_item_artifact(target).Param2,
+			rp_item_artifact(target).Uses)
 	}
 	return TRUE
 }
@@ -1241,7 +1241,7 @@ func v_identify(c *command) int {
 	if !valid_box(target) ||
 		is_artifact(target) == nil ||
 		has_item(c.who, target) == FALSE ||
-		is_artifact(target).type_ == ART_AURACULUM ||
+		is_artifact(target).Type == ART_AURACULUM ||
 		get_effect(target, ef_obscure_artifact, 0, 0) != FALSE ||
 		(target%5) == 0 {
 		wout(c.who, "You are unable to identify that item.")
@@ -1345,32 +1345,32 @@ func create_specific_artifact(monster, t int) int {
 	piece = create_unique_item(monster, sub_magic_artifact)
 	set_name(piece, "Unknown ring")
 	p_item(piece).weight = 5
-	p_item_artifact(piece).type_ = ART_NONE
-	rp_item_artifact(piece).param1 = 0
-	rp_item_artifact(piece).param2 = 0
-	rp_item_artifact(piece).uses = 0
+	p_item_artifact(piece).Type = ART_NONE
+	rp_item_artifact(piece).Param1 = 0
+	rp_item_artifact(piece).Param2 = 0
+	rp_item_artifact(piece).Uses = 0
 
 	/*
 	 *  No, so select something.
 	 *
 	 */
-	p_item_artifact(piece).type_ = artifact_tbl[select_].what
+	p_item_artifact(piece).Type = artifact_tbl[select_].what
 	/*
 	 *  Set parameter one, which might be special.
 	 *
 	 */
 	if artifact_tbl[select_].min_param1 == artifact_tbl[select_].max_param1 {
-		rp_item_artifact(piece).param1 = artifact_tbl[select_].min_param1
+		rp_item_artifact(piece).Param1 = artifact_tbl[select_].min_param1
 	} else if artifact_tbl[select_].min_param1 == RANDOM_SOLDIER {
-		rp_item_artifact(piece).param1 = random_soldier()
+		rp_item_artifact(piece).Param1 = random_soldier()
 	} else if artifact_tbl[select_].min_param1 == RANDOM_SKILL {
-		rp_item_artifact(piece).param1 = random_skill()
+		rp_item_artifact(piece).Param1 = random_skill()
 	} else if artifact_tbl[select_].min_param1 == RANDOM_BEAST {
-		rp_item_artifact(piece).param1 = random_beast(0)
+		rp_item_artifact(piece).Param1 = random_beast(0)
 	} else if artifact_tbl[select_].min_param1 == RANDOM_USE {
-		rp_item_artifact(piece).param1 = random_use()
+		rp_item_artifact(piece).Param1 = random_use()
 	} else {
-		rp_item_artifact(piece).param1 =
+		rp_item_artifact(piece).Param1 =
 			rnd(artifact_tbl[select_].min_param1, artifact_tbl[select_].max_param1)
 	}
 	/*
@@ -1378,17 +1378,17 @@ func create_specific_artifact(monster, t int) int {
 	 *
 	 */
 	if artifact_tbl[select_].min_param2 == artifact_tbl[select_].max_param2 {
-		rp_item_artifact(piece).param2 = artifact_tbl[select_].min_param2
+		rp_item_artifact(piece).Param2 = artifact_tbl[select_].min_param2
 	} else if artifact_tbl[select_].min_param2 == RANDOM_SOLDIER {
-		rp_item_artifact(piece).param2 = random_soldier()
+		rp_item_artifact(piece).Param2 = random_soldier()
 	} else if artifact_tbl[select_].min_param2 == RANDOM_SKILL {
-		rp_item_artifact(piece).param2 = random_skill()
+		rp_item_artifact(piece).Param2 = random_skill()
 	} else if artifact_tbl[select_].min_param2 == RANDOM_BEAST {
-		rp_item_artifact(piece).param2 = random_beast(0)
+		rp_item_artifact(piece).Param2 = random_beast(0)
 	} else if artifact_tbl[select_].min_param2 == RANDOM_USE {
-		rp_item_artifact(piece).param2 = random_use()
+		rp_item_artifact(piece).Param2 = random_use()
 	} else {
-		rp_item_artifact(piece).param2 =
+		rp_item_artifact(piece).Param2 =
 			rnd(artifact_tbl[select_].min_param2, artifact_tbl[select_].max_param2)
 	}
 	/*
@@ -1396,16 +1396,16 @@ func create_specific_artifact(monster, t int) int {
 	 *
 	 */
 	if artifact_tbl[select_].min_uses == artifact_tbl[select_].max_uses {
-		rp_item_artifact(piece).uses = artifact_tbl[select_].min_uses
+		rp_item_artifact(piece).Uses = artifact_tbl[select_].min_uses
 	} else {
-		rp_item_artifact(piece).uses =
+		rp_item_artifact(piece).Uses =
 			rnd(artifact_tbl[select_].min_uses, artifact_tbl[select_].max_uses)
 	}
 	/*
 	 *  And special case for combat.
 	 *
 	 */
-	if rp_item_artifact(piece).type_ == ART_COMBAT && rp_item_artifact(piece).param2 == FALSE {
+	if rp_item_artifact(piece).Type == ART_COMBAT && rp_item_artifact(piece).Param2 == FALSE {
 		create_combat_artifact(piece)
 	}
 	/*

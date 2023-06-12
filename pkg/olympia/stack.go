@@ -51,7 +51,7 @@ func here_precedes(a, b int) int {
 	p = rp_loc_info(loc(a))
 	assert(p != nil)
 
-	for i = 0; i < ilist_len(p.here_list); i++ {
+	for i = 0; i < len(p.here_list); i++ {
 		if p.here_list[i] == a {
 			return TRUE
 		} else if p.here_list[i] == b {
@@ -71,7 +71,7 @@ func first_prisoner_pos(where int) int {
 		return -1
 	}
 
-	for i = 0; i < ilist_len(p.here_list); i++ {
+	for i = 0; i < len(p.here_list); i++ {
 		if kind(p.here_list[i]) == T_char &&
 			is_prisoner(p.here_list[i]) {
 			return i
@@ -455,7 +455,7 @@ func promote_stack(lower, higher int) {
 	p = rp_loc_info(loc(higher))
 	assert(p != nil)
 
-	assert(p.here_list[ilist_len(p.here_list)-1] == lower)
+	assert(p.here_list[len(p.here_list)-1] == lower)
 	pos = ilist_lookup(p.here_list, higher)
 
 	promote(lower, pos)

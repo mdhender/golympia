@@ -142,7 +142,7 @@ func may_use_skill(who, sk int) int {
 	ret, scroll := 0, 0
 	for _, e := range loop_inventory(who) {
 		p := rp_item_magic(e.item)
-		if p != nil && ilist_lookup(p.may_use, sk) >= 0 {
+		if p != nil && p.MayUse.lookup(sk) >= 0 {
 			if subkind(e.item) == sub_scroll || subkind(e.item) == sub_book {
 				scroll = e.item
 			} else {
@@ -191,11 +191,11 @@ func correct_use_item(c *command) int {
 	}
 
 	p := rp_item_magic(item)
-	if p == nil || len(p.may_use) < 1 {
+	if p == nil || len(p.MayUse) < 1 {
 		return item
 	}
 
-	c.a = p.may_use[0]
+	c.a = p.MayUse[0]
 	return c.a
 }
 
@@ -252,10 +252,10 @@ func consume_requirements(who, skill int) {
 func consume_scroll(who, basis, amount int) {
 	if kind(basis) == T_item && p_item_magic(basis) != nil {
 		// use up some days
-		p_item_magic(basis).orb_use_count -= amount
+		p_item_magic(basis).OrbUseCount -= amount
 
 		// perhaps it is used up by now
-		if p_item_magic(basis).orb_use_count < 1 {
+		if p_item_magic(basis).OrbUseCount < 1 {
 			wout(who, "%s crumbles into dust.", box_name(basis))
 			if item_unique(basis) != FALSE {
 				destroy_unique_item(who, basis)
@@ -307,8 +307,8 @@ func religion_use_speedup(c *command) {
  */
 func artifact_use_speedup(c *command) {
 	if art := best_artifact(c.who, ART_SPEED_USE, c.use_skill, 0); art != 0 {
-		c.wait -= rp_item_artifact(art).param1
-		wout(c.who, "Using this skill is magically sped by %s day%s.", nice_num(rp_item_artifact(art).param1), or_string(rp_item_artifact(art).param1 > 1, "s", ""))
+		c.wait -= rp_item_artifact(art).Param1
+		wout(c.who, "Using this skill is magically sped by %s day%s.", nice_num(rp_item_artifact(art).Param1), or_string(rp_item_artifact(art).Param1 > 1, "s", ""))
 		if c.wait < 1 {
 			c.wait = 1
 		}
@@ -739,7 +739,7 @@ func v_use_item(c *command) int {
 		n = use_special_staff
 	}
 	if n == 0 && is_artifact(item) != nil {
-		n = 100 + is_artifact(item).type_
+		n = 100 + is_artifact(item).Type
 	}
 	if n == 0 {
 		wout(c.who, "Nothing special happens.")
@@ -997,8 +997,8 @@ func has_subskill(who, subskill int) int {
 	 */
 	for _, i := range loop_inventory(who) {
 		if a := is_artifact(i.item); a != nil {
-			if a.type_ == ART_SKILL && subkind(a.param1) == schar(subskill) {
-				return a.param1
+			if a.Type == ART_SKILL && subkind(a.Param1) == schar(subskill) {
+				return a.Param1
 			}
 		}
 	}
@@ -1267,8 +1267,8 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 	*item = 0
 
 	// possibly being taught in this location.
-	taught_specific := (p != nil && ilist_lookup(p.teaches, sk) >= 0)
-	taught_generic := (p != nil && ilist_lookup(p.teaches, school) >= 0)
+	taught_specific := (p != nil && p.teaches.lookup(sk) >= 0)
+	taught_generic := (p != nil && p.teaches.lookup(school) >= 0)
 
 	/*
 	 *  Are you in a teaching tower?
@@ -1340,7 +1340,7 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 				 *
 				 */
 				if a := best_artifact(c.who, ART_TEACHING, 0, 0); a != FALSE {
-					*teach_bonus += rp_item_artifact(a).param1
+					*teach_bonus += rp_item_artifact(a).Param1
 				}
 			}
 		}
@@ -1353,10 +1353,10 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 
 	for _, e := range loop_inventory(who) {
 		p := rp_item_magic(e.item)
-		if p != nil && ilist_lookup(p.may_study, sk) >= 0 && p.orb_use_count > 0 && subkind(e.item) == sub_book {
+		if p != nil && p.MayStudy.lookup(sk) >= 0 && p.OrbUseCount > 0 && subkind(e.item) == sub_book {
 			ret_specific = e.item
 			break
-		} else if p != nil && ilist_lookup(p.may_study, school) >= 0 && p.orb_use_count > 0 && subkind(e.item) == sub_book {
+		} else if p != nil && p.MayStudy.lookup(school) >= 0 && p.OrbUseCount > 0 && subkind(e.item) == sub_book {
 			ret_generic = e.item
 		}
 	}
@@ -1420,7 +1420,7 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 //
 //        p = rp_subloc(where);
 //
-//        if (p && ilist_lookup(p.teaches, sk) >= 0)
+//        if (p && p.teaches.lookup(sk) >= 0)
 //            return where;
 //    }
 //
@@ -1437,7 +1437,7 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 //        {
 //            q = rp_skill(e.skill);
 //
-//            if (q && ilist_lookup(q.offered, sk) >= 0)
+//            if (q && q.offered.lookup(sk) >= 0)
 //            {
 //                ret = e.skill;
 //                break;
@@ -1458,14 +1458,14 @@ func being_taught(who, sk int, item, teach_bonus *int) int {
 //
 //    {
 //        var e *item_ent
-//        var p *item_magic
+//        var p *ItemMagic
 //        ret := 0;
 //        scroll := 0;
 //
 //        for _, e = range loop_inventory(who, e)
 //        {
 //            p = rp_item_magic(e.item);
-//            if (p && ilist_lookup(p.may_study, sk) >= 0)
+//            if (p && p.may_study.lookup(sk) >= 0)
 //            {
 //                if (subkind(e.item) == sub_scroll)
 //                    scroll = e.item;
@@ -1579,7 +1579,7 @@ func end_study(c *command, sk int) bool {
 //correct_study_item(c *command)
 //{
 //  item := c.a;
-//  var p *item_magic
+//  var p *ItemMagic
 //
 //  p = rp_item_magic(item);
 //
@@ -2037,9 +2037,9 @@ func learn_skill(who, sk int) bool {
 func use_studypoint(who int) {
 	pl := player(who)
 	if pl != 0 {
-		rp_player(pl).jump_start--
-		if rp_player(pl).jump_start < 0 {
-			rp_player(pl).jump_start = 0
+		rp_player(pl).JumpStart--
+		if rp_player(pl).JumpStart < 0 {
+			rp_player(pl).JumpStart = 0
 		}
 	}
 }
@@ -2180,7 +2180,7 @@ func d_study(c *command) int {
 	 *
 	 */
 	if a := best_artifact(c.who, ART_LEARNING, 0, 0); a != 0 {
-		artifact_bonus += rp_item_artifact(a).param1
+		artifact_bonus += rp_item_artifact(a).Param1
 	}
 
 	if p.days_studied+religion_bonus+building_bonus+artifact_bonus >= learn_time(sk)*TOUGH_NUM {

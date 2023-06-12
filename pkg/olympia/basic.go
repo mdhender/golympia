@@ -514,8 +514,8 @@ func d_save_quick(c *command) int {
 
 	p := p_magic(c.who)
 	im := p_item_magic(newPotion)
-	im.use_key = use_quick_cast
-	im.quick_cast = p.quick_cast
+	im.UseKey = use_quick_cast
+	im.QuickCast = p.quick_cast
 
 	p.quick_cast = 0
 
@@ -529,13 +529,13 @@ func v_use_quick_cast(c *command) int {
 	wout(c.who, "%s drinks the potion...", just_name(c.who))
 
 	im := rp_item_magic(item)
-	if im == nil || im.quick_cast < 1 || !is_magician(c.who) {
+	if im == nil || im.QuickCast < 1 || !is_magician(c.who) {
 		wout(c.who, "Nothing happens.")
 		destroy_unique_item(c.who, item)
 		return FALSE
 	}
 
-	p_magic(c.who).quick_cast += im.quick_cast
+	p_magic(c.who).quick_cast += im.QuickCast
 
 	wout(c.who, "Spell cast speedup now %d.", char_quick_cast(c.who))
 	destroy_unique_item(c.who, item)
@@ -645,7 +645,7 @@ func v_write_spell(c *command) int {
 	isAdding := book != 0 && valid_box(book) && has_item(c.who, book) != FALSE
 	if isAdding {
 		if p := rp_item_magic(book); p != nil {
-			isAdding = ilist_lookup(p.may_study, spell) != -1
+			isAdding = p.MayStudy.lookup(spell) != -1
 		}
 	}
 	if isAdding {
@@ -661,8 +661,8 @@ func v_write_spell(c *command) int {
 		newItem := create_unique_item(c.who, sub_book)
 		p := p_item_magic(newItem)
 		set_name(newItem, "Study Guide")
-		p.may_study = append(p.may_study, spell)
-		p.orb_use_count = 0
+		p.MayStudy = append(p.MayStudy, spell)
+		p.OrbUseCount = 0
 		p_item(newItem).weight = 5
 		c.c = newItem
 	}
@@ -688,8 +688,8 @@ func new_scroll(who int) int {
 	set_name(newScroll, "Scroll")
 
 	p := p_item_magic(newScroll)
-	p.creator = who
-	p.orb_use_count = 1 /* Let the scroll get one use. */
+	p.Creator = who
+	p.OrbUseCount = 1 /* Let the scroll get one use. */
 	p_item(newScroll).weight = 1
 
 	wout(who, "Produced %s.", box_name(newScroll))
@@ -714,16 +714,16 @@ func d_write_spell(c *command) int {
 	// todo: ignore c.b?
 	book := c.c
 
-	var p *item_magic
+	var p *ItemMagic
 	if book == 0 || valid_box(book) || has_item(c.who, book) == FALSE {
 		p = rp_item_magic(book)
-		if p == nil || ilist_lookup(p.may_study, spell) == -1 {
+		if p == nil || p.MayStudy.lookup(spell) == -1 {
 			wout(c.who, "You seem to have lost your book.")
 			return FALSE
 		}
 	}
 
-	p.orb_use_count++
+	p.OrbUseCount++
 	return TRUE
 
 }

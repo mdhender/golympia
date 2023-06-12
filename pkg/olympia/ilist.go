@@ -27,27 +27,11 @@ type ints_l []int
 
 // vectors/ilist.c
 
-func ilist_cap(l ilist) int {
-	panic("!implemented")
-}
-
-func ilist_len(l ilist) int {
-	panic("!implemented")
-}
-
 func ilist_add(l []int, n int) []int {
 	if ilist_lookup(l, n) == -1 {
 		return append(l, n)
 	}
 	return l
-}
-
-func ilist_append(l *ilist, n int) *ilist {
-	panic("!implemented")
-}
-
-func ilist_clear(l *ilist) *ilist {
-	panic("!implemented")
 }
 
 func ilist_copy(l ilist) ilist {
@@ -63,6 +47,15 @@ func ilist_delete(l []int, index int) []int {
 		cp = append(cp, e)
 	}
 	return cp
+}
+
+func (l ints_l) lookup(n int) int {
+	for i, v := range l {
+		if n == v {
+			return i
+		}
+	}
+	return -1
 }
 
 func ilist_lookup(l ilist, n int) int {
@@ -98,14 +91,11 @@ func rem_value(l []int, n int) []int {
 	panic("!implemented")
 }
 
-type entity_build_l []*entity_build
-
-func (l entity_build_l) delete(index int) entity_build_l {
-	var cp entity_build_l
-	for i, e := range l {
-		if i != index {
-			cp = append(cp, e)
+func (l ints_l) ToList() (list ints_l) {
+	for _, e := range l {
+		if e != 0 {
+			list = append(list, e)
 		}
 	}
-	return cp
+	return list
 }

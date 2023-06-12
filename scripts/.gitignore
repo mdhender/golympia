@@ -1,0 +1,4 @@
+*
+!.gitignore
+!*.awk
+!*.sh

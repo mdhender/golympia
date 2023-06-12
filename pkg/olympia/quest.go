@@ -277,7 +277,7 @@ func generate_treasure(unit, divisor int) {
 func make_teach_book(who, rare, category, subkind int) int {
 	count := 0
 	var s string
-	var p *item_magic
+	var p *ItemMagic
 	skill := 0
 	first, nat := 1, 0
 	var proscribed_skills []int
@@ -449,19 +449,19 @@ func make_teach_book(who, rare, category, subkind int) int {
 
 	if subkind == sub_book {
 		p_item(newSkill).weight = 5
-		p.orb_use_count = rnd(7, 28)
+		p.OrbUseCount = rnd(7, 28)
 	} else {
 		p_item(newSkill).weight = 1
-		p.orb_use_count = 1
+		p.OrbUseCount = 1
 	}
 
 	/*
 	 *  Add the skill...
 	 *
 	 */
-	p.may_study = append(p.may_study, skill)
-	if p.orb_use_count < learn_time(skill) {
-		p.orb_use_count = learn_time(skill)
+	p.MayStudy = append(p.MayStudy, skill)
+	if p.OrbUseCount < learn_time(skill) {
+		p.OrbUseCount = learn_time(skill)
 	}
 
 	if subkind == sub_book {
@@ -473,7 +473,7 @@ func make_teach_book(who, rare, category, subkind int) int {
 		if chance == 1 {
 			/*  Tome of magic... */
 			set_name(newSkill, "Tome of Magic")
-			p.may_study = nil
+			p.MayStudy = nil
 			for _, skill := range loop_skill() {
 				if skill == sk_adv_sorcery {
 					continue
@@ -482,22 +482,22 @@ func make_teach_book(who, rare, category, subkind int) int {
 					continue
 				}
 				if magic_skill(skill) && skill_school(skill) == skill {
-					p.may_study = append(p.may_study, skill)
+					p.MayStudy = append(p.MayStudy, skill)
 				}
 			}
 		} else if chance == 2 {
 			/*  Bible */
 			set_name(newSkill, "Great Bible")
-			p.may_study = nil
+			p.MayStudy = nil
 			for _, skill := range loop_skill() {
 				if religion_skill(skill) && skill_school(skill) == skill {
-					p.may_study = append(p.may_study, skill)
+					p.MayStudy = append(p.MayStudy, skill)
 				}
 			}
 		} else if chance == 3 {
 			/*  Tome of All Knowledge... */
 			set_name(newSkill, "Tome of All Knowledge")
-			p.may_study = nil
+			p.MayStudy = nil
 			for _, skill := range loop_skill() {
 				if skill == sk_adv_sorcery {
 					continue
@@ -509,7 +509,7 @@ func make_teach_book(who, rare, category, subkind int) int {
 					continue
 				}
 				if skill_school(skill) == skill {
-					p.may_study = append(p.may_study, skill)
+					p.MayStudy = append(p.MayStudy, skill)
 				}
 			}
 		} else if rnd(1, 100) < 75 {

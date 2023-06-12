@@ -283,6 +283,7 @@ func readfile(path string) bool {
 	line_fd, err = os.Open(path)
 	if err != nil {
 		log.Printf("readfile: can't open %q: %v", path, err)
+		panic("!")
 		return false
 	}
 

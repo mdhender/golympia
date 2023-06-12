@@ -440,8 +440,8 @@ func move_exit_land(c *command, v *exit_view, show bool) int {
 	 *
 	 */
 	if art := best_artifact(c.who, ART_FAST_TERR, v.destination, 0); art != FALSE {
-		delay -= rp_item_artifact(art).param2
-		wout(c.who, "Your passage is magically sped by %s day%s.", nice_num(rp_item_artifact(art).param2), or_string(rp_item_artifact(art).param2 > 1, "s", ""))
+		delay -= rp_item_artifact(art).Param2
+		wout(c.who, "Your passage is magically sped by %s day%s.", nice_num(rp_item_artifact(art).Param2), or_string(rp_item_artifact(art).Param2 > 1, "s", ""))
 	}
 
 	if delay < 0 {
@@ -1041,7 +1041,7 @@ func peaceful_enter(who, from, where int) bool {
 	/*
 	 *  Thu Mar 20 12:33:41 1997 -- Scott Turner
 	 *
-	 *  If the border is closed and you aren't on the admit list,
+	 *  If the border is closed and you aren't on the Admit list,
 	 *  then you are refused admission.  However, there needs to
 	 *  actually be someone ruling the location.
 	 *
@@ -1104,7 +1104,7 @@ func check_peaceful_move(c *command, v *exit_view) bool {
 	//    /*
 	//     *  Thu Mar 20 12:33:41 1997 -- Scott Turner
 	//     *
-	//     *  If the border is closed and you aren't on the admit list,
+	//     *  If the border is closed and you aren't on the Admit list,
 	//     *  then you are refused admission.  However, there needs to
 	//     *  actually be someone ruling the location.
 	//     *

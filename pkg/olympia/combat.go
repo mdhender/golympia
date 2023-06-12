@@ -453,7 +453,7 @@ func init_prot(l []*fight) []*fight {
 //  defense_max := -1;
 //  missile_max := -1;
 //  struct wield _w;
-//  struct entity_artifact *a;
+//  struct EntityArtifact *a;
 //  int item;
 //
 //  if (w == nil)
@@ -755,7 +755,7 @@ func calc_man_limit(who, defender int) int {
 	 *
 	 */
 	if art := best_artifact(who, ART_CTL_MEN, 0, 0); art != 0 {
-		man_limit = ((100 + rp_item_artifact(art).param1) * man_limit) / 100
+		man_limit = ((100 + rp_item_artifact(art).Param1) * man_limit) / 100
 	}
 
 	return man_limit
@@ -796,7 +796,7 @@ func calc_beast_limit(who, defender int) int {
 	 *
 	 */
 	if art := best_artifact(who, ART_CTL_BEASTS, 0, 0); art != 0 {
-		beast_limit = ((100 + rp_item_artifact(art).param1) * beast_limit) / 100
+		beast_limit = ((100 + rp_item_artifact(art).Param1) * beast_limit) / 100
 	}
 
 	return beast_limit
@@ -1826,7 +1826,7 @@ func real_resolve_hit(l_a []*fight, f *fight, l_b []*fight, g *fight, man int, t
 	}
 
 	if art := best_artifact(f.unit, ART_IMPRV_ATT, f.kind, 0); art != 0 {
-		attack += (100 * rp_item_artifact(art).param1)
+		attack += (100 * rp_item_artifact(art).Param1)
 	}
 
 	/**** Beginning of mulplicative attack bonuses ****/
@@ -1941,7 +1941,7 @@ func real_resolve_hit(l_a []*fight, f *fight, l_b []*fight, g *fight, man int, t
 	}
 
 	if art := best_artifact(g.unit, ART_IMPRV_DEF, f.kind, 0); art != 0 {
-		defense += (100 * rp_item_artifact(art).param1)
+		defense += (100 * rp_item_artifact(art).Param1)
 	}
 
 	/**** Beginning of mulplicative defense bonuses ****/
@@ -1951,7 +1951,7 @@ func real_resolve_hit(l_a []*fight, f *fight, l_b []*fight, g *fight, man int, t
 	 *
 	 */
 	if art := best_artifact(g.unit, ART_TERRAIN, int(subkind(combat_def_loc)), 0); art != 0 {
-		defense = ((100 + rp_item_artifact(art).param1) * defense) / 100
+		defense = ((100 + rp_item_artifact(art).Param1) * defense) / 100
 	}
 
 	/*

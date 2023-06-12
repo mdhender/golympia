@@ -307,7 +307,7 @@ func v_name(c *command) int {
 }
 
 func v_times(c *command) int {
-	var p *entity_player
+	var p *EntityPlayer
 
 	if c.a == 1 {
 		c.a = 2
@@ -316,9 +316,9 @@ func v_times(c *command) int {
 	}
 
 	p = p_player(player(c.who))
-	p.compuserve = c.a != FALSE
+	p.CompuServe = c.a != FALSE
 
-	if p.compuserve {
+	if p.CompuServe {
 		wout(c.who, "Will not receive the paper.")
 	} else {
 		wout(c.who, "Will receive the paper.")
@@ -329,7 +329,7 @@ func v_times(c *command) int {
 
 func v_fullname(c *command) int {
 	var new_name string
-	var p *entity_player
+	var p *EntityPlayer
 
 	new_name = rest_name(c, 1)
 
@@ -344,10 +344,10 @@ func v_fullname(c *command) int {
 	}
 
 	p = p_player(player(c.who))
-	if len(p.full_name) != 0 {
-		my_free(p.full_name)
+	if len(p.FullName) != 0 {
+		my_free(p.FullName)
 	}
-	p.full_name = new_name
+	p.FullName = new_name
 
 	return TRUE
 }
@@ -828,7 +828,7 @@ func v_get(c *command) int {
 func noble_cost(pl int) int { return 1 }
 
 func next_np_turn(pl int) int {
-	var p *entity_player
+	var p *EntityPlayer
 	var ft, ct int
 	var n int
 
@@ -836,7 +836,7 @@ func next_np_turn(pl int) int {
 
 	ct = (7 - (sysclock.turn+1)%NUM_MONTHS)
 	/* ct = (7 - (sysclock.turn + 1)) % NUM_MONTHS; */
-	ft = p.first_turn % NUM_MONTHS
+	ft = p.FirstTurn % NUM_MONTHS
 	n = (ft + ct) % NUM_MONTHS
 
 	return n
@@ -867,14 +867,14 @@ func print_unformed(pl int) {
 	var buf string
 	var i int
 
-	if p == nil || len(p.unformed) < 1 {
+	if p == nil || len(p.Unformed) < 1 {
 		return
 	}
 
-	n = len(p.unformed)
+	n = len(p.Unformed)
 
 	for i = 0; i < n && i < 5; i++ {
-		buf += (sout(" %s", box_code_less(p.unformed[i])))
+		buf += (sout(" %s", box_code_less(p.Unformed[i])))
 	}
 
 	out(pl, "")
@@ -1023,7 +1023,7 @@ func d_form(c *command) int {
 	var pl int
 	var cost int
 	new_noble := c.a
-	var p *entity_player
+	var p *EntityPlayer
 
 	pl = player(c.who)
 	cost = noble_cost(pl)
@@ -1042,15 +1042,15 @@ func d_form(c *command) int {
 			return FALSE
 		}
 		if kind(new_noble) != T_unform ||
-			ilist_lookup(p.unformed, new_noble) < 0 {
+			p.Unformed.lookup(new_noble) < 0 {
 			wout(c.who, "%s is not a valid unformed noble entity.", box_code(new_noble))
 			wout(c.who, "I will use one of your unformed noble codes at random.")
 			new_noble = 0
 		}
 	}
 
-	if new_noble == 0 && len(p.unformed) > 0 {
-		new_noble = p.unformed[0]
+	if new_noble == 0 && len(p.Unformed) > 0 {
+		new_noble = p.Unformed[0]
 	}
 
 	//#if 1
@@ -1076,7 +1076,7 @@ func d_form(c *command) int {
 
 	form_new_noble(c.who, new_name, new_noble)
 
-	p.unformed = rem_value(p.unformed, new_noble)
+	p.Unformed = rem_value(p.Unformed, new_noble)
 	deduct_np(pl, cost)
 
 	return TRUE
@@ -1663,7 +1663,7 @@ func i_wait(c *command) int {
 func v_split(c *command) int {
 	lines := c.a
 	bytes := c.b
-	var p *entity_player
+	var p *EntityPlayer
 	var pl int
 
 	pl = player(c.who)
@@ -1679,8 +1679,8 @@ func v_split(c *command) int {
 		out(c.who, "Minimum bytes to split at is 10,000")
 	}
 
-	p.split_lines = lines
-	p.split_bytes = bytes
+	p.SplitLines = lines
+	p.SplitBytes = bytes
 
 	if lines == 0 && bytes == 0 {
 		out(c.who, "Reports will not be split when mailed.")

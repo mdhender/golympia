@@ -226,7 +226,7 @@ func create_faery() {
 	faery_player = 204
 	alloc_box(faery_player, T_player, sub_pl_npc)
 	set_name(faery_player, "Faery player")
-	p_player(faery_player).password = DEFAULT_PASSWORD
+	p_player(faery_player).Password = DEFAULT_PASSWORD
 
 	log.Printf("faery loc is %s\n", box_name(fmap[1][1]))
 }
@@ -558,13 +558,13 @@ func v_use_faery_artifact(c *command) int {
 		return FALSE
 	}
 
-	if a.uses < 1 {
+	if a.Uses < 1 {
 		wout(c.who, "%s gives off a blinding glow and suddenly vanishes!",
 			box_name(c.a))
 		destroy_unique_item(c.who, c.a)
 		return FALSE
 	}
-	a.uses--
+	a.Uses--
 
 	/*
 	 *  In a hill? f you're in a closed hill, then open the hill...

@@ -1540,7 +1540,7 @@ func create_some_storms(num, kind int) {
 
 	l = shuffle_ints(l)
 
-	for i = 0; i < ilist_len(l) && i < num; i++ {
+	for i = 0; i < len(l) && i < num; i++ {
 		new_storm(0, kind, rnd(2, 3), l[i])
 	}
 
@@ -1606,7 +1606,7 @@ func update_weather_view_loc_sup(who, where int) {
 	pl = player(who)
 	assert(valid_box(pl))
 
-	p_player(pl).weather_seen = set_bit(p_player(pl).weather_seen, where)
+	p_player(pl).weatherSeen = set_bit(p_player(pl).weatherSeen, where)
 }
 
 func update_weather_view_locs(stack, where int) {
@@ -1649,5 +1649,5 @@ func can_see_weather_here(who, where int) bool {
 		return false
 	}
 
-	return test_bit(p.weather_seen, where)
+	return test_bit(p.weatherSeen, where)
 }

@@ -136,12 +136,12 @@ func drop_player(pl int) {
 	//#endif
 
 	if rp_player(pl) != nil {
-		if rp_player(pl).email != "" {
-			email = rp_player(pl).email
+		if rp_player(pl).EMail != "" {
+			email = rp_player(pl).EMail
 		}
 
-		if rp_player(pl).full_name != "" {
-			s = rp_player(pl).full_name
+		if rp_player(pl).FullName != "" {
+			s = rp_player(pl).FullName
 		}
 	}
 
@@ -254,7 +254,7 @@ func v_post(c *command) int {
 	}
 
 	newEnt := new_ent(T_post, 0)
-	p_item_magic(newEnt).creator = c.who
+	p_item_magic(newEnt).Creator = c.who
 	set_where(newEnt, subloc(c.who))
 
 	p_misc(newEnt).post_txt = nil

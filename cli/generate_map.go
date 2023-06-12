@@ -21,6 +21,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/mdhender/golympia/pkg/maps"
 	"github.com/mdhender/golympia/pkg/olympia"
 	"github.com/spf13/cobra"
 	"log"
@@ -31,7 +32,9 @@ var cmdGenerateMap = &cobra.Command{
 	Use:   "map",
 	Short: "generate a new map",
 	RunE: func(cmd *cobra.Command, args []string) error {
-		if argsGenerateMap.mapFileName == "" {
+		if argsRoot.libdir == "" {
+			return fmt.Errorf("missing lib-dir parameter")
+		} else if argsGenerateMap.mapFileName == "" {
 			return fmt.Errorf("missing map-data parameter")
 		} else if argsGenerateMap.continentFileName == "" {
 			return fmt.Errorf("missing continent-data parameter")
@@ -46,7 +49,9 @@ var cmdGenerateMap = &cobra.Command{
 		}
 
 		var options []olympia.Option
+		options = append(options, olympia.WithLibPath(argsRoot.libdir))
 		options = append(options, olympia.WithMapData(argsGenerateMap.mapFileName))
+		options = append(options, olympia.WithCityData(argsGenerateMap.cityFileName))
 		options = append(options, olympia.WithContinentData(argsGenerateMap.continentFileName))
 		options = append(options, olympia.WithGateData(argsGenerateMap.gateFileName))
 		options = append(options, olympia.WithLandData(argsGenerateMap.landFileName))
@@ -54,6 +59,13 @@ var cmdGenerateMap = &cobra.Command{
 		options = append(options, olympia.WithRegionData(argsGenerateMap.regionFileName))
 		options = append(options, olympia.WithRoadData(argsGenerateMap.roadFileName))
 		options = append(options, olympia.WithSeedData(argsGenerateMap.seedFileName))
+
+		mc, err := maps.Read(argsGenerateMap.mapFileName)
+		if err != nil {
+			log.Fatal(err)
+		} else if mc != nil {
+			return nil
+		}
 
 		if err := olympia.GenerateMap(options...); err != nil {
 			log.Fatal(err)
@@ -65,6 +77,7 @@ var cmdGenerateMap = &cobra.Command{
 
 var argsGenerateMap struct {
 	mapFileName       string
+	cityFileName      string
 	continentFileName string
 	gateFileName      string
 	landFileName      string
@@ -76,15 +89,20 @@ var argsGenerateMap struct {
 
 func init() {
 	cmdGenerate.AddCommand(cmdGenerateMap)
+	// inputs
 	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.mapFileName, "map-data", "map-data.txt", "map data to import")
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.cityFileName, "city-data", "cities.json", "city name data to import")
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.landFileName, "land-data", "lands.json", "land data to import")
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.regionFileName, "region-data", "regions.json", "region data to import")
+
+	// outputs
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.continentFileName, "continent-data", "continents.json", "continent data to export")
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.locationFileName, "location-data", "locations.json", "location data to export")
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.gateFileName, "gate-data", "gates.json", "gate data to export")
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.roadFileName, "road-data", "roads.json", "road data to export")
+	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.seedFileName, "seed-data", "randseed.json", "random seed data to export")
+
 	//if err := cmdGenerateMap.MarkFlagRequired("map-data"); err != nil {
 	//	panic(err)
 	//}
-	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.continentFileName, "continent-data", "continents.json", "continent data to import")
-	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.landFileName, "land-data", "lands.json", "land data to import")
-	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.locationFileName, "location-data", "locations.json", "location data to import")
-	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.regionFileName, "region-data", "regions.json", "region data to import")
-	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.gateFileName, "gate-data", "gates.json", "gate data to export")
-	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.roadFileName, "road-data", "roads.json", "road data to export")
-	cmdGenerateMap.Flags().StringVar(&argsGenerateMap.seedFileName, "seed-data", "randseed.json", "random seed data")
 }
