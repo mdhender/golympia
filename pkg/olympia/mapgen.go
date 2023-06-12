@@ -1896,7 +1896,7 @@ func read_map(name string) {
 				if isdigit(line[col]) {
 					panic(fmt.Sprintf("terrain %q should not fall through", line[col]))
 				}
-				panic(fmt.Sprintf("unknown terrain %q", line[col]))
+				panic(fmt.Sprintf("%d: %d: unknown terrain %q", row+1, col+1, line[col]))
 			}
 
 			map_[row][col].save_char = line[col]

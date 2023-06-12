@@ -21,6 +21,7 @@ package cli
 
 import (
 	"fmt"
+	"github.com/mdhender/golympia/pkg/maps"
 	"github.com/mdhender/golympia/pkg/olympia"
 	"github.com/spf13/cobra"
 	"log"
@@ -58,6 +59,13 @@ var cmdGenerateMap = &cobra.Command{
 		options = append(options, olympia.WithRegionData(argsGenerateMap.regionFileName))
 		options = append(options, olympia.WithRoadData(argsGenerateMap.roadFileName))
 		options = append(options, olympia.WithSeedData(argsGenerateMap.seedFileName))
+
+		mc, err := maps.Read(argsGenerateMap.mapFileName)
+		if err != nil {
+			log.Fatal(err)
+		} else if mc != nil {
+			return nil
+		}
 
 		if err := olympia.GenerateMap(options...); err != nil {
 			log.Fatal(err)
